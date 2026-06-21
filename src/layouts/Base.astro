@@ -1,0 +1,72 @@
+---
+import '@fontsource-variable/inter'
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'Hagen Fritz',
+  description = 'Personal site of Hagen Fritz — writing on software, volleyball, and assorted curiosities.',
+} = Astro.props
+
+const nav = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Connect', href: '/connect' },
+]
+
+const path = Astro.url.pathname
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="min-h-dvh bg-background text-foreground antialiased">
+    <div class="bg-layer bg-grid" aria-hidden="true"></div>
+    <div class="mx-auto flex min-h-dvh max-w-2xl flex-col px-6">
+      <header
+        class="flex items-center justify-between border-b border-border py-5"
+      >
+        <a href="/" class="font-semibold tracking-tight hover:text-primary">
+          Hagen Fritz
+        </a>
+        <nav class="flex gap-5 text-sm">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  'transition-colors hover:text-foreground',
+                  isActive(item.href)
+                    ? 'text-foreground'
+                    : 'text-muted-foreground',
+                ]}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <main class="flex-1 py-12">
+        <slot />
+      </main>
+
+      <footer class="border-t border-border py-6 text-sm text-muted-foreground">
+        © {new Date().getFullYear()} Hagen Fritz
+      </footer>
+    </div>
+  </body>
+</html>

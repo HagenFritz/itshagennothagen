@@ -1,0 +1,230 @@
+@import 'tailwindcss';
+@source '../**/*.astro';
+
+/* ── Theme tokens (single source of truth) ──────────────────────────────
+   shadcn-style semantic tokens. Dark-only. Edit colors here; everything
+   downstream references the Tailwind utilities mapped in @theme below. */
+:root {
+  /* navy ramp — the spine of the palette */
+  --navy: #1e2a4a; /* mid navy, for accents/surfaces */
+  --navy-bright: #3b5bdb; /* saturated navy/blue, for highlights */
+
+  /* base — near-black with a navy undertone */
+  --background: #0b0f1a;
+  --foreground: #eef2fb; /* near-white, slightly cool */
+
+  /* surfaces — navy-tinted, not flat gray */
+  --card: #131a2e;
+  --card-foreground: #eef2fb;
+  --popover: #131a2e;
+  --popover-foreground: #eef2fb;
+
+  /* muted / secondary — navy */
+  --muted: #1b2440;
+  --muted-foreground: #9aa6c2; /* cool light gray */
+  --secondary: #1e2a4a;
+  --secondary-foreground: #eef2fb;
+
+  /* accent — burnt orange (pops against navy) */
+  --primary: #c2410c;
+  --primary-foreground: #ffffff;
+  --accent: #c2410c;
+  --accent-foreground: #ffffff;
+
+  /* feedback */
+  --destructive: #da3633;
+  --destructive-foreground: #ffffff;
+
+  /* lines & focus */
+  --border: #283256; /* navy border */
+  --input: #283256;
+  --ring: #c2410c;
+
+  --radius: 0.5rem;
+}
+
+/* Map tokens → Tailwind theme so `bg-background`, `text-foreground`,
+   `border-border`, `bg-primary`, `ring-ring`, `font-sans` etc. resolve. */
+@theme inline {
+  --color-navy: var(--navy);
+  --color-navy-bright: var(--navy-bright);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Background: faint grid fading toward the edges ─────────────────── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-grid {
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 30%,
+    #000 30%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 30%,
+    #000 30%,
+    transparent 75%
+  );
+  opacity: 0.5;
+}
+
+/* ── Tagline: fixed two-line box so the typewriter never reflows ────── */
+.tagline-line {
+  line-height: 1.4;
+  height: calc(2 * 1.4em);
+  overflow: hidden;
+}
+
+/* ── Typewriter caret ───────────────────────────────────────────────── */
+.tagline-caret {
+  display: inline-block;
+  width: 0.55ch;
+  height: 1.1em;
+  margin-left: 2px;
+  transform: translateY(0.15em);
+  background: var(--primary);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Tag filter chips (state driven by aria-pressed) ────────────────── */
+.tag-btn {
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+.tag-btn:hover {
+  border-color: var(--navy-bright);
+  color: var(--foreground);
+}
+.tag-btn[aria-pressed='true'] {
+  background: var(--navy-bright);
+  border-color: var(--navy-bright);
+  color: #fff;
+}
+.tag-btn[aria-pressed='true']:hover {
+  color: #fff;
+}
+
+/* ── Article (Markdown) typography ──────────────────────────────────── */
+.prose {
+  line-height: 1.7;
+  color: var(--foreground);
+}
+.prose > * + * {
+  margin-top: 1.25rem;
+}
+.prose h2 {
+  margin-top: 2.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.prose h3 {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.4rem;
+}
+.prose blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+}
+.prose code {
+  background: var(--muted);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+}
+.prose pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+.prose img {
+  max-width: 100%;
+  border-radius: var(--radius);
+}
