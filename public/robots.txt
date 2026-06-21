@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://itshagennothagen.dev/sitemap-index.xml
