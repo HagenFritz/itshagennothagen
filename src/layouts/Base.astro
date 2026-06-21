@@ -5,15 +5,21 @@ import '../styles/global.css'
 interface Props {
   title?: string
   description?: string
+  image?: string
 }
 
 const {
   title = 'Hagen Fritz',
   description = 'Personal site of Hagen Fritz — writing on software, volleyball, and assorted curiosities.',
+  image = '/og.png',
 } = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site)
+const ogImage = new URL(image, Astro.site)
 
 const nav = [
   { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
   { label: 'Blog', href: '/blog' },
   { label: 'Connect', href: '/connect' },
 ]
@@ -29,8 +35,21 @@ const isActive = (href: string) =>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Hagen Fritz" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body class="min-h-dvh bg-background text-foreground antialiased">
     <div class="bg-layer bg-grid" aria-hidden="true"></div>
