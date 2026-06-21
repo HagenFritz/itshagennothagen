@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Side-quests (local-only, not committed)
+docs/side-quests/
+
+# Astro
+.astro/

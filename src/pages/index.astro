@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../layouts/Base.astro'
+
+const recent = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3)
+
+const taglines = [
+  'I build tools for the way I work.',
+  'I play a lot of volleyball.',
+  "I tinker with whatever's in front of me.",
+]
+---
+
+<Base>
+  <section class="space-y-5">
+    <h1 class="text-5xl font-bold tracking-tight sm:text-7xl">Hagen Fritz</h1>
+    <p
+      class="tagline-line flex items-start text-xl text-muted-foreground sm:text-2xl"
+    >
+      <span id="tagline" class="tagline-text">{taglines[0]}</span>
+      <span class="tagline-caret" aria-hidden="true"></span>
+    </p>
+  </section>
+
+  {
+    recent.length > 0 && (
+      <section class="mt-16 space-y-4">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-lg font-semibold">Recent writing</h2>
+          <a
+            href="/blog"
+            class="text-sm text-muted-foreground hover:text-primary"
+          >
+            All posts →
+          </a>
+        </div>
+        <ul class="space-y-3">
+          {recent.map((post) => (
+            <li>
+              <a
+                href={`/blog/${post.id}`}
+                class="group flex flex-col gap-1 rounded-md border border-border bg-card p-4 transition-colors hover:border-navy-bright"
+              >
+                <span class="font-medium group-hover:text-primary">
+                  {post.data.title}
+                </span>
+                <span class="text-sm text-muted-foreground">
+                  {post.data.summary}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Base>
+
+<script is:inline define:vars={{ taglines }}>
+  const el = document.getElementById('tagline')
+  if (el) {
+    let phrase = 0
+    let char = 0
+    let deleting = false
+
+    const tick = () => {
+      const full = taglines[phrase]
+      char += deleting ? -1 : 1
+      el.textContent = full.slice(0, char)
+
+      let delay = deleting ? 35 : 65
+      if (!deleting && char === full.length) {
+        delay = 1800
+        deleting = true
+      } else if (deleting && char === 0) {
+        deleting = false
+        phrase = (phrase + 1) % taglines.length
+        delay = 350
+      }
+      setTimeout(tick, delay)
+    }
+    el.textContent = ''
+    setTimeout(tick, 600)
+  }
+</script>

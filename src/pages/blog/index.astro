@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+)
+
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort()
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+---
+
+<Base title="Blog — Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Blog</h1>
+
+  {
+    tags.length > 0 && (
+      <div class="mt-6 flex flex-wrap gap-2" id="tag-filter">
+        <button
+          type="button"
+          data-tag="all"
+          aria-pressed="true"
+          class="tag-btn rounded-full border px-3 py-1 text-xs transition-colors"
+        >
+          All
+        </button>
+        {tags.map((tag) => (
+          <button
+            type="button"
+            data-tag={tag}
+            aria-pressed="false"
+            class="tag-btn rounded-full border px-3 py-1 text-xs transition-colors"
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  <ul class="mt-8 space-y-3">
+    {
+      posts.map((post) => (
+        <li class="post-item" data-tags={post.data.tags.join(',')}>
+          <a
+            href={`/blog/${post.id}`}
+            class="group flex flex-col gap-1 rounded-md border border-border bg-card p-4 transition-colors hover:border-primary"
+          >
+            <div class="flex items-baseline justify-between gap-4">
+              <span class="font-medium group-hover:text-primary">
+                {post.data.title}
+              </span>
+              <time class="shrink-0 text-xs text-muted-foreground">
+                {fmt(post.data.date)}
+              </time>
+            </div>
+            <span class="text-sm text-muted-foreground">
+              {post.data.summary}
+            </span>
+            <div class="mt-1 flex flex-wrap gap-1.5">
+              {post.data.tags.map((t) => (
+                <span class="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {posts.length === 0 && <p class="text-muted-foreground">No posts yet.</p>}
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn')
+  const items = document.querySelectorAll<HTMLElement>('.post-item')
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)))
+      items.forEach((item) => {
+        const tags = (item.dataset.tags || '').split(',')
+        item.hidden = tag !== 'all' && !tags.includes(tag!)
+      })
+    })
+  })
+</script>

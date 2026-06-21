@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro'
+
+const links = [
+  {
+    label: 'GitHub',
+    href: 'https://github.com/HagenFritz',
+    handle: '@HagenFritz',
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/hagenfritz/',
+    handle: 'in/hagenfritz',
+  },
+  {
+    label: 'Email',
+    href: 'mailto:hagenfritz@gmail.com',
+    handle: 'hagenfritz@gmail.com',
+  },
+]
+---
+
+<Base title="Connect — Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Connect</h1>
+  <p class="mt-4 text-muted-foreground">
+    Reach me at any of these. Happy to talk software, volleyball, or whatever
+    rabbit hole you're in.
+  </p>
+
+  <ul class="mt-8 space-y-3">
+    {
+      links.map((l) => (
+        <li>
+          <a
+            href={l.href}
+            target="_blank"
+            rel="noreferrer"
+            class="group flex items-center justify-between rounded-md border border-border bg-card px-4 py-3 transition-colors hover:border-primary"
+          >
+            <span class="font-medium group-hover:text-primary">{l.label}</span>
+            <span class="text-sm text-muted-foreground">{l.handle}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
