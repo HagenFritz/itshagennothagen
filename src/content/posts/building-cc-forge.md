@@ -1,7 +1,7 @@
 ---
-title: 'cc-forge: my Workflow Toolkit for Claude Code'
+title: 'cc-forge: My Workflow Toolkit for Claude Code'
 date: 2026-06-20
-summary: How my GitHub habits and a plugin I stumbled into became cc-forge — a collection of skills and subagents for Claude Code you can cherry-pick from.
+summary: 'My GitHub workflows and a plugin I stumbled upon became cc-forge: a collection of skills and subagents I use in Claude Code that you can cherry-pick from.'
 tags: [claude-code, tooling]
 ---
 
