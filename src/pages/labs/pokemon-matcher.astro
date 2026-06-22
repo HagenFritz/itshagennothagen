@@ -1,0 +1,194 @@
+---
+import Base from '../../layouts/Base.astro'
+
+const STATS = [
+  { key: 'HP', label: 'HP', sub: 'Sustained energy, playing many games' },
+  { key: 'ATK', label: 'Attack', sub: 'Serve pressure, hitting with power' },
+  {
+    key: 'DEF',
+    label: 'Defense',
+    sub: 'Digging, blocking, pressing and hands',
+  },
+  {
+    key: 'SPA',
+    label: 'Sp. Atk',
+    sub: 'Cutting/shooting, pokies/cobras, tooling',
+  },
+  { key: 'SPD', label: 'Sp. Def', sub: 'Running down shots, setting' },
+  { key: 'SPE', label: 'Speed', sub: 'Quickness, strategy' },
+]
+---
+
+<Base title="Which Pokémon Matches Your Volleyball Game? — Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">
+    Which Pokémon Matches Your Volleyball Game?
+  </h1>
+
+  <p class="mt-4 text-muted-foreground">
+    Drag the bars to set your six stats, then watch your closest Pokémon by
+    base-stat shape appear. It matches on <em>proportions</em>, not totals.
+    Raise one stat and the others give ground. The story behind it is in
+    <a
+      href="/blog/pokemon-matcher"
+      class="text-primary underline underline-offset-2">this post</a
+    >.
+  </p>
+
+  <div class="mt-8 grid gap-8 sm:grid-cols-2">
+    <div class="rounded-lg border border-border bg-card p-5">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-sm font-semibold tracking-wide text-muted-foreground">
+          YOUR STATS
+        </h2>
+        <span class="text-sm text-muted-foreground"
+          >Total: <span id="total" class="font-semibold text-foreground"
+            >420</span
+          ></span
+        >
+      </div>
+
+      <div class="mt-4 space-y-3">
+        {
+          STATS.map((s, i) => (
+            <label class="block">
+              <div class="flex justify-between text-sm">
+                <span class="text-foreground">{s.label}</span>
+                <span
+                  class="stat-val tabular-nums text-muted-foreground"
+                  data-i={i}
+                />
+              </div>
+              <p class="text-xs text-muted-foreground">{s.sub}</p>
+              <input
+                type="range"
+                class="stat-slider mt-1 w-full accent-primary"
+                min="50"
+                max="100"
+                step="5"
+                value="70"
+                data-i={i}
+              />
+            </label>
+          ))
+        }
+      </div>
+
+      <button
+        id="reset"
+        class="mt-5 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >Reset</button
+      >
+    </div>
+
+    <div class="flex flex-col">
+      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground">
+        YOUR MATCHES
+      </h2>
+      <ol id="results" class="mt-4 flex flex-1 flex-col gap-3"></ol>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import pokemon from '../../data/pokemon.json'
+
+  type Mon = {
+    id: number
+    name: string
+    t1: string
+    t2: string | null
+    s: number[]
+  }
+  const dex = pokemon as Mon[]
+
+  // precompute normalized ratio vectors + magnitudes
+  const vecs = dex.map((p) => {
+    const t = p.s.reduce((a, b) => a + b, 0)
+    const r = p.s.map((x) => x / t)
+    const mag = Math.sqrt(r.reduce((a, x) => a + x * x, 0))
+    return { r, mag }
+  })
+
+  const sliders = Array.from(
+    document.querySelectorAll<HTMLInputElement>('.stat-slider'),
+  )
+  const vals = Array.from(document.querySelectorAll<HTMLElement>('.stat-val'))
+  const totalEl = document.getElementById('total')!
+  const resultsEl = document.getElementById('results')!
+
+  const TYPE_COLORS: Record<string, string> = {
+    Normal: '#9099a1',
+    Fire: '#ff6b3d',
+    Water: '#4f9bff',
+    Electric: '#f5c518',
+    Grass: '#5fbf5f',
+    Ice: '#79d0d0',
+    Fighting: '#d83a3a',
+    Poison: '#a85fc7',
+    Ground: '#d6a458',
+    Flying: '#8fa9f0',
+    Psychic: '#ff6f91',
+    Bug: '#9fb83a',
+    Rock: '#bba14a',
+    Ghost: '#7b6bb5',
+    Dragon: '#6c5cf0',
+    Dark: '#6b6477',
+    Steel: '#8aa0b0',
+    Fairy: '#f08ad0',
+  }
+
+  function sprite(id: number) {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+  }
+
+  function render() {
+    const stats = sliders.map((s) => parseInt(s.value, 10))
+    const total = stats.reduce((a, b) => a + b, 0)
+    totalEl.textContent = String(total)
+    stats.forEach((v, i) => (vals[i].textContent = String(v)))
+
+    const tr = stats.map((x) => x / total)
+    const tmag = Math.sqrt(tr.reduce((a, x) => a + x * x, 0))
+
+    const scored = vecs.map((v, idx) => {
+      let dot = 0
+      for (let k = 0; k < 6; k++) dot += tr[k] * v.r[k]
+      return { idx, sim: dot / (tmag * v.mag) }
+    })
+    scored.sort((a, b) => b.sim - a.sim)
+
+    resultsEl.innerHTML = scored
+      .slice(0, 5)
+      .map(({ idx, sim }, rank) => {
+        const p = dex[idx]
+        const types = [p.t1, p.t2].filter(Boolean) as string[]
+        const chips = types
+          .map(
+            (t) =>
+              `<span class="rounded px-1.5 py-0.5 text-xs font-medium text-white" style="background:${TYPE_COLORS[t] ?? '#666'}">${t}</span>`,
+          )
+          .join(' ')
+        return `
+          <li class="flex flex-1 items-center gap-3 rounded-lg border border-border bg-card p-3 ${rank === 0 ? 'ring-1 ring-primary' : ''}">
+            <span class="w-5 text-sm font-semibold text-muted-foreground">#${rank + 1}</span>
+            <img src="${sprite(p.id)}" alt="${p.name}" width="64" height="64" loading="lazy"
+                 class="h-16 w-16 shrink-0 [image-rendering:pixelated]"
+                 onerror="this.style.visibility='hidden'" />
+            <div class="min-w-0 flex-1">
+              <div class="truncate font-medium text-foreground">${p.name}</div>
+              <div class="mt-1 flex flex-wrap gap-1">${chips}</div>
+              <div class="mt-1 text-xs tabular-nums text-muted-foreground">${p.s.join(' / ')}</div>
+            </div>
+            <span class="shrink-0 text-sm tabular-nums text-primary">${(sim * 100).toFixed(1)}%</span>
+          </li>`
+      })
+      .join('')
+  }
+
+  sliders.forEach((s) => s.addEventListener('input', render))
+  document.getElementById('reset')!.addEventListener('click', () => {
+    sliders.forEach((s) => (s.value = '70'))
+    render()
+  })
+  render()
+</script>

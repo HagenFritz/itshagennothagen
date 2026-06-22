@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro'
+
+const tools = [
+  {
+    href: '/labs/pokemon-matcher',
+    title: 'Which Pokémon Matches Your Volleyball Game?',
+    blurb:
+      'Drag six sliders to set your stats and watch your closest Pokémon by base-stat shape appear, live. Cosine similarity on normalized stat ratios.',
+    tag: 'Pokémon',
+  },
+]
+---
+
+<Base title="Lab — Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Lab</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Small interactive things I've built. Experiments, toys, and side-projects
+    that are more fun to poke at than to read.
+  </p>
+
+  <ul class="mt-8 space-y-4">
+    {
+      tools.map((t) => (
+        <li>
+          <a
+            href={t.href}
+            class="group flex h-full flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
+          >
+            <div class="flex items-baseline justify-between gap-3">
+              <span class="font-medium group-hover:text-primary">
+                {t.title}
+              </span>
+              <span class="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                {t.tag}
+              </span>
+            </div>
+            <span class="text-sm text-muted-foreground">{t.blurb}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
