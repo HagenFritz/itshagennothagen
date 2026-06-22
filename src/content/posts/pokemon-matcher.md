@@ -5,8 +5,8 @@ summary: A PowerPoint-night project that grew into something more. I mapped my v
 tags: [pokemon, python, lab]
 ---
 
-This idea came to me when I brainstorming for a PowerPoint night I was having with friends. I wanted to fuse three things I like: my research-y / quantitative side, Pokemon knowledge, and programming skills. The result was a script that takes a person's volleyball stat breakdown and tells
-them which Pokémon they map to.
+This idea came to me when I brainstorming for a PowerPoint night I was having with friends. I wanted to fuse three things about me: my research-y / quantitative side, Pokemon knowledge, and programming skills. The result was a script that takes a person's volleyball stat breakdown and tells
+them which Pokémon they are.
 
 ## The stat to skill mapping
 
@@ -78,7 +78,7 @@ My method for assigning points followed these general considerations:
 2. Every other stat is assigned **relative to that**, within that one person's kit.
 3. The six stats sum to **420**.
 
-The 420 budget was chosen by happenstance. The first two players I assigned points to both happened to sum to 420 so I decided to stick with that to keep everyone on the same scale. The key is that I was not measuring a person against anabsolute standard, but describing the *shape* of their game relative to itself.
+The 420 budget was chosen by happenstance. The first two players I assigned points to both happened to sum to 420 so I decided to stick with that to keep everyone on the same scale. The key is that I was not measuring a person against an absolute standard, but describing the *shape* of their game relative to itself.
 
 That leads to two important notes:
 
@@ -89,13 +89,13 @@ That leads to two important notes:
 > **You cannot compare numbers between players.** The numbers describe shape, not
 > magnitude. My 100 and your 100 are not the same amount of anything.
 
-## The match: shape, not size
+## The matching process
 
 I chose to measure *shape* instead of *size*. Otherwise, a person scored on a 420 budget would
 never match to a legendary Pokemon which typically have high base stat totals (500+). Also... it would require me to make comparative judgements between my friends' abilities which I was _not_ going to do.
 
-Intsead, the process normalizes each stat breakdown into ratios where each
-stat is a fraction of that total. Then I used
+Instead, the process normalizes each stat breakdown into ratios where each
+stat is a fraction of the total. Then I used
 **[cosine similarity](https://www.youtube.com/watch?v=e9U0QAFbfLI)** to compare the ratios between people and Pokemon. Cosine similarity measures the angle between two vectors
 and ignores their length entirely. Two stat breakdowns point the same direction when
 they emphasize the same things in the same proportions, regardless of how big the
@@ -140,10 +140,10 @@ Take one of my teammates. Let's call him Devin. He's a great defender, both digg
   </div>
 </div>
 
-Defense is his 100; that's his identity. ATK is his floor at 50, because power
+Defense is his max stat: 100. ATK is his floor at 50, because power
 hitting isn't where his game lives (not to say he can't bounce a ball here and there).
 
-Feed that into the script and the top match comes back at **0.9935** similarity with a rather popular legendary beast:
+Feed that into the script and the top match comes back at **0.9935** similarity with:
 
 ```
 #1  Suicune
@@ -164,7 +164,7 @@ Feed that into the script and the top match comes back at **0.9935** similarity 
   />
 </figure>
 
-Legendary Pokemon! Nice! However... the next best match was:
+A popular, strong legendary Pokemon! Nice! However... the next best match was:
 
 ```
 #3  Burmy (Plant Cloak)
@@ -185,15 +185,14 @@ Legendary Pokemon! Nice! However... the next best match was:
   />
 </figure>
 
-A first-evolution bug Pokémon with a 224 base-stat total which is less than half of
-Suicune's total. The two ranked side by side because they share the same silhouette:
-tanky on both defenses, weak on offense. Different size, identical shape. That's
-the feature, not a bug (well, I guess it _is_ a bug in this case 😜).
+A first-stage bug Pokémon with a 224 base-stat total which is less than half of
+Suicune's total. The two ranked similarly because they share the same silhouette. Both are
+tanky in both defenses (in their own right), but weaker on offense. Different sized numbers, but identical shape. That's the intent, not a bug (well, I guess it _is_ a bug in this case 😜).
 
-The graphics below hopefully make things more concrete. On the left, the three stat lines drawn as
-vectors: wildly different lengths (Suicune's 580 down to Burmy's 224), but only a
-few degrees of angle separating them. Cosine only sees that tiny spread, not the
-length. On the right, the same three drawn as _ratios_ on stat axes. The
+The graphics below hopefully make things more concrete. On the left, the three stat lines are drawn as
+vectors. They have wildly different lengths (Suicune's 580 down to Burmy's 224), but only a
+few degrees of angle separating them. Cosine similarity only cares about the tiny spread, not the
+length. On the right, are the same three breakdowns drawn as _ratios_ on stat axes. The
 hexagons land almost on top of each other.
 
 <figure style="margin: 1.75rem 0;">
