@@ -27,14 +27,15 @@ const STATS = [
   <p class="mt-4 text-muted-foreground">
     Drag the bars to set your six stats, then watch your closest Pokémon by
     base-stat shape appear. It matches on <em>proportions</em>, not totals.
-    Raise one stat and the others give ground. The story behind it is in
+    Raise one stat and the others give ground. Tap a match to see its Pokédex
+    blurb and stats. The story behind it is in
     <a
       href="/blog/pokemon-matcher"
       class="text-primary underline underline-offset-2">this post</a
     >.
   </p>
 
-  <div class="mt-8 grid gap-8 sm:grid-cols-2">
+  <div class="mt-8 grid gap-8 sm:grid-cols-[3fr_2fr]">
     <div class="rounded-lg border border-border bg-card p-5">
       <div class="flex items-baseline justify-between">
         <h2 class="text-sm font-semibold tracking-wide text-muted-foreground">
@@ -87,6 +88,44 @@ const STATS = [
       <ol id="results" class="mt-4 flex flex-1 flex-col gap-3"></ol>
     </div>
   </div>
+
+  <dialog
+    id="mon-dialog"
+    class="m-auto w-[min(90vw,28rem)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/60"
+  >
+    <div class="relative p-5">
+      <button
+        id="mon-close"
+        aria-label="Close"
+        class="absolute right-3 top-3 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+          ><path
+            fill-rule="evenodd"
+            d="M4.3 4.3a1 1 0 0 1 1.4 0L10 8.6l4.3-4.3a1 1 0 1 1 1.4 1.4L11.4 10l4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4z"
+            clip-rule="evenodd"></path></svg
+        >
+      </button>
+      <div class="flex items-center gap-4">
+        <img
+          id="d-sprite"
+          width="80"
+          height="80"
+          class="h-20 w-20 shrink-0 [image-rendering:pixelated]"
+        />
+        <div>
+          <div id="d-name" class="text-lg font-semibold"></div>
+          <div id="d-types" class="mt-1 flex flex-wrap gap-1"></div>
+        </div>
+      </div>
+      <p
+        id="d-blurb"
+        class="mt-4 text-sm leading-relaxed text-muted-foreground"
+      >
+      </p>
+      <div id="d-stats" class="mt-4 grid grid-cols-3 gap-2 text-sm"></div>
+    </div>
+  </dialog>
 </Base>
 
 <script>
@@ -137,8 +176,45 @@ const STATS = [
     Fairy: '#f08ad0',
   }
 
+  const STAT_LABELS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe']
+
+  function cleanName(name: string) {
+    return name.replace(/\s*\(.*\)\s*$/, '').trim()
+  }
+
   function sprite(id: number) {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+  }
+
+  function chips(types: string[]) {
+    return types
+      .map(
+        (t) =>
+          `<span class="rounded px-1.5 py-0.5 text-xs font-medium text-white" style="background:${TYPE_COLORS[t] ?? '#666'}">${t}</span>`,
+      )
+      .join(' ')
+  }
+
+  const flavorCache = new Map<number, Promise<string>>()
+
+  function flavorText(id: number): Promise<string> {
+    let p = flavorCache.get(id)
+    if (!p) {
+      p = fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`)
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((data) => {
+          const entry = data.flavor_text_entries?.find(
+            (e: { language: { name: string } }) => e.language.name === 'en',
+          )
+          const text: string = entry?.flavor_text ?? ''
+          return (
+            text.replace(/[\f\n\r]+/g, ' ').trim() || 'No description found.'
+          )
+        })
+        .catch(() => 'Could not load description.')
+      flavorCache.set(id, p)
+    }
+    return p
   }
 
   function render() {
@@ -158,32 +234,72 @@ const STATS = [
     scored.sort((a, b) => b.sim - a.sim)
 
     resultsEl.innerHTML = scored
-      .slice(0, 5)
+      .slice(0, 6)
       .map(({ idx, sim }, rank) => {
         const p = dex[idx]
         const types = [p.t1, p.t2].filter(Boolean) as string[]
-        const chips = types
-          .map(
-            (t) =>
-              `<span class="rounded px-1.5 py-0.5 text-xs font-medium text-white" style="background:${TYPE_COLORS[t] ?? '#666'}">${t}</span>`,
-          )
-          .join(' ')
         return `
-          <li class="flex flex-1 items-center gap-3 rounded-lg border border-border bg-card p-3 ${rank === 0 ? 'ring-1 ring-primary' : ''}">
-            <span class="w-5 text-sm font-semibold text-muted-foreground">#${rank + 1}</span>
-            <img src="${sprite(p.id)}" alt="${p.name}" width="64" height="64" loading="lazy"
-                 class="h-16 w-16 shrink-0 [image-rendering:pixelated]"
-                 onerror="this.style.visibility='hidden'" />
-            <div class="min-w-0 flex-1">
-              <div class="truncate font-medium text-foreground">${p.name}</div>
-              <div class="mt-1 flex flex-wrap gap-1">${chips}</div>
-              <div class="mt-1 text-xs tabular-nums text-muted-foreground">${p.s.join(' / ')}</div>
-            </div>
-            <span class="shrink-0 text-sm tabular-nums text-primary">${(sim * 100).toFixed(1)}%</span>
+          <li class="flex flex-1">
+            <button type="button" data-idx="${idx}"
+                    class="match-card flex w-full items-center gap-3 rounded-lg border bg-card p-3 text-left transition-colors">
+              <span class="w-5 text-sm font-semibold text-muted-foreground">#${rank + 1}</span>
+              <img src="${sprite(p.id)}" alt="${p.name}" width="56" height="56" loading="lazy"
+                   class="h-14 w-14 shrink-0 [image-rendering:pixelated]"
+                   onerror="this.style.visibility='hidden'" />
+              <div class="min-w-0 flex-1">
+                <div class="truncate font-medium text-foreground">${cleanName(p.name)}</div>
+                <div class="mt-1 flex flex-wrap gap-1">${chips(types)}</div>
+              </div>
+              <span class="shrink-0 text-sm tabular-nums text-primary">${(sim * 100).toFixed(1)}%</span>
+            </button>
           </li>`
       })
       .join('')
   }
+
+  const dialog = document.getElementById('mon-dialog') as HTMLDialogElement
+  const dSprite = document.getElementById('d-sprite') as HTMLImageElement
+  const dName = document.getElementById('d-name')!
+  const dTypes = document.getElementById('d-types')!
+  const dBlurb = document.getElementById('d-blurb')!
+  const dStats = document.getElementById('d-stats')!
+
+  function openDialog(idx: number) {
+    const p = dex[idx]
+    const name = cleanName(p.name)
+    dSprite.src = sprite(p.id)
+    dSprite.alt = name
+    dName.textContent = name
+    dTypes.innerHTML = chips([p.t1, p.t2].filter(Boolean) as string[])
+    dStats.innerHTML = p.s
+      .map(
+        (v, i) =>
+          `<div class="rounded border border-border px-2 py-1">
+             <div class="text-xs text-muted-foreground">${STAT_LABELS[i]}</div>
+             <div class="font-semibold tabular-nums">${v}</div>
+           </div>`,
+      )
+      .join('')
+    dBlurb.textContent = 'Loading…'
+    flavorText(p.id).then((t) => {
+      if (dName.textContent === name) dBlurb.textContent = t
+    })
+    dialog.showModal()
+  }
+
+  resultsEl.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+      'button[data-idx]',
+    )
+    if (btn) openDialog(Number(btn.dataset.idx))
+  })
+
+  document
+    .getElementById('mon-close')!
+    .addEventListener('click', () => dialog.close())
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close()
+  })
 
   sliders.forEach((s) => s.addEventListener('input', render))
   document.getElementById('reset')!.addEventListener('click', () => {
