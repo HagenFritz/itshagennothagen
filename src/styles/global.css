@@ -169,6 +169,21 @@ body {
   color: #fff;
 }
 
+/* ── Pokémon matcher cards (injected via JS) ────────────────────────── */
+.match-card {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.match-card:hover {
+  border-color: var(--primary);
+}
+.stat-slider {
+  cursor: grab;
+}
+.stat-slider:active {
+  cursor: grabbing;
+}
+
 /* ── Article (Markdown) typography ──────────────────────────────────── */
 .prose {
   line-height: 1.7;
