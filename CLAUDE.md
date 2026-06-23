@@ -50,3 +50,8 @@ colors there, not inline.
 - Plays **beach volleyball**. Taught a UT class in Fall 2025 (one-off, fun).
 - Keep the site's voice conversational and a little playful; match the existing
   `/about` and homepage tone. Don't inflate credentials.
+
+## Related
+
+- **PR #9**: Add cc-forge-land.md, a blog post breaking down the /land skill as
+  a follow-up to the cc-forge post.
