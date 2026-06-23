@@ -9,7 +9,7 @@ The interesting part of shipping software is writing the code. The boring part i
 
 It's necessary, repetitive, and exactly the kind of thing AI agents should handle for us.
 
-In my [previous post](/blog/building-cc-forge), I introduced `cc-forge`: my personal collection of Claude Code skills and subagents designed to automate the repetitive parts of my development workflow. I already had a skill called `/land`, that helped to log previous actions in a localized `CLAUDE.md` file. This skill seemed like the pefect one to append a merge-and-sync step to. 
+In my [previous post](/blog/building-cc-forge), I introduced `cc-forge`: my personal collection of Claude Code skills and subagents designed to automate the repetitive parts of my development workflow. I already had a skill called `/land`, that helped to log previous actions in a localized `CLAUDE.md` file. This skill seemed like the perfect one to append a merge-and-sync step to.
 
 I am sharing a short breakdown of `/land` here so that you can [hopefully] be inspired and use it as a reference to build your own related skill. You can find the full implementation in the [cc-forge repository](https://github.com/HagenFritz/cc-forge/blob/main/skills/land/SKILL.md).
 
