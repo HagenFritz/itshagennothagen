@@ -53,6 +53,8 @@ colors there, not inline.
 
 ## Related
 
+- **PR #11**: Polish Fredericksburg trip post with maps buttons, website links,
+  mobile table scroll, and SVG text size bump
 - **PR #10**: Add Fredericksburg trip blog post with embedded interactive route
   widget and prose table styles
 - **PR #9**: Add cc-forge-land.md, a blog post breaking down the /land skill as
