@@ -39,4 +39,12 @@ const fmt = date.toLocaleDateString('en-US', {
       <slot />
     </div>
   </article>
+  <script>
+    document.querySelectorAll('.prose table').forEach((t) => {
+      const w = document.createElement('div')
+      w.className = 'table-wrap'
+      t.parentNode!.insertBefore(w, t)
+      w.appendChild(t)
+    })
+  </script>
 </Base>
