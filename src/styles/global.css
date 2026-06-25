@@ -248,3 +248,26 @@ body {
   max-width: 100%;
   border-radius: var(--radius);
 }
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.prose thead {
+  border-bottom: 2px solid var(--border);
+}
+.prose th {
+  padding: 0.625rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+.prose td {
+  padding: 0.625rem 1rem;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.prose tbody tr:hover {
+  background: var(--muted);
+}
