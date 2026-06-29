@@ -24,265 +24,166 @@ at 9:00 PM.
 
 ## Friday, June 26
 
-**8:00 to 11:00 AM** — Slow morning. Cook breakfast, hang out on the patio, swap stories.
+**~8:30 AM** — Drive to Enchanted Rock State Natural Area (~20 minutes from
+Fredericksburg).
 
-**11:00 AM to 1:30 PM** — Experience the town. Park near Marktplatz (free lot at 100 W
-Main St) or the Visitor Center lot (302 E Austin St). Street parking on Main has
-a two-hour limit, so the lots are safer for a full afternoon.
+> [!NOTE]
+> Dog is in tow, so "elevated trails" (like the famous Summit Trail) are off limits. The Loop
+> Trail is dog-friendly the whole way.
 
-Shops and stops along Main Street:
+Take the Loop Trail south from the main parking area, following it up to the
+Turkey Pass Trail junction, then turn around and walk the same
+path back. ~4 miles round trip, mostly scrubby hill
+country with a river to follow and some exposed granite.
 
-| Place | Address | What | Dog? |
-| --- | --- | --- | --- |
-| [Dogologie](https://www.dogologie.com/) | 148 E Main St | Dog boutique; "Dog Pause" daycare + stroller rental | 🐶 |
-| [RS Hanna Gallery](https://rshannagallery.wordpress.com/) | 244 W Main St | Fine art gallery | 🐶 |
-| [Chocolat](https://liquidchocolates.com/) | 251 W Main St | European liquid-filled chocolates, truffles | 🐶 |
-| [Rustlin' Rob's](https://www.rustlinrobs.com/) | 121 E Main St | Gourmet Texas sauces, salsas, free sampling | 🐶 |
-| [Vaudeville](https://vaudeville-living.com/) | 230 E Main St | 3-floor design/art/retail + gourmet bistro | 🤷 (patio yes, interior unclear) |
-| [Lone Star Candy Bar](https://www.lonestarcandybar.com/) | 254 E Main St | Chocolate-covered bacon, nostalgic sweets, sodas | 🤷 |
-| [Felt Boutique](https://feltboutique.com/) | 204 E Main St | "Hat bar," customize a felt/straw hat | 🤷 |
-| [Fredericksburg General Store](https://www.fbgeneralstore.com/) | 143 E Main St | Texas souvenirs, nostalgic candy, jams | 🤷 |
-| [Berkman Books](https://www.berkmanbooks.com/) | 416 E Main St | New/used/rare books + antique maps | ❌ (resident shop cats) |
-| [Marktplatz / Vereins Kirche](https://www.fbgtx.org/237/Marktplatz) | 100 block W Main St | Central public square, lawns, picnic tables | 🐶 outdoors / ❌ museum |
-
-I wanted to visit places in a logical order (naturally), so I asked to Claude help me figure out the ideal routing and timing for our stops. We have from parking to lunch location, both with and without the pup in tow.
-
-<div class="fredi-routes">
+<div class="erock-route">
 <style>
-.fredi-routes { font-family: inherit; }
-.fredi-routes .fr-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
-.fredi-routes .fr-tab {
-  padding: 0.5rem 1.25rem; border: 1px solid var(--border); border-radius: 0.5rem;
-  background: transparent; color: var(--muted-foreground); font-size: 0.8125rem;
-  font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit;
-}
-.fredi-routes .fr-tab:hover { border-color: var(--navy-bright); color: var(--foreground); }
-.fredi-routes .fr-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-.fredi-routes .fr-map {
+.erock-route { font-family: inherit; }
+.erock-route .er-wrap {
   position: relative; background: var(--card); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden; margin-bottom: 1.25rem;
 }
-.fredi-routes .fr-map svg { width: 100%; height: auto; display: block; }
-.fredi-routes .fr-tt {
-  position: absolute; background: var(--muted); border: 1px solid var(--border);
-  border-radius: 0.375rem; padding: 0.375rem 0.625rem; font-size: 0.8125rem;
-  color: var(--foreground); pointer-events: none; opacity: 0; transition: opacity 0.15s;
-  white-space: nowrap; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+.erock-route canvas { width: 100%; height: auto; display: block; }
+.erock-route .er-attr {
+  position: absolute; bottom: 4px; right: 6px; font-size: 0.5625rem;
+  color: rgba(255,255,255,0.45); pointer-events: auto;
 }
-.fredi-routes .fr-tt.visible { opacity: 1; }
-.fredi-routes .fr-pin { cursor: pointer; }
-.fredi-routes .fr-pin:hover circle:first-child { filter: brightness(1.3); }
-.fredi-routes .fr-park {
-  display: flex; align-items: flex-start; gap: 0.625rem; background: var(--muted);
-  border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem; font-size: 0.8125rem; color: var(--muted-foreground); line-height: 1.5;
+.erock-route .er-attr a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.erock-route .er-attr a:hover { text-decoration: underline; }
+.erock-route .er-stats {
+  display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+  font-size: 0.8125rem; color: var(--muted-foreground);
 }
-.fredi-routes .fr-park strong { color: var(--foreground); }
-.fredi-routes .fr-park-icon {
-  flex-shrink: 0; width: 20px; height: 20px; background: var(--navy-bright); border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.6875rem; color: #fff; margin-top: 1px;
-}
-.fredi-routes .fr-list { display: flex; flex-direction: column; }
-.fredi-routes .fr-stop {
-  display: grid; grid-template-columns: 3.5rem 1.5rem 1fr auto;
-  gap: 0 0.75rem; align-items: start; padding: 0.625rem 0;
-}
-.fredi-routes .fr-time {
-  font-size: 0.75rem; font-weight: 600; color: var(--muted-foreground); text-align: right;
-  padding-top: 0.125rem; font-variant-numeric: tabular-nums; white-space: nowrap;
-}
-.fredi-routes .fr-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 0.25rem; }
-.fredi-routes .fr-dot {
-  width: 10px; height: 10px; border-radius: 50%; background: var(--primary);
-  border: 2px solid var(--background); z-index: 1; flex-shrink: 0;
-}
-.fredi-routes .fr-dot.dest { width: 14px; height: 14px; box-shadow: 0 0 0 3px rgba(194,65,12,0.3); }
-.fredi-routes .fr-dot.park { background: var(--navy-bright); }
-.fredi-routes .fr-line { width: 2px; background: var(--border); flex: 1; min-height: 1rem; margin-top: 0.25rem; }
-.fredi-routes .fr-stop:last-child .fr-line { display: none; }
-.fredi-routes .fr-name { font-size: 0.875rem; font-weight: 600; color: var(--foreground); line-height: 1.3; }
-.fredi-routes .fr-desc { font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.125rem; line-height: 1.4; }
-.fredi-routes .fr-addr {
-  display: flex; width: fit-content; align-items: center; gap: 0.25rem; margin-top: 0.375rem;
-  font-size: 0.6875rem; color: var(--navy-bright); text-decoration: none;
-  border: 1px solid var(--border); border-radius: 0.25rem; padding: 0.125rem 0.5rem;
-  transition: all 0.15s; cursor: pointer; background: transparent; font-family: inherit;
-}
-.fredi-routes .fr-addr:hover { border-color: var(--navy-bright); color: var(--foreground); }
-.fredi-routes .fr-addr svg { width: 12px; height: 12px; flex-shrink: 0; }
-.fredi-routes .fr-badges { display: flex; gap: 0.375rem; align-self: start; margin-top: 0.125rem; flex-wrap: wrap; }
-.fredi-routes .bw {
-  font-size: 0.6875rem; font-weight: 600; color: var(--foreground);
-  background: rgba(238,242,251,0.08); border: 1px solid rgba(238,242,251,0.15);
-  border-radius: 0.25rem; padding: 0.125rem 0.5rem; white-space: nowrap;
-}
-.fredi-routes .bd {
-  font-size: 0.6875rem; font-weight: 600; color: var(--primary);
-  background: rgba(194,65,12,0.1); border: 1px solid rgba(194,65,12,0.2);
-  border-radius: 0.25rem; padding: 0.125rem 0.5rem; white-space: nowrap;
-}
-.fredi-routes .bg {
-  font-size: 0.6875rem; font-weight: 600; color: #4ade80;
-  background: rgba(31,122,67,0.15); border: 1px solid rgba(31,122,67,0.25);
-  border-radius: 0.25rem; padding: 0.125rem 0.5rem; white-space: nowrap;
-}
-.fredi-routes .dog {
-  display: inline-block; font-size: 0.625rem; font-weight: 600;
-  padding: 0.0625rem 0.375rem; border-radius: 0.1875rem; margin-left: 0.375rem;
-  vertical-align: middle; text-transform: uppercase; letter-spacing: 0.03em;
-}
-.fredi-routes .dog.y { background: rgba(31,122,67,0.2); color: #4ade80; border: 1px solid rgba(31,122,67,0.3); }
-.fredi-routes .dog.m { background: rgba(234,179,8,0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.2); }
-.fredi-routes .dog.n { background: rgba(218,54,51,0.15); color: #f87171; border: 1px solid rgba(218,54,51,0.2); }
-.fredi-routes .fr-arrival {
-  display: flex; align-items: center; gap: 0.625rem;
-  background: rgba(194,65,12,0.1); border: 1px solid rgba(194,65,12,0.25);
-  border-radius: var(--radius); padding: 0.75rem 1rem; margin-top: 0.5rem;
-  font-size: 0.8125rem; line-height: 1.4;
-}
-.fredi-routes .fr-arrival strong { color: var(--primary); }
-.fredi-routes .fr-legend {
-  display: flex; gap: 1rem; margin-top: 1rem; padding-top: 1rem;
-  border-top: 1px solid var(--border); font-size: 0.6875rem; color: var(--muted-foreground);
-  flex-wrap: wrap; align-items: center;
-}
-.fredi-routes .fr-legend-item { display: flex; align-items: center; gap: 0.375rem; }
-.fredi-routes .fr-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-.fredi-routes .fr-panel { display: none; }
-.fredi-routes .fr-panel.active { display: block; }
-@media (max-width: 600px) {
-  .fredi-routes .fr-stop { grid-template-columns: 3rem 1.25rem 1fr auto; gap: 0 0.5rem; }
-  .fredi-routes .fr-time { font-size: 0.6875rem; }
-  .fredi-routes .fr-tabs { flex-wrap: wrap; }
-  .fredi-routes .fr-badges { flex-direction: column; gap: 0.25rem; }
-}
+.erock-route .er-stats strong { color: var(--foreground); }
 </style>
-
-<div class="fr-tabs">
-  <button class="fr-tab active" data-sc="nodog" onclick="frSwitch('nodog')">No Dog &#8594; West End Pizza</button>
-  <button class="fr-tab" data-sc="dog" onclick="frSwitch('dog')">With Dog &#8594; The Auslander</button>
+<div class="er-wrap">
+  <canvas id="erock-map" width="920" height="520"></canvas>
+  <div class="er-attr"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</div>
 </div>
-
-<!-- ══ SCENARIO 1: NO DOG ══ -->
-<div class="fr-panel active" id="fr-nodog">
-<div class="fr-map">
-  <div class="fr-tt" id="frt1"></div>
-  <svg viewBox="0 0 920 440" xmlns="http://www.w3.org/2000/svg" id="frs1">
-    <defs><linearGradient id="sf1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#283256" stop-opacity="0"/><stop offset="8%" stop-color="#283256" stop-opacity="1"/><stop offset="92%" stop-color="#283256" stop-opacity="1"/><stop offset="100%" stop-color="#283256" stop-opacity="0"/></linearGradient></defs>
-    <rect width="920" height="440" fill="#131a2e"/>
-    <line x1="30" y1="200" x2="890" y2="200" stroke="url(#sf1)" stroke-width="2.5"/>
-    <text x="40" y="192" fill="#555c72" font-size="11" font-family="inherit" opacity="0.7">&#8592; W MAIN ST</text>
-    <text x="880" y="192" fill="#555c72" font-size="11" font-family="inherit" text-anchor="end" opacity="0.7">E MAIN ST &#8594;</text>
-    <line x1="520" y1="70" x2="520" y2="400" stroke="#283256" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
-    <text x="526" y="84" fill="#555c72" font-size="10" font-family="inherit" opacity="0.5">SAN ANTONIO ST</text>
-    <path d="M 130,200 L 190,200 L 340,200 L 390,200 L 410,200 L 530,200 L 570,200 L 770,200 L 770,320 L 520,320" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="6,4" opacity="0.5"/>
-    <g class="fr-pin" data-name="Marktplatz" data-time="11:00 AM" data-addr="100 W Main St"><circle cx="130" cy="200" r="8" fill="#3b5bdb" stroke="#131a2e" stroke-width="2"/><text x="130" y="203" fill="#fff" font-size="10" font-weight="700" font-family="inherit" text-anchor="middle">P</text><text x="130" y="180" fill="#eef2fb" font-size="11" font-weight="600" font-family="inherit" text-anchor="middle">Marktplatz</text></g>
-    <g class="fr-pin" data-name="Chocolat" data-time="11:13 AM" data-addr="251 W Main St"><circle cx="190" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="190" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">2</text><text x="190" y="228" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Chocolat</text></g>
-    <g class="fr-pin" data-name="Rustlin' Rob's" data-time="11:33 AM" data-addr="121 E Main St"><circle cx="340" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="340" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">3</text><text x="340" y="180" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Rustlin' Rob's</text></g>
-    <g class="fr-pin" data-name="General Store" data-time="11:53 AM" data-addr="143 E Main St"><circle cx="390" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="390" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">4</text><text x="390" y="228" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">General Store</text></g>
-    <g class="fr-pin" data-name="Dogologie" data-time="12:05 PM" data-addr="148 E Main St"><circle cx="410" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="410" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">5</text><text x="432" y="180" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Dogologie</text></g>
-    <g class="fr-pin" data-name="Vaudeville" data-time="12:18 PM" data-addr="230 E Main St"><circle cx="530" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="530" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">6</text><text x="530" y="228" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Vaudeville</text></g>
-    <g class="fr-pin" data-name="Lone Star Candy" data-time="12:38 PM" data-addr="254 E Main St"><circle cx="570" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="570" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">7</text><text x="570" y="180" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Lone Star Candy</text></g>
-    <g class="fr-pin" data-name="Berkman Books" data-time="12:53 PM" data-addr="416 E Main St"><circle cx="770" cy="200" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="770" y="203" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">8</text><text x="770" y="228" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Berkman Books</text></g>
-    <g class="fr-pin" data-name="West End Pizza Co." data-time="1:30 PM" data-addr="207 E San Antonio St"><circle cx="520" cy="320" r="15" fill="none" stroke="#c2410c" stroke-width="1.5" opacity="0.3"/><circle cx="520" cy="320" r="10" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="520" y="323" fill="#fff" font-size="11" font-weight="700" font-family="inherit" text-anchor="middle">&#9733;</text><text x="520" y="350" fill="#eef2fb" font-size="12" font-weight="600" font-family="inherit" text-anchor="middle">West End Pizza Co.</text><text x="520" y="363" fill="#c2410c" font-size="10" font-family="inherit" text-anchor="middle">1:30 PM · France at 2:00</text></g>
-    <text x="40" y="425" fill="#555c72" font-size="10" font-family="inherit" opacity="0.4">Schematic. Stops positioned by address number along Main St.</text>
-  </svg>
+<div class="er-stats">
+  <div><strong>~4 mi</strong> round trip</div>
+  <div><strong>~3 hrs</strong> on trail</div>
+  <div><strong>Loop Trail</strong> to Turkey Pass junction</div>
 </div>
-<div class="fr-park"><div class="fr-park-icon">P</div><div><strong>Park at Marktplatz</strong> (100 W Main St). Free lot, no time limit. Street parking on Main has a 2-hour cap.</div></div>
-<div class="fr-list">
-  <div class="fr-stop"><div class="fr-time">11:00</div><div class="fr-dot-col"><div class="fr-dot park"></div><div class="fr-line"></div></div><div><div class="fr-name">Marktplatz / Vereins Kirche</div><div class="fr-desc">Central square. Get bearings, start walking.</div></div><div class="fr-badges"><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:13</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Chocolat</div><div class="fr-desc">European liquid-filled chocolates, truffles.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=251+W+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 251 W Main St</a></div></div><div class="fr-badges"><span class="bw">3 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:33</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Rustlin' Rob's</div><div class="fr-desc">Gourmet sauces, salsas, free sampling.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=121+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 121 E Main St</a></div></div><div class="fr-badges"><span class="bw">5 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:53</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Fredericksburg General Store</div><div class="fr-desc">Souvenirs, nostalgic candy, jams.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=143+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 143 E Main St</a></div></div><div class="fr-badges"><span class="bw">2 min</span><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:05</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Dogologie</div><div class="fr-desc">Dog boutique + "Dog Pause" daycare.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=148+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 148 E Main St</a></div></div><div class="fr-badges"><span class="bw">1 min</span><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:18</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Vaudeville</div><div class="fr-desc">3-floor design/art/retail + bistro.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=230+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 230 E Main St</a></div></div><div class="fr-badges"><span class="bw">3 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:38</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Lone Star Candy Bar</div><div class="fr-desc">Chocolate-covered bacon, nostalgic sweets.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=254+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 254 E Main St</a></div></div><div class="fr-badges"><span class="bw">2 min</span><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:53</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Berkman Books</div><div class="fr-desc">New/used/rare books + antique maps. Resident shop cats.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=416+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 416 E Main St</a></div></div><div class="fr-badges"><span class="bw">5 min</span><span class="bd">20 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">1:20</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Walk south to West End Pizza Co.</div><div class="fr-desc">One block south of Main.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=207+E+San+Antonio+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 207 E San Antonio St</a></div></div><div class="fr-badges"><span class="bw">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">1:30</div><div class="fr-dot-col"><div class="fr-dot dest"></div></div><div><div class="fr-name">West End Pizza Co.</div><div class="fr-desc">France kicks off at 2:00. Big-screen HDTVs, covered patio, full bar.</div></div><div class="fr-badges"><span class="bg">game time</span></div></div>
-</div>
-<div class="fr-arrival"><strong>1:30 PM</strong> &#8212; 30 minutes to settle in before France. 9 stops, ~2.5 hours.</div>
-<div class="fr-legend">
-  <div class="fr-legend-item"><div class="fr-legend-dot" style="background:var(--navy-bright)"></div> Parking</div>
-  <div class="fr-legend-item"><div class="fr-legend-dot" style="background:var(--primary)"></div> Stop</div>
-  <div class="fr-legend-item"><span class="bw" style="font-size:0.625rem;padding:0 0.375rem">walk</span> Walk time</div>
-  <div class="fr-legend-item"><span class="bd" style="font-size:0.625rem;padding:0 0.375rem">dwell</span> Time at stop</div>
-</div>
-</div>
-
-<!-- ══ SCENARIO 2: WITH DOG ══ -->
-<div class="fr-panel" id="fr-dog">
-<div class="fr-map">
-  <div class="fr-tt" id="frt2"></div>
-  <svg viewBox="0 0 920 340" xmlns="http://www.w3.org/2000/svg" id="frs2">
-    <defs><linearGradient id="sf2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#283256" stop-opacity="0"/><stop offset="8%" stop-color="#283256" stop-opacity="1"/><stop offset="92%" stop-color="#283256" stop-opacity="1"/><stop offset="100%" stop-color="#283256" stop-opacity="0"/></linearGradient></defs>
-    <rect width="920" height="340" fill="#131a2e"/>
-    <line x1="30" y1="175" x2="890" y2="175" stroke="url(#sf2)" stroke-width="2.5"/>
-    <text x="40" y="167" fill="#555c72" font-size="11" font-family="inherit" opacity="0.7">&#8592; W MAIN ST</text>
-    <text x="880" y="167" fill="#555c72" font-size="11" font-family="inherit" text-anchor="end" opacity="0.7">E MAIN ST &#8594;</text>
-    <path d="M 140,175 L 210,175 L 390,175 L 440,175 L 560,175 L 600,175 L 720,175" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="6,4" opacity="0.5"/>
-    <g class="fr-pin" data-name="Marktplatz" data-time="11:00 AM" data-addr="100 W Main St"><circle cx="140" cy="175" r="8" fill="#3b5bdb" stroke="#131a2e" stroke-width="2"/><text x="140" y="178" fill="#fff" font-size="10" font-weight="700" font-family="inherit" text-anchor="middle">P</text><text x="140" y="155" fill="#eef2fb" font-size="11" font-weight="600" font-family="inherit" text-anchor="middle">Marktplatz</text></g>
-    <g class="fr-pin" data-name="Chocolat" data-time="11:13 AM" data-addr="251 W Main St"><circle cx="210" cy="175" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="210" y="178" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">2</text><text x="210" y="203" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Chocolat</text></g>
-    <g class="fr-pin" data-name="Rustlin' Rob's" data-time="11:33 AM" data-addr="121 E Main St"><circle cx="390" cy="175" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="390" y="178" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">3</text><text x="390" y="155" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Rustlin' Rob's</text></g>
-    <g class="fr-pin" data-name="Dogologie" data-time="11:53 AM" data-addr="148 E Main St"><circle cx="440" cy="175" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="440" y="178" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">4</text><text x="440" y="203" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Dogologie</text></g>
-    <g class="fr-pin" data-name="Vaudeville" data-time="12:11 PM" data-addr="230 E Main St"><circle cx="560" cy="175" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="560" y="178" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">5</text><text x="560" y="155" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Vaudeville</text></g>
-    <g class="fr-pin" data-name="Lone Star Candy" data-time="12:36 PM" data-addr="254 E Main St"><circle cx="600" cy="175" r="7" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="600" y="178" fill="#fff" font-size="9" font-weight="700" font-family="inherit" text-anchor="middle">6</text><text x="600" y="203" fill="#9aa6c2" font-size="10" font-family="inherit" text-anchor="middle">Lone Star Candy</text></g>
-    <g class="fr-pin" data-name="The Auslander" data-time="1:30 PM" data-addr="323 E Main St"><circle cx="720" cy="175" r="15" fill="none" stroke="#c2410c" stroke-width="1.5" opacity="0.3"/><circle cx="720" cy="175" r="10" fill="#c2410c" stroke="#131a2e" stroke-width="2"/><text x="720" y="178" fill="#fff" font-size="11" font-weight="700" font-family="inherit" text-anchor="middle">&#9733;</text><text x="720" y="155" fill="#eef2fb" font-size="12" font-weight="600" font-family="inherit" text-anchor="middle">The Auslander</text><text x="720" y="143" fill="#c2410c" font-size="10" font-family="inherit" text-anchor="middle">1:30 PM · France at 2:00</text></g>
-    <text x="40" y="325" fill="#555c72" font-size="10" font-family="inherit" opacity="0.4">Schematic. Stops positioned by address number along Main St.</text>
-  </svg>
-</div>
-<div class="fr-park"><div class="fr-park-icon">P</div><div><strong>Park at Marktplatz</strong> (100 W Main St). Free lot, no time limit. Shorter route, plenty of buffer.</div></div>
-<div class="fr-list">
-  <div class="fr-stop"><div class="fr-time">11:00</div><div class="fr-dot-col"><div class="fr-dot park"></div><div class="fr-line"></div></div><div><div class="fr-name">Marktplatz (outdoor square) <span class="dog y">dog ok</span></div><div class="fr-desc">Central square, lawns. Let the dog stretch.</div></div><div class="fr-badges"><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:13</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Chocolat <span class="dog y">dog ok</span></div><div class="fr-desc">European liquid-filled chocolates, truffles.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=251+W+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 251 W Main St</a></div></div><div class="fr-badges"><span class="bw">3 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:33</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Rustlin' Rob's <span class="dog y">dog ok</span></div><div class="fr-desc">Gourmet sauces, salsas, free sampling.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=121+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 121 E Main St</a></div></div><div class="fr-badges"><span class="bw">5 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">11:53</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Dogologie <span class="dog y">dog ok</span></div><div class="fr-desc">Dog boutique + "Dog Pause" daycare if needed.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=148+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 148 E Main St</a></div></div><div class="fr-badges"><span class="bw">2 min</span><span class="bd">15 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:11</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Vaudeville (patio) <span class="dog m">patio</span></div><div class="fr-desc">3-floor design/art/retail + bistro. Dog on patio.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=230+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 230 E Main St</a></div></div><div class="fr-badges"><span class="bw">3 min</span><span class="bd">20 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:36</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Lone Star Candy Bar <span class="dog m">maybe</span></div><div class="fr-desc">Chocolate-covered bacon, nostalgic sweets.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=254+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 254 E Main St</a></div></div><div class="fr-badges"><span class="bw">2 min</span><span class="bd">10 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">12:50</div><div class="fr-dot-col"><div class="fr-dot"></div><div class="fr-line"></div></div><div><div class="fr-name">Walk to The Auslander</div><div class="fr-desc">Just up the street.<a class="fr-addr" href="https://www.google.com/maps/search/?api=1&query=323+E+Main+St,+Fredericksburg,+TX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> 323 E Main St</a></div></div><div class="fr-badges"><span class="bw">5 min</span></div></div>
-  <div class="fr-stop"><div class="fr-time">1:30</div><div class="fr-dot-col"><div class="fr-dot dest"></div></div><div><div class="fr-name">The Auslander Biergarten</div><div class="fr-desc">Dog-friendly patio, German food, TVs at the bar. France at 2:00 PM.</div></div><div class="fr-badges"><span class="bg">game time</span></div></div>
-</div>
-<div class="fr-arrival"><strong>1:30 PM</strong> &#8212; 30 minutes to settle in before France. 7 stops, ~2.5 hours, relaxed pace with the dog.</div>
-<div class="fr-legend">
-  <div class="fr-legend-item"><div class="fr-legend-dot" style="background:var(--navy-bright)"></div> Parking</div>
-  <div class="fr-legend-item"><div class="fr-legend-dot" style="background:var(--primary)"></div> Stop</div>
-  <div class="fr-legend-item"><span class="bw" style="font-size:0.625rem;padding:0 0.375rem">walk</span> Walk time</div>
-  <div class="fr-legend-item"><span class="bd" style="font-size:0.625rem;padding:0 0.375rem">dwell</span> Time at stop</div>
-</div>
-</div>
-
 <script>
-function frSwitch(id) {
-  document.querySelectorAll('.fredi-routes .fr-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.fredi-routes .fr-tab[data-sc="'+id+'"]').classList.add('active');
-  document.querySelectorAll('.fredi-routes .fr-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('fr-'+id).classList.add('active');
-}
-document.querySelectorAll('.fredi-routes .fr-pin').forEach(pin => {
-  const svg = pin.closest('svg');
-  const map = svg.closest('.fr-map');
-  const tt = map.querySelector('.fr-tt');
-  pin.addEventListener('mouseenter', () => {
-    tt.innerHTML = '<strong>'+pin.dataset.name+'</strong><br><span style="color:#c2410c">'+pin.dataset.time+'</span> · <span style="color:#9aa6c2">'+pin.dataset.addr+'</span>';
-    tt.classList.add('visible');
-    const rect = map.getBoundingClientRect();
-    const c = pin.querySelector('circle');
-    const pt = svg.createSVGPoint();
-    pt.x = parseFloat(c.getAttribute('cx'));
-    pt.y = parseFloat(c.getAttribute('cy'));
-    const sp = pt.matrixTransform(svg.getScreenCTM());
-    tt.style.left = (sp.x - rect.left - tt.offsetWidth/2) + 'px';
-    tt.style.top = (sp.y - rect.top - 40) + 'px';
-  });
-  pin.addEventListener('mouseleave', () => tt.classList.remove('visible'));
-});
+(function(){
+  var W=920,H=520,Z=15,PAD=40;
+  var hikedRoute=[[30.4973,-98.8181],[30.4976,-98.8177],[30.4978,-98.8175],[30.4980,-98.8175],[30.4983,-98.8173],[30.4984,-98.8173],[30.4987,-98.8173],[30.4989,-98.8171],[30.4990,-98.8170],[30.4991,-98.8168],[30.4992,-98.8167],[30.4994,-98.8167],[30.4995,-98.8167],[30.4996,-98.8168],[30.4997,-98.8168],[30.4998,-98.8168],[30.5000,-98.8167],[30.5002,-98.8165],[30.5002,-98.8163],[30.5004,-98.8161],[30.5005,-98.8159],[30.5005,-98.8157],[30.5005,-98.8156],[30.5006,-98.8154],[30.5008,-98.8152],[30.5010,-98.8149],[30.5012,-98.8146],[30.5014,-98.8144],[30.5016,-98.8143],[30.5017,-98.8143],[30.5019,-98.8141]];
+  var canvas=document.getElementById('erock-map');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var lats=hikedRoute.map(function(p){return p[0]});
+  var lngs=hikedRoute.map(function(p){return p[1]});
+  var minLat=Math.min.apply(null,lats)-0.004,maxLat=Math.max.apply(null,lats)+0.006;
+  var minLng=Math.min.apply(null,lngs)-0.006,maxLng=Math.max.apply(null,lngs)+0.006;
+  var cLat=(minLat+maxLat)/2,cLng=(minLng+maxLng)/2;
+  var scale=Math.pow(2,Z);
+  function lngToX(lng){return((lng+180)/360)*256*scale}
+  function latToY(lat){var r=lat*Math.PI/180;return(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*256*scale}
+  var cx=lngToX(cLng),cy=latToY(cLat);
+  var bxMin=lngToX(minLng),bxMax=lngToX(maxLng);
+  var byMin=latToY(maxLat),byMax=latToY(minLat);
+  var sX=W/(bxMax-bxMin),sY=H/(byMax-byMin);
+  var fitScale=Math.min(sX,sY);
+  var ox=cx-W/(2*fitScale),oy=cy-H/(2*fitScale);
+  function project(lat,lng){return[(lngToX(lng)-ox)*fitScale,(latToY(lat)-oy)*fitScale]}
+  var tileSize=256;
+  var tilesLoaded=0,totalTiles=0;
+  var tileMinX=Math.floor(ox/tileSize),tileMaxX=Math.floor((ox+W/fitScale)/tileSize);
+  var tileMinY=Math.floor(oy/tileSize),tileMaxY=Math.floor((oy+H/fitScale)/tileSize);
+  totalTiles=(tileMaxX-tileMinX+1)*(tileMaxY-tileMinY+1);
+  ctx.fillStyle='#131a2e';
+  ctx.fillRect(0,0,W,H);
+  for(var tx=tileMinX;tx<=tileMaxX;tx++){
+    for(var ty=tileMinY;ty<=tileMaxY;ty++){
+      (function(tx,ty){
+        var img=new Image();
+        img.crossOrigin='anonymous';
+        img.onload=function(){
+          var dx=(tx*tileSize-ox)*fitScale;
+          var dy=(ty*tileSize-oy)*fitScale;
+          var dw=tileSize*fitScale;
+          ctx.drawImage(img,dx,dy,dw,dw);
+          tilesLoaded++;
+          if(tilesLoaded>=totalTiles)drawOverlay();
+        };
+        img.onerror=function(){tilesLoaded++;if(tilesLoaded>=totalTiles)drawOverlay()};
+        img.src='https://tile.openstreetmap.org/'+Z+'/'+tx+'/'+ty+'.png';
+      })(tx,ty);
+    }
+  }
+  function drawOverlay(){
+    ctx.save();
+    ctx.globalCompositeOperation='multiply';
+    ctx.fillStyle='rgba(19,26,46,0.4)';
+    ctx.fillRect(0,0,W,H);
+    ctx.restore();
+    ctx.beginPath();
+    for(var i=0;i<hikedRoute.length;i++){
+      var p=project(hikedRoute[i][0],hikedRoute[i][1]);
+      if(i===0)ctx.moveTo(p[0],p[1]);
+      else ctx.lineTo(p[0],p[1]);
+    }
+    ctx.strokeStyle='rgba(194,65,12,0.9)';
+    ctx.lineWidth=4;
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.setLineDash([]);
+    ctx.stroke();
+    function drawPin(lat,lng,radius,fill,label,labelYOff){
+      var p=project(lat,lng);
+      ctx.beginPath();
+      ctx.arc(p[0],p[1],radius,0,Math.PI*2);
+      ctx.fillStyle=fill;
+      ctx.fill();
+      ctx.strokeStyle='#131a2e';
+      ctx.lineWidth=2.5;
+      ctx.stroke();
+      if(label){
+        ctx.font='600 12px system-ui, sans-serif';
+        ctx.fillStyle='#eef2fb';
+        ctx.textAlign='center';
+        ctx.fillText(label,p[0],p[1]+(labelYOff||20));
+      }
+    }
+    drawPin(30.4973,-98.8181,11,'#3b5bdb','Parking',24);
+    var pp=project(30.4973,-98.8181);
+    ctx.font='700 12px system-ui, sans-serif';
+    ctx.fillStyle='#fff';
+    ctx.textAlign='center';
+    ctx.fillText('P',pp[0],pp[1]+4);
+    var tp=project(30.5019,-98.8141);
+    ctx.beginPath();
+    ctx.arc(tp[0],tp[1],18,0,Math.PI*2);
+    ctx.strokeStyle='rgba(194,65,12,0.3)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+    drawPin(30.5019,-98.8141,10,'#c2410c',null,0);
+    ctx.font='700 11px system-ui, sans-serif';
+    ctx.fillStyle='#fff';
+    ctx.textAlign='center';
+    ctx.fillText('↻',tp[0],tp[1]+4);
+    ctx.font='600 12px system-ui, sans-serif';
+    ctx.fillStyle='#eef2fb';
+    ctx.fillText('Turkey Pass junction',tp[0],tp[1]-20);
+    ctx.font='10px system-ui, sans-serif';
+    ctx.fillStyle='#c2410c';
+    ctx.fillText('turnaround',tp[0],tp[1]-33);
+  }
+})();
 </script>
 </div>
 
-Arrive by 1:30 PM in either scenario, 30 minutes before France kicks off.
+**~12:30 PM** — Back at the Airbnb. Shower, get ready.
 
-**~4:00 PM** — Return to the Airbnb. Patio, cook dinner, hot tub.
+**~1:30 PM** — Head to **West End Pizza Co.** (207 E San Antonio St) for the
+France game at 2:00 PM.
+
+**~4:00 PM** — After the game, walk around downtown Fredericksburg for a couple
+hours. No particular agenda, just meander up and down Main Street and duck into
+whatever looks interesting.
+
+**~6:00 PM** — Back to the Airbnb. Cook dinner, hot tub.
 
 ## Saturday, June 27
 
