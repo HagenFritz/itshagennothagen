@@ -231,7 +231,11 @@ body {
 /* Callouts (remark-github-blockquote-alert) */
 .prose .markdown-alert {
   border-left: 3px solid var(--alert-color, var(--border));
-  background: color-mix(in srgb, var(--alert-color, var(--border)) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--alert-color, var(--border)) 8%,
+    transparent
+  );
   border-radius: var(--radius);
   padding: 0.75rem 1rem;
   margin: 1.25rem 0;
@@ -259,11 +263,21 @@ body {
   fill: var(--alert-color);
   flex-shrink: 0;
 }
-.prose .markdown-alert-note { --alert-color: #58a6ff; }
-.prose .markdown-alert-tip { --alert-color: #4ade80; }
-.prose .markdown-alert-important { --alert-color: #d2a8ff; }
-.prose .markdown-alert-warning { --alert-color: #e3b341; }
-.prose .markdown-alert-caution { --alert-color: #f85149; }
+.prose .markdown-alert-note {
+  --alert-color: #58a6ff;
+}
+.prose .markdown-alert-tip {
+  --alert-color: #4ade80;
+}
+.prose .markdown-alert-important {
+  --alert-color: #d2a8ff;
+}
+.prose .markdown-alert-warning {
+  --alert-color: #e3b341;
+}
+.prose .markdown-alert-caution {
+  --alert-color: #f85149;
+}
 .prose code {
   background: var(--muted);
   border-radius: 4px;
