@@ -30,3 +30,7 @@ docs/side-quests/
 .astro/
 
 *.code-workspace
+
+# Playwright MCP artifacts
+.playwright-mcp/
+/*.png
