@@ -17,37 +17,37 @@ date: 2026-07-03
 
 ### P1 Issues
 
-- [ ] **tick() accepts arbitrary dt** - NaN poisons the run forever, negative dt
+- [x] **tick() accepts arbitrary dt** - NaN poisons the run forever, negative dt
       rewinds the clock, large dt breaks the spawn/income model.
-- [ ] **MAX_SCORE invariant is false** - executed counterexamples reach 181
+- [x] **MAX_SCORE invariant is false** - executed counterexamples reach 181
       whacks; the honest 60fps max is 178 due to float dust; the covering test
       is vacuous.
 
 ### P2 Issues
 
-- [ ] **Malformed move dir throws mid-tick** - unknown direction poisons facing
+- [x] **Malformed move dir throws mid-tick** - unknown direction poisons facing
       and breaks all future buys.
-- [ ] **`weed-whacker: *` is a latent dependency-confusion squat** - name is
+- [x] **`weed-whacker: *` is a latent dependency-confusion squat** - name is
       unclaimed on the npm registry.
-- [ ] **Multi-intent ticks untested** - move+chop ordering is load-bearing for
+- [x] **Multi-intent ticks untested** - move+chop ordering is load-bearing for
       PR2 and unpinned.
-- [ ] **Weeds determinism test is degenerate** - chance 1.2 makes the seed
+- [x] **Weeds determinism test is degenerate** - chance 1.2 makes the seed
       irrelevant; proves nothing.
 
 ### P3 Issues
 
-- [ ] **Cooldown-expiry-tick ordering untested** - tickCooldowns-before- intents
+- [x] **Cooldown-expiry-tick ordering untested** - tickCooldowns-before- intents
       contract unpinned.
-- [ ] **Buy facing a weed tile untested** - weed branch of the denial
+- [x] **Buy facing a weed tile untested** - weed branch of the denial
       unverified; facing-on-success also unasserted.
-- [ ] **index.ts exports speculative surface** - nothing consumes most of it;
+- [x] **index.ts exports speculative surface** - nothing consumes most of it;
       trim to config + state.
-- [ ] **timerWarning + runEnded co-emission unasserted** - both can arrive in
+- [x] **timerWarning + runEnded co-emission unasserted** - both can arrive in
       one events array; PR2 must tolerate it.
-- [ ] **Minor simplifications** - dead setTile bounds guard, premature
+- [x] **Minor simplifications** - dead setTile bounds guard, premature
       `functions` tsconfig exclude, optional inBounds fold and init-loop
       shortening.
-- [ ] **Unbounded intents array** - 10^6 buy intents allocate 10^6 events in one
+- [x] **Unbounded intents array** - 10^6 buy intents allocate 10^6 events in one
       tick; PR2 shell is the only cap.
 
 ---
@@ -97,7 +97,7 @@ goal: pin contracts PR2 will silently depend on.
 
 ### P1-1: tick() accepts arbitrary dt
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** correctness
 
@@ -137,7 +137,7 @@ for the same seed.
 
 ### P1-2: MAX_SCORE invariant is false in both directions
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** correctness
 
@@ -181,7 +181,7 @@ worst-case dt-sequence test asserting whacked <= MAX_SCORE.
 
 ### P2-1: Malformed move direction throws mid-tick and poisons facing
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** correctness
 
@@ -211,7 +211,7 @@ the shell's keymap. One test: unknown dir is a no-op.
 
 ### P2-2: Workspace dependency "weed-whacker": "\*" invites dependency confusion
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** security
 
@@ -241,7 +241,7 @@ Run npm install once to update the lockfile.
 
 ### P2-3: Multi-intent ticks are untested
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** testing
 
@@ -271,7 +271,7 @@ include a buy in the same array.
 
 ### P2-4: Weeds determinism test is degenerate
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** testing
 
@@ -300,7 +300,7 @@ so fix alongside.)
 
 ### P3-1: Cooldown-expires-this-tick ordering untested
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** testing
 
@@ -327,7 +327,7 @@ intent, expect weedWhacked. Coordinate with P1-2's integer-tick rework.
 
 ### P3-2: Buy facing a weed tile and facing-on-success untested
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** testing
 
@@ -355,7 +355,7 @@ weed. (2) Assert facing equals the moved direction after a successful move.
 
 ### P3-3: index.ts exports a speculative public surface
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** maintainability
 
@@ -386,7 +386,7 @@ keeps importing ./core/\* directly.
 
 ### P3-4: timerWarning and runEnded co-emission unasserted
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** testing
 
@@ -414,7 +414,7 @@ should then fire in its own step).
 
 ### P3-5: Minor simplifications from the simplicity pass
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** maintainability
 
@@ -449,7 +449,7 @@ distinct grid loops, tickCooldowns twin lines, the two why-comments.
 
 ### P3-6: Unbounded intents array per tick
 
-**Status:** `open`
+**Status:** `done`
 
 **Category:** architecture
 
