@@ -22,9 +22,11 @@ import Base from '../layouts/Base.astro'
 
   <div id="game-wrap" class="mt-8">
     <div
-      class="relative mx-auto aspect-square w-full max-w-[448px] overflow-hidden rounded-lg border border-border bg-black"
+      class="relative mx-auto aspect-square w-full max-w-[672px] overflow-hidden rounded-lg border border-border bg-black"
     >
-      <canvas id="game" class="block h-full w-full [image-rendering:pixelated]"
+      <canvas
+        id="game"
+        class="block h-full w-full rounded-lg [image-rendering:pixelated]"
       ></canvas>
 
       <div
@@ -59,7 +61,7 @@ import Base from '../layouts/Base.astro'
     </div>
 
     <div
-      class="mx-auto mt-3 flex max-w-[448px] items-center justify-between text-sm"
+      class="mx-auto mt-3 flex max-w-[672px] items-center justify-between text-sm"
     >
       <div class="flex gap-4 tabular-nums">
         <span class="text-muted-foreground"

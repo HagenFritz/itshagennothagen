@@ -1,4 +1,5 @@
 import { WORLD_GRID_SIZE } from '../core/config'
+import { nextTileCost } from '../core/economy'
 import { DIRECTION_DELTAS, tileAt } from '../core/grid'
 import type { GameState } from '../core/state'
 import type { SpriteName, SpriteSheet } from './sprites'
@@ -17,6 +18,7 @@ export function render(
   ctx.clearRect(0, 0, INTERNAL_SIZE, INTERNAL_SIZE)
 
   const target = buyTarget(state)
+  const canAfford = state.money >= nextTileCost(state)
 
   for (let y = 0; y < WORLD_GRID_SIZE; y++) {
     for (let x = 0; x < WORLD_GRID_SIZE; x++) {
@@ -39,7 +41,8 @@ export function render(
         ctx.lineWidth = 1
         ctx.strokeRect(sx + 0.5, sy + 0.5, TILE_SIZE - 1, TILE_SIZE - 1)
         if (target && target.x === x && target.y === y) {
-          ctx.strokeStyle = '#c2410c'
+          // Green when the faced tile is affordable, red when it is not.
+          ctx.strokeStyle = canAfford ? '#4ade80' : '#ef4444'
           ctx.lineWidth = 3
           ctx.strokeRect(sx + 2, sy + 2, TILE_SIZE - 4, TILE_SIZE - 4)
         }
