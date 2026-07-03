@@ -23,11 +23,13 @@ material.
 - R2. A session is a 3-minute timed run. A countdown timer shows in the HUD.
   When the timer ends, an end screen shows the final score with a
   submit-to-leaderboard form (player name) and a play-again option.
-- R3. Core mechanics match the original game: 30x30 tile world with a 5x5
-  starting plot in the center, tile-based player movement (WASD or arrow keys,
-  150 ms cooldown), chop action (spacebar or click, 1000 ms cooldown, hand hoe
-  only), income of $1 per second per clear grass tile, and purchasing adjacent
-  unowned tiles for $10 plus $1 per tile already bought.
+- R3. Core mechanics match the original game: a 7x7 tile world fully visible on
+  screen with a random connected 9-tile starting plot around the center (revised
+  from a 30x30 world with a fixed 5x5 plot after playtest, see PR 2 review),
+  tile-based player movement (WASD or arrow keys, 150 ms cooldown), chop action
+  (spacebar or click, 1000 ms cooldown, hand hoe only), income of $1 per second
+  per clear grass tile, and purchasing adjacent unowned tiles for $10 plus $5
+  per tile already bought.
 - R4. Weed spawning scales with the number of owned tiles (spawn chance per
   grass tile per tick) so expansion increases score potential. Exact constants
   are tunable via a single config, mirroring the original config.py approach.
@@ -39,9 +41,10 @@ material.
 - R7. Sound effects: chop (existing hand_hoe.wav), tile purchase, timer
   countdown warning, and run end. A mute toggle is visible in the game UI. No
   background music.
-- R8. Rendering uses the original pixel-art sprites (farmer, grass variants,
-  weed, coin) at 16 px tile size with a camera that follows the player,
-  integer-scaled so pixels stay crisp.
+- R8. Rendering uses the original sprites (farmer, grass variants, weed)
+  re-exported at 64 px tiles. The whole 7x7 board is drawn at once with no
+  camera (revised from camera-follow after playtest); the 448 px square canvas
+  displays at an integer 1:1 so pixels stay crisp.
 - R9. Desktop keyboard is the supported input. On touch devices the page shows a
   "best played with a keyboard" note instead of broken controls.
 

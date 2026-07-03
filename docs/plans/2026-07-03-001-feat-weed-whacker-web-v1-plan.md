@@ -34,18 +34,19 @@ From the origin document:
 - R1. Playable at `/play`, card on the Lab page (Units 7, 10)
 - R2. 3-minute timed run, countdown HUD, end screen with submit form and play
   again (Units 3, 7, 10)
-- R3. Core mechanics match the original: 30x30 world, 5x5 start plot, tile
-  movement (150 ms cooldown), chop (1000 ms cooldown, hand hoe), $1/sec per
-  clear grass tile, adjacent tile purchase at $10 + $1 per tile bought (Units
-  2, 3)
+- R3. Core mechanics match the original: 7x7 fully-visible world (revised from
+  30x30 after playtest, see docs/reviews/2026-07-03-002), random connected
+  9-tile start plot, tile movement (150 ms cooldown), chop (1000 ms cooldown,
+  hand hoe), $1/sec per clear grass tile, adjacent tile purchase at $10 + $5 per
+  tile bought (Units 2, 3)
 - R4. Weed spawn scales with owned grass tiles, constants in one config (Unit 3)
 - R5. Score = weeds whacked, live in HUD (Units 3, 7)
 - R6. Global top-10 leaderboard, 20-char names, server-side validation, rate
   limiting (Units 8, 9, 10)
 - R7. SFX: chop wav, purchase, timer warning, run end; mute toggle; no music
   (Unit 6)
-- R8. Original pixel-art sprites, 16 px tiles, camera follow, integer scaling
-  (Units 4, 5)
+- R8. Original sprites at 64 px tiles, whole 7x7 board visible (no camera,
+  revised after playtest), integer 1:1 canvas scaling (Units 4, 5)
 - R9. Desktop keyboard; touch devices get a "best with keyboard" note (Units
   5, 7)
 
