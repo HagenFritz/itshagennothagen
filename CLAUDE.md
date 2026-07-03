@@ -11,6 +11,10 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
 - **Inter** (self-hosted via `@fontsource-variable/inter`).
 - Blog posts are Markdown content collection entries in `src/content/posts/`,
   schema in `src/content.config.ts`.
+- **npm workspaces**: game/interactive code lives in `packages/*` (currently
+  `packages/weed-whacker`, a headless TypeScript game sim tested with Vitest).
+  Packages are excluded from the root `tsconfig` and own their own strict
+  tsconfig plus `test`/`typecheck` scripts.
 
 ## Theme
 
@@ -23,7 +27,9 @@ colors there, not inline.
 
 - `main` is branch-protected: no direct pushes. All changes go through a PR that
   must pass CI (`Build & checks` + `Spell check`).
-- CI runs prettier check, `astro check`, build, and codespell on `src/content`.
+- CI runs prettier check, `astro check`, workspace typecheck
+  (`npm run typecheck`), workspace tests (`npm test`), build, and codespell on
+  `src/content`.
 - Cloudflare auto-deploys `main` on merge and builds per-PR previews.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
   `npm run format`.
@@ -53,6 +59,10 @@ colors there, not inline.
 
 ## Related
 
+- **PR #13**: Add the Weed Whacker game as an npm workspace package
+  (`packages/weed-whacker`) with a deterministic headless sim core, plus CI
+  test/typecheck steps.
+  [Plan](docs/plans/2026-07-03-001-feat-weed-whacker-web-v1-plan.md).
 - **PR #11**: Polish Fredericksburg trip post with maps buttons, website links,
   mobile table scroll, and SVG text size bump
 - **PR #10**: Add Fredericksburg trip blog post with embedded interactive route

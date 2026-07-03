@@ -3,11 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -17,7 +22,8 @@
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^6.4.8",
     "remark-github-blockquote-alert": "^2.1.0",
-    "tailwindcss": "^4.3.1"
+    "tailwindcss": "^4.3.1",
+    "weed-whacker": "file:packages/weed-whacker"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",

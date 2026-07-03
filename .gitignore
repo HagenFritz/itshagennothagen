@@ -26,6 +26,9 @@ dist-ssr
 # Side-quests (local-only, not committed)
 docs/side-quests/
 
+# cc-forge working files (local-only, not committed)
+.context/
+
 # Astro
 .astro/
 
