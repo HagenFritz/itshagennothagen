@@ -22,12 +22,9 @@ export const GAME_KEYS = new Set([
 
 // Held direction, last pressed wins, so tapping a new key redirects
 // immediately rather than waiting for the old key to lift.
-export function heldDirection(
-  held: string[],
-  moveKeys: Record<string, Direction> = MOVE_KEYS,
-): Direction | null {
+export function heldDirection(held: string[]): Direction | null {
   for (let i = held.length - 1; i >= 0; i--) {
-    const dir = moveKeys[held[i]!]
+    const dir = MOVE_KEYS[held[i]!]
     if (dir) return dir
   }
   return null
