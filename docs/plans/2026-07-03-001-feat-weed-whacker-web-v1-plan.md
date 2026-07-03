@@ -401,7 +401,7 @@ phases, score, shared max-score constant.
 
 ### Phase 2 (PR 2): playable game at /play
 
-- [ ] **Unit 4: assets and renderer**
+- [x] **Unit 4: assets and renderer**
 
 **Goal:** Canvas renderer drawing the real sprites with camera follow and crisp
 integer scaling.
@@ -435,7 +435,7 @@ integer scaling.
 
 - Game renders crisp at multiple window sizes in the real browser
 
-- [ ] **Unit 5: input and shell loop (mount API)**
+- [x] **Unit 5: input and shell loop (mount API)**
 
 **Goal:** Playable loop: keyboard/mouse input, fixed-timestep shell, visibility
 handling, single `mount()` entry point.
@@ -467,7 +467,7 @@ handling, single `mount()` entry point.
 - Full run playable start to finish with keyboard; tab-away and return keeps the
   3-minute wall clock accurate; no stuck keys after Alt-Tab
 
-- [ ] **Unit 6: audio**
+- [x] **Unit 6: audio**
 
 **Goal:** Full SFX set with mute toggle, resilient to autoplay policy and load
 failure.
@@ -500,7 +500,7 @@ failure.
 - Sounds play after first gesture; mute persists across reloads; game runs
   normally with the wav 404ed (dev-tools blocked)
 
-- [ ] **Unit 7: /play page, HUD, screens, Lab card**
+- [x] **Unit 7: /play page, HUD, screens, Lab card**
 
 **Goal:** The public page: start screen, HUD, end screen (PR2 form-less
 variant), mobile note, Lab discovery.
