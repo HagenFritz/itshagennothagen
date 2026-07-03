@@ -1,9 +1,11 @@
+import type { GameEvent } from '../core/state'
+import { denySfx, purchaseSfx, runEndSfx, timerWarningSfx } from './sfx'
+
 const MUTE_KEY = 'weed-whacker:muted'
 
-export interface AudioEngine {
+export interface GameAudio {
   unlock: () => void
-  playBuffer: (name: string) => void
-  playSynth: (render: (ctx: AudioContext, out: GainNode) => void) => void
+  playEvent: (event: GameEvent) => void
   isMuted: () => boolean
   setMuted: (muted: boolean) => void
 }
@@ -25,15 +27,13 @@ function writeMuted(muted: boolean): void {
 }
 
 // All audio is best-effort: any failure to construct the context, decode
-// a buffer, or schedule a node degrades to silence and never reaches the
+// the buffer, or schedule a node degrades to silence and never reaches the
 // game loop.
-export function createAudioEngine(
-  bufferUrls: Record<string, string>,
-): AudioEngine {
+export function createGameAudio(assetBaseUrl: string): GameAudio {
   let ctx: AudioContext | null = null
   let master: GainNode | null = null
+  let chop: AudioBuffer | null = null
   let muted = readMuted()
-  const buffers = new Map<string, AudioBuffer>()
 
   const ensureContext = (): AudioContext | null => {
     if (ctx) return ctx
@@ -42,49 +42,68 @@ export function createAudioEngine(
       master = ctx.createGain()
       master.gain.value = muted ? 0 : 1
       master.connect(ctx.destination)
-      for (const [name, url] of Object.entries(bufferUrls))
-        void decode(name, url)
+      void decodeChop()
     } catch {
       ctx = null
     }
     return ctx
   }
 
-  const decode = async (name: string, url: string): Promise<void> => {
+  const decodeChop = async (): Promise<void> => {
     if (!ctx) return
     try {
-      const res = await fetch(url)
-      const bytes = await res.arrayBuffer()
-      buffers.set(name, await ctx.decodeAudioData(bytes))
+      const res = await fetch(`${assetBaseUrl}hand_hoe.wav`)
+      chop = await ctx.decodeAudioData(await res.arrayBuffer())
     } catch {
-      // Missing or undecodable asset: that sound is simply silent.
+      // Missing or undecodable asset: the chop is simply silent.
     }
   }
 
+  const playChop = () => {
+    if (muted || !ctx || !master || !chop) return
+    try {
+      const source = ctx.createBufferSource()
+      source.buffer = chop
+      source.connect(master)
+      source.start()
+    } catch {
+      // Scheduling failed; skip this sound.
+    }
+  }
+
+  const playSynth = (render: (ctx: AudioContext, out: GainNode) => void) => {
+    if (muted || !ctx || !master) return
+    try {
+      render(ctx, master)
+    } catch {
+      // Synth graph failed; skip this sound.
+    }
+  }
+
+  const unlock = () => {
+    const c = ensureContext()
+    if (c && c.state === 'suspended') void c.resume()
+  }
+
   return {
-    unlock() {
-      const c = ensureContext()
-      if (c && c.state === 'suspended') void c.resume()
-    },
-    playBuffer(name) {
-      if (muted || !ctx || !master) return
-      const buffer = buffers.get(name)
-      if (!buffer) return
-      try {
-        const source = ctx.createBufferSource()
-        source.buffer = buffer
-        source.connect(master)
-        source.start()
-      } catch {
-        // Scheduling failed; skip this sound.
-      }
-    },
-    playSynth(render) {
-      if (muted || !ctx || !master) return
-      try {
-        render(ctx, master)
-      } catch {
-        // Synth graph failed; skip this sound.
+    unlock,
+    playEvent(event) {
+      switch (event.type) {
+        case 'weedWhacked':
+          playChop()
+          break
+        case 'tilePurchased':
+          playSynth(purchaseSfx)
+          break
+        case 'buyDenied':
+          playSynth(denySfx)
+          break
+        case 'timerWarning':
+          playSynth(timerWarningSfx)
+          break
+        case 'runEnded':
+          playSynth(runEndSfx)
+          break
       }
     },
     isMuted() {
@@ -94,7 +113,7 @@ export function createAudioEngine(
       muted = next
       writeMuted(next)
       if (master) master.gain.value = next ? 0 : 1
-      if (!next) this.unlock()
+      if (!next) unlock()
     },
   }
 }

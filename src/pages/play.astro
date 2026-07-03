@@ -22,12 +22,10 @@ import Base from '../layouts/Base.astro'
 
   <div id="game-wrap" class="mt-8">
     <div
-      class="relative mx-auto w-full max-w-[640px] overflow-hidden rounded-lg border border-border bg-black"
+      class="relative mx-auto aspect-square w-full max-w-[448px] overflow-hidden rounded-lg border border-border bg-black"
     >
-      <canvas
-        id="game"
-        class="block w-full [image-rendering:pixelated]"
-        style="aspect-ratio: 320 / 240;"></canvas>
+      <canvas id="game" class="block h-full w-full [image-rendering:pixelated]"
+      ></canvas>
 
       <div
         id="start-screen"
@@ -36,8 +34,9 @@ import Base from '../layouts/Base.astro'
         <p class="text-lg font-semibold text-foreground">Ready?</p>
         <button
           id="start-btn"
-          class="rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
-          >Start (3:00)</button
+          disabled
+          class="rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          >Loading...</button
         >
       </div>
 
@@ -60,7 +59,7 @@ import Base from '../layouts/Base.astro'
     </div>
 
     <div
-      class="mx-auto mt-3 flex max-w-[640px] items-center justify-between text-sm"
+      class="mx-auto mt-3 flex max-w-[448px] items-center justify-between text-sm"
     >
       <div class="flex gap-4 tabular-nums">
         <span class="text-muted-foreground"
@@ -91,7 +90,6 @@ import Base from '../layouts/Base.astro'
   import {
     createGameAudio,
     mount,
-    playEventSound,
     RUN_DURATION_MS,
     type GameHandle,
     type GameState,
@@ -112,7 +110,7 @@ import Base from '../layouts/Base.astro'
     const canvas = document.getElementById('game') as HTMLCanvasElement
     const startScreen = document.getElementById('start-screen')!
     const endScreen = document.getElementById('end-screen')!
-    const startBtn = document.getElementById('start-btn')!
+    const startBtn = document.getElementById('start-btn') as HTMLButtonElement
     const againBtn = document.getElementById('again-btn')!
     const muteBtn = document.getElementById('mute-btn')!
     const hudScore = document.getElementById('hud-score')!
@@ -141,7 +139,7 @@ import Base from '../layouts/Base.astro'
       handle = await mount(canvas, {
         assetBaseUrl: '/games/weed-whacker/',
         onEvent: (event) => {
-          playEventSound(audio, event)
+          audio.playEvent(event)
           if (event.type === 'runEnded') {
             finalScore.textContent = String(event.whacked)
             endScreen.classList.remove('hidden')
@@ -150,11 +148,15 @@ import Base from '../layouts/Base.astro'
         },
         onStateChange: paintHud,
       })
-    } catch {
+    } catch (err) {
+      console.error(err)
       startScreen.innerHTML =
         '<p class="text-muted-foreground">The game could not load. Try refreshing.</p>'
       return
     }
+
+    startBtn.textContent = 'Start (3:00)'
+    startBtn.disabled = false
 
     const begin = () => {
       audio.unlock()
