@@ -60,61 +60,42 @@ import Base from '../layouts/Base.astro'
       </div>
     </div>
 
-    <div
-      class="mx-auto mt-3 flex max-w-[672px] flex-wrap items-center gap-x-5 gap-y-2 text-sm"
-    >
-      <span class="flex items-center gap-1.5 text-muted-foreground">
+    <div class="mx-auto mt-3 flex max-w-[672px] items-center gap-6 text-base">
+      <span class="flex items-center gap-2 text-muted-foreground">
         <img
           src="/games/weed-whacker/weed_basic.png"
           alt="weeds whacked"
-          width="20"
-          height="20"
-          class="h-5 w-5 [image-rendering:pixelated]"
+          width="28"
+          height="28"
+          class="h-7 w-7 [image-rendering:pixelated]"
         />
         <span id="hud-score" class="font-semibold text-foreground">0</span>
       </span>
 
-      <span class="flex items-center gap-1.5 text-muted-foreground">
+      <span class="flex items-center gap-2 text-muted-foreground">
         <img
           src="/games/weed-whacker/coin.png"
           alt="money"
-          width="20"
-          height="20"
-          class="h-5 w-5 [image-rendering:pixelated]"
+          width="28"
+          height="28"
+          class="h-7 w-7 [image-rendering:pixelated]"
         />
         <span id="hud-money" class="font-semibold text-foreground">0</span>
       </span>
 
-      <span class="flex items-center gap-1.5 text-muted-foreground">
-        <svg
-          class="h-4 w-4 text-primary"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-          ><path
-            fill-rule="evenodd"
-            d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm.8 3.5H9.2V11l4 2.4.8-1.3-3.2-1.9V5.5Z"
-            clip-rule="evenodd"></path></svg
-        >
-        <span id="hud-time" class="font-semibold tabular-nums text-foreground"
-          >3:00</span
-        >
-        <span class="sr-only">time remaining</span>
-      </span>
-
       <span
-        class="flex items-center gap-1.5 text-muted-foreground"
+        class="flex items-center gap-2 text-muted-foreground"
         title="Chop cooldown"
       >
         <img
           src="/games/weed-whacker/hoe.png"
           alt="chop cooldown"
-          width="20"
-          height="20"
-          class="h-5 w-5 [image-rendering:pixelated]"
+          width="28"
+          height="28"
+          class="h-7 w-7 [image-rendering:pixelated]"
         />
         <span
-          class="relative block h-1.5 w-14 overflow-hidden rounded-full bg-muted"
+          class="relative block h-2 w-16 overflow-hidden rounded-full bg-muted"
         >
           <span
             id="hud-cooldown"
@@ -123,9 +104,13 @@ import Base from '../layouts/Base.astro'
         </span>
       </span>
 
+      <span
+        id="hud-time"
+        class="ml-auto font-semibold tabular-nums text-foreground">3:00</span
+      >
       <button
         id="mute-btn"
-        class="ml-auto rounded-md border border-border px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+        class="rounded-md border border-border px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >Sound: on</button
       >
     </div>
