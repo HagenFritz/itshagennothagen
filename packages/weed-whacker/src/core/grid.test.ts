@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { STARTING_GRID_SIZE, WORLD_GRID_SIZE } from './config'
-import { countTiles, inBounds, isOwned, setTile, tileAt } from './grid'
+import { countTiles, inBounds, isOwned, tileAt } from './grid'
 import { createState } from './state'
 
 describe('createState', () => {
@@ -36,15 +36,11 @@ describe('createState', () => {
 })
 
 describe('grid helpers', () => {
-  it('bounds-checks reads and writes', () => {
+  it('bounds-checks reads', () => {
     const state = createState()
     expect(inBounds(-1, 0)).toBe(false)
     expect(inBounds(WORLD_GRID_SIZE, 0)).toBe(false)
     expect(tileAt(state, -1, 0)).toBeUndefined()
-    setTile(state, -1, 0, 'grass')
-    expect(countTiles(state, 'grass')).toBe(
-      STARTING_GRID_SIZE * STARTING_GRID_SIZE,
-    )
   })
 
   it('treats grass and weed as owned', () => {

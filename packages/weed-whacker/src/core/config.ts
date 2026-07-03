@@ -13,6 +13,8 @@ export const TILE_COST_INCREMENT = 1
 export const RUN_DURATION_MS = 180_000
 export const TIMER_WARNING_MS = 10_000
 
-export const TICK_MS = 1000 / 60
+// 50 divides every cooldown and duration above exactly, so simulated
+// time stays integer and cooldowns expire on their precise step.
+export const SIM_STEP_MS = 50
 
 export const MAX_SCORE = RUN_DURATION_MS / CHOP_COOLDOWN_MS

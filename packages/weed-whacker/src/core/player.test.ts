@@ -5,13 +5,23 @@ import { applyChop, applyMove, tickCooldowns } from './player'
 import { createState } from './state'
 
 describe('applyMove', () => {
-  it('moves onto owned tiles and sets the cooldown', () => {
+  it('moves onto owned tiles, faces the direction, and sets the cooldown', () => {
     const state = createState()
     const { x, y } = state.player
     applyMove(state, 'right')
     expect(state.player.x).toBe(x + 1)
     expect(state.player.y).toBe(y)
+    expect(state.player.facing).toBe('right')
     expect(state.player.moveCooldownMs).toBe(PLAYER_MOVE_COOLDOWN_MS)
+  })
+
+  it('ignores an unknown direction without touching facing', () => {
+    const state = createState()
+    const { x, y } = state.player
+    applyMove(state, 'north' as never)
+    expect(state.player.x).toBe(x)
+    expect(state.player.y).toBe(y)
+    expect(state.player.facing).toBe('down')
   })
 
   it('blocks a second move until the cooldown expires', () => {

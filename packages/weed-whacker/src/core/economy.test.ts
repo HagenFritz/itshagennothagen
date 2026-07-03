@@ -86,6 +86,15 @@ describe('applyBuy', () => {
     expect(state.money).toBe(100)
   })
 
+  it('denies when facing a weed tile and leaves the weed', () => {
+    const state = stateFacingUnowned()
+    setTile(state, 13, 12, 'weed')
+    state.money = 100
+    expect(applyBuy(state)).toEqual([{ type: 'buyDenied', reason: 'noTarget' }])
+    expect(tileAt(state, 13, 12)).toBe('weed')
+    expect(state.money).toBe(100)
+  })
+
   it('denies when facing out of bounds', () => {
     const state = createState()
     state.player.x = 0

@@ -9,11 +9,16 @@ export function tickCooldowns(state: GameState, dtMs: number): void {
 }
 
 export function applyMove(state: GameState, dir: Direction): void {
+  // Runtime guard: the shell's keymap can hand us a dir the type system
+  // never saw, and writing it into facing would poison later buys.
+  const delta = DIRECTION_DELTAS[dir]
+  if (!delta) return
+
   const p = state.player
   p.facing = dir
   if (p.moveCooldownMs > 0) return
 
-  const [dx, dy] = DIRECTION_DELTAS[dir]
+  const [dx, dy] = delta
   const target = tileAt(state, p.x + dx, p.y + dy)
   if (!isOwned(target)) return
 

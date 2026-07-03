@@ -32,6 +32,7 @@ export interface GameState {
   tilesPurchased: number
   whacked: number
   elapsedMs: number
+  accumulatorMs: number
   phase: RunPhase
   timerWarningFired: boolean
 }
@@ -67,6 +68,7 @@ export function createState(): GameState {
     tilesPurchased: 0,
     whacked: 0,
     elapsedMs: 0,
+    accumulatorMs: 0,
     phase: 'idle',
     timerWarningFired: false,
   }

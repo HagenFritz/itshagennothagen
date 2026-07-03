@@ -28,11 +28,14 @@ describe('spawnWeeds', () => {
     expect(spawnWeeds(state, () => 0, 1000)).toHaveLength(0)
   })
 
-  it('is deterministic for the same seed', () => {
+  it('is deterministic for the same seed with a discriminating roll', () => {
     const a = createState()
     const b = createState()
-    const eventsA = spawnWeeds(a, mulberry32(9), 60_000)
-    const eventsB = spawnWeeds(b, mulberry32(9), 60_000)
+    // dt=25000 -> chance 0.5, so the outcome actually depends on the seed
+    const eventsA = spawnWeeds(a, mulberry32(9), 25_000)
+    const eventsB = spawnWeeds(b, mulberry32(9), 25_000)
+    expect(eventsA.length).toBeGreaterThan(0)
+    expect(eventsA.length).toBeLessThan(PLOT_TILES)
     expect(eventsA).toEqual(eventsB)
     expect(a.tiles).toEqual(b.tiles)
   })

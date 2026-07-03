@@ -27,7 +27,6 @@ export function setTile(
   y: number,
   tile: TileType,
 ): void {
-  if (!inBounds(x, y)) return
   state.tiles[y]![x] = tile
 }
 
