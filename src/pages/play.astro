@@ -1,0 +1,178 @@
+---
+import Base from '../layouts/Base.astro'
+---
+
+<Base title="Weed Whacker · Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Weed Whacker</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Clear weeds off your plot, earn a little cash, and buy more land to grow on.
+    You have three minutes. Whack as many weeds as you can. Move with WASD or
+    the arrow keys, chop with space, and buy the tile you are facing with B.
+  </p>
+
+  <div
+    id="mobile-note"
+    class="mt-8 hidden rounded-lg border border-border bg-card p-5"
+  >
+    <p class="text-muted-foreground">
+      This one wants a keyboard. Come back on a laptop or desktop to play.
+    </p>
+  </div>
+
+  <div id="game-wrap" class="mt-8">
+    <div
+      class="relative mx-auto w-full max-w-[640px] overflow-hidden rounded-lg border border-border bg-black"
+    >
+      <canvas
+        id="game"
+        class="block w-full [image-rendering:pixelated]"
+        style="aspect-ratio: 320 / 240;"></canvas>
+
+      <div
+        id="start-screen"
+        class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/70 text-center"
+      >
+        <p class="text-lg font-semibold text-foreground">Ready?</p>
+        <button
+          id="start-btn"
+          class="rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
+          >Start (3:00)</button
+        >
+      </div>
+
+      <div
+        id="end-screen"
+        class="absolute inset-0 hidden flex-col items-center justify-center gap-3 bg-black/80 text-center"
+      >
+        <p class="text-sm uppercase tracking-wide text-muted-foreground">
+          Time
+        </p>
+        <p class="text-3xl font-semibold text-foreground">
+          <span id="final-score">0</span> weeds
+        </p>
+        <button
+          id="again-btn"
+          class="mt-2 rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
+          >Play again</button
+        >
+      </div>
+    </div>
+
+    <div
+      class="mx-auto mt-3 flex max-w-[640px] items-center justify-between text-sm"
+    >
+      <div class="flex gap-4 tabular-nums">
+        <span class="text-muted-foreground"
+          >Weeds <span id="hud-score" class="font-semibold text-foreground"
+            >0</span
+          ></span
+        >
+        <span class="text-muted-foreground"
+          >$<span id="hud-money" class="font-semibold text-foreground">0</span
+          ></span
+        >
+        <span class="text-muted-foreground"
+          >Time <span id="hud-time" class="font-semibold text-foreground"
+            >3:00</span
+          ></span
+        >
+      </div>
+      <button
+        id="mute-btn"
+        class="rounded-md border border-border px-2 py-1 text-muted-foreground transition-colors hover:text-foreground"
+        >Sound: on</button
+      >
+    </div>
+  </div>
+</Base>
+
+<script>
+  import {
+    createGameAudio,
+    mount,
+    playEventSound,
+    RUN_DURATION_MS,
+    type GameHandle,
+    type GameState,
+  } from 'weed-whacker'
+
+  const isTouch = window.matchMedia(
+    '(hover: none) and (pointer: coarse)',
+  ).matches
+
+  if (isTouch) {
+    document.getElementById('mobile-note')!.classList.remove('hidden')
+    document.getElementById('game-wrap')!.classList.add('hidden')
+  } else {
+    void setup()
+  }
+
+  async function setup() {
+    const canvas = document.getElementById('game') as HTMLCanvasElement
+    const startScreen = document.getElementById('start-screen')!
+    const endScreen = document.getElementById('end-screen')!
+    const startBtn = document.getElementById('start-btn')!
+    const againBtn = document.getElementById('again-btn')!
+    const muteBtn = document.getElementById('mute-btn')!
+    const hudScore = document.getElementById('hud-score')!
+    const hudMoney = document.getElementById('hud-money')!
+    const hudTime = document.getElementById('hud-time')!
+    const finalScore = document.getElementById('final-score')!
+
+    const audio = createGameAudio('/games/weed-whacker/')
+    muteBtn.textContent = audio.isMuted() ? 'Sound: off' : 'Sound: on'
+
+    const formatTime = (remainingMs: number) => {
+      const total = Math.max(0, Math.ceil(remainingMs / 1000))
+      const m = Math.floor(total / 60)
+      const s = total % 60
+      return `${m}:${s.toString().padStart(2, '0')}`
+    }
+
+    const paintHud = (state: GameState) => {
+      hudScore.textContent = String(state.whacked)
+      hudMoney.textContent = String(Math.floor(state.money))
+      hudTime.textContent = formatTime(RUN_DURATION_MS - state.elapsedMs)
+    }
+
+    let handle: GameHandle
+    try {
+      handle = await mount(canvas, {
+        assetBaseUrl: '/games/weed-whacker/',
+        onEvent: (event) => {
+          playEventSound(audio, event)
+          if (event.type === 'runEnded') {
+            finalScore.textContent = String(event.whacked)
+            endScreen.classList.remove('hidden')
+            endScreen.classList.add('flex')
+          }
+        },
+        onStateChange: paintHud,
+      })
+    } catch {
+      startScreen.innerHTML =
+        '<p class="text-muted-foreground">The game could not load. Try refreshing.</p>'
+      return
+    }
+
+    const begin = () => {
+      audio.unlock()
+      startScreen.classList.add('hidden')
+      endScreen.classList.add('hidden')
+      endScreen.classList.remove('flex')
+      hudScore.textContent = '0'
+      hudMoney.textContent = '0'
+      hudTime.textContent = formatTime(RUN_DURATION_MS)
+      handle.start()
+    }
+
+    startBtn.addEventListener('click', begin)
+    againBtn.addEventListener('click', begin)
+    muteBtn.addEventListener('click', () => {
+      audio.setMuted(!audio.isMuted())
+      muteBtn.textContent = audio.isMuted() ? 'Sound: off' : 'Sound: on'
+      handle.focus()
+    })
+  }
+</script>
