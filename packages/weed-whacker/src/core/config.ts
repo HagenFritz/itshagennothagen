@@ -7,7 +7,7 @@ export const STARTING_TILE_COUNT = 9
 export const PLAYER_MOVE_COOLDOWN_MS = 150
 export const CHOP_COOLDOWN_MS = 1000
 
-export const WEED_SPAWN_CHANCE_PER_TILE_PER_SECOND = 0.02
+export const WEED_SPAWN_CHANCE_PER_TILE_PER_SECOND = 0.05
 
 export const INCOME_PER_TILE_PER_SECOND = 1
 export const TILE_BASE_COST = 10
