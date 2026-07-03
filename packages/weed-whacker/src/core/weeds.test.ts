@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { STARTING_GRID_SIZE } from './config'
+import { STARTING_TILE_COUNT } from './config'
 import { countTiles } from './grid'
 import { mulberry32 } from './rng'
 import { createState } from './state'
 import { spawnWeeds } from './weeds'
 
-const PLOT_TILES = STARTING_GRID_SIZE * STARTING_GRID_SIZE
+const PLOT_TILES = STARTING_TILE_COUNT
 
 describe('spawnWeeds', () => {
   it('spawns on every grass tile when the roll always hits', () => {

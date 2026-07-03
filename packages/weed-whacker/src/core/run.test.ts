@@ -10,6 +10,7 @@ import { mulberry32 } from './rng'
 import { startRun, tick } from './run'
 import { createState } from './state'
 import type { GameEvent, GameState } from './state'
+import { findFrontier } from './testutil'
 
 const neverSpawn = () => 0.999999
 
@@ -97,10 +98,11 @@ describe('tick intents', () => {
 
   it('applies at most one intent per type per call', () => {
     const state = runningState()
+    const f = findFrontier(state)
+    state.player.x = f.x
+    state.player.y = f.y
+    state.player.facing = f.dir
     state.money = 100
-    state.player.x = 13
-    state.player.y = 13
-    state.player.facing = 'up'
     const events = tick(
       state,
       [{ type: 'buy' }, { type: 'buy' }, { type: 'buy' }],
