@@ -279,7 +279,7 @@ resolving on the final tick counts.
 
 ### Phase 1 (PR 1): workspace and sim core
 
-- [ ] **Unit 1: npm workspace scaffold and toolchain**
+- [x] **Unit 1: npm workspace scaffold and toolchain**
 
 **Goal:** Repo supports a raw-TS workspace package with tests and typechecking
 wired into CI, without disturbing the Astro build.
@@ -314,7 +314,7 @@ wired into CI, without disturbing the Astro build.
 - `npm ci && npm test` passes from root; `astro check` and `astro build` still
   pass; CI green with the new steps
 
-- [ ] **Unit 2: sim core, grid and player**
+- [x] **Unit 2: sim core, grid and player**
 
 **Goal:** Deterministic headless core: state shape, config, RNG, grid, player
 movement and chop.
@@ -356,7 +356,7 @@ movement and chop.
 
 - Package tests green; typecheck green
 
-- [ ] **Unit 3: economy, weeds, run lifecycle**
+- [x] **Unit 3: economy, weeds, run lifecycle**
 
 **Goal:** Complete the sim: income, tile purchase, scaled weed spawning, timer,
 phases, score, shared max-score constant.
