@@ -1,7 +1,7 @@
 ---
 title: 'feat: Weed Whacker web v1 with leaderboard'
 type: feat
-status: active
+status: completed
 date: 2026-07-03
 origin: docs/brainstorms/2026-07-03-001-weed-whacker-web-v1-requirements.md
 deepened: 2026-07-03
@@ -534,7 +534,7 @@ variant), mobile note, Lab discovery.
 
 ### Phase 3 (PR 3): leaderboard
 
-- [ ] **Unit 8: Cloudflare infrastructure**
+- [x] **Unit 8: Cloudflare infrastructure**
 
 **Goal:** D1 databases, schema, bindings, and the one-time ops runbook.
 
@@ -588,7 +588,7 @@ variant), mobile note, Lab discovery.
 - `wrangler pages dev dist` serves the site with a bound local D1; schema
   applies cleanly
 
-- [ ] **Unit 9: API functions**
+- [x] **Unit 9: API functions**
 
 **Goal:** Token issuance and score endpoints with real validation.
 
@@ -663,7 +663,7 @@ variant), mobile note, Lab discovery.
 - Against `wrangler pages dev` + local D1: happy path, duplicate nonce rejected,
   early submit rejected, rate limit trips
 
-- [ ] **Unit 10: frontend leaderboard integration**
+- [x] **Unit 10: frontend leaderboard integration**
 
 **Goal:** Close the loop on /play: token at start, submit flow with honest
 failure UX, leaderboard display.
