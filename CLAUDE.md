@@ -12,9 +12,11 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
 - Blog posts are Markdown content collection entries in `src/content/posts/`,
   schema in `src/content.config.ts`.
 - **npm workspaces**: game/interactive code lives in `packages/*` (currently
-  `packages/weed-whacker`, a headless TypeScript game sim tested with Vitest).
-  Packages are excluded from the root `tsconfig` and own their own strict
-  tsconfig plus `test`/`typecheck` scripts.
+  `packages/weed-whacker`: a headless TypeScript sim core plus canvas renderer,
+  keyboard input, and WebAudio, exposing a `mount()` API that
+  `src/pages/play.astro` drives). Packages are excluded from the root `tsconfig`
+  and own their own strict tsconfig plus `test`/`typecheck` scripts. Game assets
+  and the chop sound live in `public/games/weed-whacker/`.
 
 ## Theme
 
@@ -59,6 +61,9 @@ colors there, not inline.
 
 ## Related
 
+- **PR #14**: Add the playable Weed Whacker /play page: 7x7 fixed-board canvas
+  renderer, keyboard input, WebAudio, and sprite-based HUD (PR 2 of 3).
+  [Plan](docs/plans/2026-07-03-001-feat-weed-whacker-web-v1-plan.md).
 - **PR #13**: Add the Weed Whacker game as an npm workspace package
   (`packages/weed-whacker`) with a deterministic headless sim core, plus CI
   test/typecheck steps.

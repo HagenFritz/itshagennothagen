@@ -1,4 +1,6 @@
-import { STARTING_GRID_SIZE, WORLD_GRID_SIZE } from './config'
+import { STARTING_TILE_COUNT, WORLD_GRID_SIZE } from './config'
+import type { Rng } from './rng'
+import { mulberry32 } from './rng'
 
 export type TileType = 'grass' | 'weed' | 'unowned'
 export type Direction = 'up' | 'down' | 'left' | 'right'
@@ -37,7 +39,7 @@ export interface GameState {
   timerWarningFired: boolean
 }
 
-export function createState(): GameState {
+export function createState(rng: Rng = mulberry32(1)): GameState {
   const tiles: TileType[][] = []
   for (let y = 0; y < WORLD_GRID_SIZE; y++) {
     const row: TileType[] = []
@@ -48,12 +50,7 @@ export function createState(): GameState {
   }
 
   const center = Math.floor(WORLD_GRID_SIZE / 2)
-  const start = center - Math.floor(STARTING_GRID_SIZE / 2)
-  for (let y = start; y < start + STARTING_GRID_SIZE; y++) {
-    for (let x = start; x < start + STARTING_GRID_SIZE; x++) {
-      tiles[y]![x] = 'grass'
-    }
-  }
+  growStartingPlot(tiles, center, rng)
 
   return {
     tiles,
@@ -71,5 +68,44 @@ export function createState(): GameState {
     accumulatorMs: 0,
     phase: 'idle',
     timerWarningFired: false,
+  }
+}
+
+// Grow a connected random blob of STARTING_TILE_COUNT grass tiles out from
+// the center. Connected so the player (who spawns at center and can only
+// walk owned tiles) can reach every starting tile. Each step picks a random
+// unowned tile orthogonally adjacent to the blob so far.
+function growStartingPlot(tiles: TileType[][], center: number, rng: Rng): void {
+  tiles[center]![center] = 'grass'
+  let count = 1
+
+  const key = (x: number, y: number) => y * WORLD_GRID_SIZE + x
+  const frontier = new Map<number, [number, number]>()
+  const deltas: [number, number][] = [
+    [0, -1],
+    [0, 1],
+    [-1, 0],
+    [1, 0],
+  ]
+  const addFrontier = (x: number, y: number) => {
+    for (const [dx, dy] of deltas) {
+      const nx = x + dx
+      const ny = y + dy
+      if (nx < 0 || nx >= WORLD_GRID_SIZE || ny < 0 || ny >= WORLD_GRID_SIZE) {
+        continue
+      }
+      if (tiles[ny]![nx] === 'grass') continue
+      frontier.set(key(nx, ny), [nx, ny])
+    }
+  }
+  addFrontier(center, center)
+
+  while (count < STARTING_TILE_COUNT && frontier.size > 0) {
+    const candidates = [...frontier.values()]
+    const [x, y] = candidates[Math.floor(rng() * candidates.length)]!
+    frontier.delete(key(x, y))
+    tiles[y]![x] = 'grass'
+    count++
+    addFrontier(x, y)
   }
 }

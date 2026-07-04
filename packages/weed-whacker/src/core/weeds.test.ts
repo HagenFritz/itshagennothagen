@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { STARTING_GRID_SIZE } from './config'
+import { STARTING_TILE_COUNT } from './config'
 import { countTiles } from './grid'
 import { mulberry32 } from './rng'
 import { createState } from './state'
 import { spawnWeeds } from './weeds'
 
-const PLOT_TILES = STARTING_GRID_SIZE * STARTING_GRID_SIZE
+const PLOT_TILES = STARTING_TILE_COUNT
 
 describe('spawnWeeds', () => {
   it('spawns on every grass tile when the roll always hits', () => {
@@ -31,9 +31,9 @@ describe('spawnWeeds', () => {
   it('is deterministic for the same seed with a discriminating roll', () => {
     const a = createState()
     const b = createState()
-    // dt=25000 -> chance 0.5, so the outcome actually depends on the seed
-    const eventsA = spawnWeeds(a, mulberry32(9), 25_000)
-    const eventsB = spawnWeeds(b, mulberry32(9), 25_000)
+    // dt=10000 -> chance 0.5, so the outcome actually depends on the seed
+    const eventsA = spawnWeeds(a, mulberry32(9), 10_000)
+    const eventsB = spawnWeeds(b, mulberry32(9), 10_000)
     expect(eventsA.length).toBeGreaterThan(0)
     expect(eventsA.length).toBeLessThan(PLOT_TILES)
     expect(eventsA).toEqual(eventsB)

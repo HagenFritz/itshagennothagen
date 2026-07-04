@@ -3,10 +3,22 @@ import { CHOP_COOLDOWN_MS, PLAYER_MOVE_COOLDOWN_MS } from './config'
 import { setTile, tileAt } from './grid'
 import { applyChop, applyMove, tickCooldowns } from './player'
 import { createState } from './state'
+import type { GameState } from './state'
+import { findFrontier } from './testutil'
+
+// A state with a known owned horizontal strip for movement mechanics, so
+// assertions do not depend on the random starting blob's shape.
+function stateWithOwnedRow(): GameState {
+  const state = createState()
+  const y = state.player.y
+  for (let x = 0; x < state.tiles.length; x++) setTile(state, x, y, 'grass')
+  state.player.x = 1
+  return state
+}
 
 describe('applyMove', () => {
   it('moves onto owned tiles, faces the direction, and sets the cooldown', () => {
-    const state = createState()
+    const state = stateWithOwnedRow()
     const { x, y } = state.player
     applyMove(state, 'right')
     expect(state.player.x).toBe(x + 1)
@@ -25,7 +37,7 @@ describe('applyMove', () => {
   })
 
   it('blocks a second move until the cooldown expires', () => {
-    const state = createState()
+    const state = stateWithOwnedRow()
     const { x } = state.player
     applyMove(state, 'right')
     applyMove(state, 'right')
@@ -37,12 +49,15 @@ describe('applyMove', () => {
 
   it('does not walk onto unowned tiles but still turns', () => {
     const state = createState()
-    state.player.x = 13
-    state.player.y = 13
-    applyMove(state, 'up')
-    expect(state.player.x).toBe(13)
-    expect(state.player.y).toBe(13)
-    expect(state.player.facing).toBe('up')
+    // A frontier tile has an in-bounds unowned neighbor: blocking there
+    // exercises the ownership check, not an out-of-bounds fallthrough.
+    const f = findFrontier(state)
+    state.player.x = f.x
+    state.player.y = f.y
+    applyMove(state, f.dir)
+    expect(state.player.x).toBe(f.x)
+    expect(state.player.y).toBe(f.y)
+    expect(state.player.facing).toBe(f.dir)
     expect(state.player.moveCooldownMs).toBe(0)
   })
 

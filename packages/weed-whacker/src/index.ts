@@ -1,2 +1,6 @@
 export * from './core/config'
 export * from './core/state'
+export { mount } from './mount'
+export type { GameHandle, MountOptions } from './mount'
+export { createGameAudio } from './audio/audio'
+export type { GameAudio } from './audio/audio'
