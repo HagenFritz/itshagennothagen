@@ -3,3 +3,4 @@ node_modules
 .astro
 package-lock.json
 src/content/posts
+functions/types.d.ts

@@ -2,6 +2,7 @@
 # truth for these settings and they go read-only in the dashboard.
 name = "itshagennothagen"
 pages_build_output_dir = "./dist"
+compatibility_date = "2026-07-01"
 
 # Production leaderboard database. database_id comes from `wrangler d1 create`.
 [[d1_databases]]

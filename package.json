@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "npm test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

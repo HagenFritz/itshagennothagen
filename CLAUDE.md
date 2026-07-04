@@ -36,9 +36,9 @@ colors there, not inline.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
   `npm run format`.
 - Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`.
-  Local dev with a bound local D1: `npm run build && npx wrangler pages dev
-  dist`. Apply the schema first with `npx wrangler d1 execute
-  weed-whacker-leaderboard --local --file=functions/schema.sql`.
+  Local dev with a bound local D1:
+  `npm run build && npx wrangler pages dev dist`. Apply the schema first with
+  `npx wrangler d1 execute weed-whacker-leaderboard --local --file=functions/schema.sql`.
 - Prettier is configured with `proseWrap: always` — markdown prose is
   hard-wrapped at 80 columns. Write to the edge if you want; `npm run format`
   rewraps it. This keeps line-level git diffs clean (a one-word edit touches one
