@@ -11,7 +11,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "npm test --workspaces --if-present",
+    "test": "npm test --workspaces --if-present && vitest run --config functions/vitest.config.ts functions",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

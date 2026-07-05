@@ -38,11 +38,13 @@ _None._
       rule, noted in CLAUDE.md.
 - [x] **Committed write reported as failure** — a post-INSERT throw returns 500;
       the retry then falsely says "not saved." FIXED (8638858).
-- [ ] **scores.ts POST has zero automated coverage** — replay branch, status
+- [x] **scores.ts POST has zero automated coverage** — replay branch, status
       mapping, rate-limit math, GET ordering guarded only by a one-time manual
-      matrix.
-- [ ] **Silent failure paths** — every catch discards the error; a misconfigured
-      preview secret is indistinguishable from a D1 outage.
+      matrix. FIXED: `functions/api/scores.test.ts`, 14 cases over a fake D1,
+      wired into `npm test` + CI.
+- [x] **Silent failure paths** — every catch discards the error; a misconfigured
+      preview secret is indistinguishable from a D1 outage. FIXED: both
+      scores.ts catches now `console.error` before returning.
 
 ### P3 Issues
 
