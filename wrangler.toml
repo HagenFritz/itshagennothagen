@@ -1,0 +1,19 @@
+# Cloudflare Pages config. Once deployed, this file becomes the source of
+# truth for these settings and they go read-only in the dashboard.
+name = "itshagennothagen"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-07-01"
+
+# Production leaderboard database. database_id comes from `wrangler d1 create`.
+[[d1_databases]]
+binding = "DB"
+database_name = "weed-whacker-leaderboard"
+database_id = "156344f7-375f-4485-8d06-4ed7f5ef9c0c"
+
+# Separate preview database so PR previews never write production scores.
+[env.preview]
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "weed-whacker-leaderboard-preview"
+database_id = "88354b6a-10f4-4b45-a28a-d155991e156a"

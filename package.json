@@ -8,11 +8,13 @@
   ],
   "scripts": {
     "dev": "astro dev",
+    "dev:api": "npm run db:local && npm run build && npx wrangler pages dev dist --port 8788",
+    "db:local": "npx wrangler d1 execute weed-whacker-leaderboard --local --file=functions/schema.sql",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "npm test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspaces --if-present && vitest run --config functions/vitest.config.ts functions",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -30,7 +32,8 @@
     "@types/node": "^24.12.3",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.107.0"
   },
   "overrides": {
     "vite": "^7.3.2"

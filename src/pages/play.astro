@@ -7,8 +7,8 @@ import Base from '../layouts/Base.astro'
 
   <p class="mt-4 max-w-[70ch] text-muted-foreground">
     Clear weeds off your plot, earn a little cash, and buy more land to grow on.
-    You have three minutes. Whack as many weeds as you can. Move with WASD or
-    the arrow keys, chop with space, and buy the tile you are facing with B.
+    You have one minute. Whack as many weeds as you can. Move with WASD or the
+    arrow keys, chop with space, and buy the tile you are facing with B.
   </p>
 
   <div
@@ -52,6 +52,30 @@ import Base from '../layouts/Base.astro'
         <p class="text-3xl font-semibold text-foreground">
           <span id="final-score">0</span> weeds
         </p>
+
+        <form id="submit-form" class="hidden flex-col items-center gap-2">
+          <div class="flex items-center gap-2">
+            <input
+              id="name-input"
+              type="text"
+              maxlength="20"
+              placeholder="Your name"
+              autocomplete="off"
+              class="w-40 rounded-md border border-border bg-card px-3 py-1.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+            />
+            <button
+              id="submit-btn"
+              type="submit"
+              class="rounded-md bg-primary px-3 py-1.5 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+              >Submit</button
+            >
+          </div>
+          <p id="submit-msg" class="min-h-5 text-sm text-muted-foreground"></p>
+        </form>
+        <p id="lb-note" class="hidden text-sm text-muted-foreground">
+          Leaderboard unavailable right now. Your run still counts in spirit.
+        </p>
+
         <button
           id="again-btn"
           class="mt-2 rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
@@ -69,7 +93,11 @@ import Base from '../layouts/Base.astro'
           height="32"
           class="h-8 w-8 [image-rendering:pixelated]"
         />
-        <span id="hud-score" class="font-semibold text-foreground">0</span>
+        <span
+          id="hud-score"
+          class="inline-block min-w-[2ch] text-right font-semibold tabular-nums text-foreground"
+          >0</span
+        >
       </span>
 
       <span class="flex items-center gap-2 text-muted-foreground">
@@ -80,7 +108,11 @@ import Base from '../layouts/Base.astro'
           height="32"
           class="h-8 w-8 [image-rendering:pixelated]"
         />
-        <span id="hud-money" class="font-semibold text-foreground">0</span>
+        <span
+          id="hud-money"
+          class="inline-block min-w-[3ch] text-right font-semibold tabular-nums text-foreground"
+          >0</span
+        >
       </span>
 
       <span
@@ -106,7 +138,7 @@ import Base from '../layouts/Base.astro'
 
       <span
         id="hud-time"
-        class="ml-auto font-semibold tabular-nums text-foreground">3:00</span
+        class="ml-auto font-semibold tabular-nums text-foreground">1:00</span
       >
       <button
         id="mute-btn"
@@ -114,6 +146,12 @@ import Base from '../layouts/Base.astro'
         >Sound: on</button
       >
     </div>
+  </div>
+
+  <div class="mx-auto mt-12 max-w-[672px]">
+    <h2 class="text-xl font-semibold tracking-tight">Top 10</h2>
+    <ol id="lb-list" class="mt-4 hidden space-y-1"></ol>
+    <p id="lb-status" class="mt-4 text-muted-foreground">Loading scores...</p>
   </div>
 </Base>
 
@@ -126,6 +164,53 @@ import Base from '../layouts/Base.astro'
     type GameHandle,
     type GameState,
   } from 'weed-whacker'
+
+  const lbList = document.getElementById('lb-list')!
+  const lbStatus = document.getElementById('lb-status')!
+
+  async function loadBoard(fresh = false) {
+    try {
+      const res = await fetch('/api/scores', {
+        cache: fresh ? 'no-store' : 'default',
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      const { scores } = (await res.json()) as {
+        scores: { name: string; score: number }[]
+      }
+      lbList.textContent = ''
+      if (scores.length === 0) {
+        lbStatus.textContent = 'No scores yet. Be the first.'
+        lbStatus.classList.remove('hidden')
+        lbList.classList.add('hidden')
+        return
+      }
+      scores.forEach((entry, i) => {
+        const li = document.createElement('li')
+        li.className =
+          'flex items-baseline gap-3 rounded-md border border-border bg-card px-3 py-1.5'
+        const rank = document.createElement('span')
+        rank.className = 'w-6 shrink-0 text-sm text-muted-foreground'
+        rank.textContent = `${i + 1}.`
+        const name = document.createElement('span')
+        name.className =
+          'min-w-0 overflow-hidden text-ellipsis whitespace-nowrap'
+        name.textContent = entry.name
+        const score = document.createElement('span')
+        score.className = 'ml-auto font-semibold tabular-nums text-foreground'
+        score.textContent = String(entry.score)
+        li.append(rank, name, score)
+        lbList.appendChild(li)
+      })
+      lbList.classList.remove('hidden')
+      lbStatus.classList.add('hidden')
+    } catch {
+      lbStatus.textContent = 'Leaderboard unavailable right now.'
+      lbStatus.classList.remove('hidden')
+      lbList.classList.add('hidden')
+    }
+  }
+
+  void loadBoard()
 
   const isTouch = window.matchMedia(
     '(hover: none) and (pointer: coarse)',
@@ -150,6 +235,27 @@ import Base from '../layouts/Base.astro'
     const hudTime = document.getElementById('hud-time')!
     const hudCooldown = document.getElementById('hud-cooldown')!
     const finalScore = document.getElementById('final-score')!
+    const submitForm = document.getElementById('submit-form') as HTMLFormElement
+    const nameInput = document.getElementById('name-input') as HTMLInputElement
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement
+    const submitMsg = document.getElementById('submit-msg')!
+    const lbNote = document.getElementById('lb-note')!
+
+    let runToken: string | null = null
+    let lastScore = 0
+
+    const fetchToken = async () => {
+      runToken = null
+      try {
+        const res = await fetch('/api/runs', { method: 'POST' })
+        if (res.ok) {
+          const data = (await res.json()) as { token?: string }
+          runToken = data.token ?? null
+        }
+      } catch {
+        // Leaderboard is optional; the run plays either way.
+      }
+    }
 
     const audio = createGameAudio('/games/weed-whacker/')
     muteBtn.textContent = audio.isMuted() ? 'Sound: off' : 'Sound: on'
@@ -177,7 +283,17 @@ import Base from '../layouts/Base.astro'
         onEvent: (event) => {
           audio.playEvent(event)
           if (event.type === 'runEnded') {
+            lastScore = event.whacked
             finalScore.textContent = String(event.whacked)
+            if (runToken) {
+              submitForm.classList.remove('hidden')
+              submitForm.classList.add('flex')
+              lbNote.classList.add('hidden')
+            } else {
+              submitForm.classList.add('hidden')
+              submitForm.classList.remove('flex')
+              lbNote.classList.remove('hidden')
+            }
             endScreen.classList.remove('hidden')
             endScreen.classList.add('flex')
           }
@@ -191,18 +307,64 @@ import Base from '../layouts/Base.astro'
       return
     }
 
-    startBtn.textContent = 'Start (3:00)'
+    startBtn.textContent = 'Start (1:00)'
     startBtn.disabled = false
 
     const begin = () => {
       audio.unlock()
+      void fetchToken()
       startScreen.classList.add('hidden')
       endScreen.classList.add('hidden')
       endScreen.classList.remove('flex')
+      submitBtn.disabled = false
+      submitMsg.textContent = ''
       hudScore.textContent = '0'
       hudMoney.textContent = '0'
       hudTime.textContent = formatTime(RUN_DURATION_MS)
       handle.start()
+    }
+
+    submitForm.addEventListener('submit', (e) => {
+      e.preventDefault()
+      void submitScore()
+    })
+
+    const submitScore = async () => {
+      const name = nameInput.value.trim()
+      if (!name) {
+        submitMsg.textContent = 'Enter a name first.'
+        return
+      }
+      submitBtn.disabled = true
+      submitMsg.textContent = 'Submitting...'
+      try {
+        const res = await fetch('/api/scores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: runToken, name, score: lastScore }),
+        })
+        if (res.ok) {
+          const { placement } = (await res.json()) as {
+            placement: number | null
+          }
+          submitMsg.textContent =
+            placement === null ? 'Score saved.' : `You placed #${placement}.`
+          void loadBoard(true)
+        } else if (res.status === 429) {
+          submitMsg.textContent =
+            'Too many submissions from your network. Try again later.'
+          submitBtn.disabled = false
+        } else if (res.status === 401) {
+          submitMsg.textContent =
+            'This run could not be verified, so the score was not saved.'
+        } else {
+          submitMsg.textContent = 'That name did not pass. Try another.'
+          submitBtn.disabled = false
+        }
+      } catch {
+        submitMsg.textContent = 'Network hiccup. Try again.'
+        submitBtn.disabled = false
+      }
     }
 
     startBtn.addEventListener('click', begin)

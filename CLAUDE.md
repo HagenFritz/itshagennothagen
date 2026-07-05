@@ -17,6 +17,14 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   `src/pages/play.astro` drives). Packages are excluded from the root `tsconfig`
   and own their own strict tsconfig plus `test`/`typecheck` scripts. Game assets
   and the chop sound live in `public/games/weed-whacker/`.
+- **Cloudflare Pages Functions**: backend lives in `functions/` at the repo root
+  (no adapter; file routing, e.g. `functions/api/scores.ts` → `/api/scores`).
+  The Weed Whacker leaderboard runs on D1 (`wrangler.toml` binds a production
+  and a preview database; schema in `functions/schema.sql`). Validation helpers
+  are shared with the sim from `packages/weed-whacker/src/leaderboard/`.
+  `functions/` is excluded from the root `tsconfig` and has its own; the root
+  `typecheck` script covers it (`tsc -p functions`), and root `test` runs its
+  Vitest suite.
 
 ## Theme
 
@@ -29,12 +37,24 @@ colors there, not inline.
 
 - `main` is branch-protected: no direct pushes. All changes go through a PR that
   must pass CI (`Build & checks` + `Spell check`).
-- CI runs prettier check, `astro check`, workspace typecheck
-  (`npm run typecheck`), workspace tests (`npm test`), build, and codespell on
-  `src/content`.
+- CI runs prettier check, `astro check`, typecheck (`npm run typecheck`, covers
+  workspaces plus `functions/`), tests (`npm test`, workspaces plus the
+  `functions/` Vitest suite), build, and codespell on `src/content`.
 - Cloudflare auto-deploys `main` on merge and builds per-PR previews.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
   `npm run format`.
+- Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`,
+  so the leaderboard shows "unavailable" on port 4321. Use `npm run dev` for
+  everything except the leaderboard; use `npm run dev:api` (builds, applies the
+  local D1 schema, serves on port 8788 via `wrangler pages dev dist`) when
+  working on the API or submit/board flow. `npm run db:local` applies the schema
+  to the local D1 on its own (idempotent).
+- Leaderboard rate limiting keys on `CF-Connecting-IP`, which is only
+  trustworthy behind the Cloudflare edge. The `*.pages.dev` deployment and PR
+  preview URLs are directly reachable and can spoof that header to reset the
+  per-IP bucket. Ops follow-up: add a Cloudflare redirect rule sending
+  `*.pages.dev` to `itshagennothagen.dev` (or an Access policy on the pages.dev
+  hostnames) so `/api/scores` is only reachable through the proxy.
 - Prettier is configured with `proseWrap: always` — markdown prose is
   hard-wrapped at 80 columns. Write to the edge if you want; `npm run format`
   rewraps it. This keeps line-level git diffs clean (a one-word edit touches one
@@ -61,6 +81,10 @@ colors there, not inline.
 
 ## Related
 
+- **PR #15**: Add the global leaderboard (Cloudflare D1 + Pages Functions):
+  token/score API, shared validation, /play submit UI, and a launch blog post
+  (PR 3 of 3).
+  [Plan](docs/plans/2026-07-03-001-feat-weed-whacker-web-v1-plan.md).
 - **PR #14**: Add the playable Weed Whacker /play page: 7x7 fixed-board canvas
   renderer, keyboard input, WebAudio, and sprite-based HUD (PR 2 of 3).
   [Plan](docs/plans/2026-07-03-001-feat-weed-whacker-web-v1-plan.md).

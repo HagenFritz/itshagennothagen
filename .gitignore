@@ -32,6 +32,10 @@ docs/side-quests/
 # Astro
 .astro/
 
+# Wrangler (local D1 state, local secrets)
+.wrangler/
+.dev.vars
+
 *.code-workspace
 
 # Playwright MCP artifacts
