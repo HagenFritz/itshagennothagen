@@ -39,6 +39,12 @@ colors there, not inline.
   Local dev with a bound local D1:
   `npm run build && npx wrangler pages dev dist`. Apply the schema first with
   `npx wrangler d1 execute weed-whacker-leaderboard --local --file=functions/schema.sql`.
+- Leaderboard rate limiting keys on `CF-Connecting-IP`, which is only
+  trustworthy behind the Cloudflare edge. The `*.pages.dev` deployment and PR
+  preview URLs are directly reachable and can spoof that header to reset the
+  per-IP bucket. Ops follow-up: add a Cloudflare redirect rule sending
+  `*.pages.dev` to `itshagennothagen.dev` (or an Access policy on the pages.dev
+  hostnames) so `/api/scores` is only reachable through the proxy.
 - Prettier is configured with `proseWrap: always` — markdown prose is
   hard-wrapped at 80 columns. Write to the edge if you want; `npm run format`
   rewraps it. This keeps line-level git diffs clean (a one-word edit touches one

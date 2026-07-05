@@ -61,25 +61,37 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
     const ip = request.headers.get('CF-Connecting-IP') ?? ''
     const ipHash = await hmacHex(env.LEADERBOARD_SECRET, ip)
 
-    const recent = await env.DB.prepare(
-      'SELECT COUNT(*) AS n FROM scores WHERE ip_hash = ? AND created_at > ?',
-    )
-      .bind(ipHash, now - RATE_LIMIT_WINDOW_MS)
-      .first<{ n: number }>()
-    if ((recent?.n ?? 0) >= RATE_LIMIT_MAX_SUBMITS) {
-      return Response.json({ error: 'rate_limited' }, { status: 429 })
-    }
-
-    // The INSERT is the nonce claim. Zero changed rows means the nonce was
-    // already used: a replayed token.
+    // Rate limit and nonce claim are one atomic statement: the row inserts only
+    // if the nonce is unused AND this IP is under the window limit. Checking
+    // the count in a separate SELECT would let a concurrent burst all read a
+    // stale count and slip past the cap (check-then-act race).
     const insert = await env.DB.prepare(
       `INSERT INTO scores (name, score, nonce, ip_hash, created_at)
-       VALUES (?, ?, ?, ?, ?) ON CONFLICT(nonce) DO NOTHING`,
+       SELECT ?, ?, ?, ?, ?
+       WHERE NOT EXISTS (SELECT 1 FROM scores WHERE nonce = ?)
+         AND (SELECT COUNT(*) FROM scores WHERE ip_hash = ? AND created_at > ?) < ?`,
     )
-      .bind(cleanName, score, parsed.nonce, ipHash, now)
+      .bind(
+        cleanName,
+        score,
+        parsed.nonce,
+        ipHash,
+        now,
+        parsed.nonce,
+        ipHash,
+        now - RATE_LIMIT_WINDOW_MS,
+        RATE_LIMIT_MAX_SUBMITS,
+      )
       .run()
+    // Zero changed rows is either a replayed nonce or a tripped rate limit. One
+    // cheap read tells them apart so the client gets the right status.
     if (insert.meta.changes === 0) {
-      return Response.json({ error: 'invalid_token' }, { status: 401 })
+      const dup = await env.DB.prepare('SELECT 1 FROM scores WHERE nonce = ?')
+        .bind(parsed.nonce)
+        .first()
+      return dup
+        ? Response.json({ error: 'invalid_token' }, { status: 401 })
+        : Response.json({ error: 'rate_limited' }, { status: 429 })
     }
 
     // The write is committed. A failure computing placement must not report the
