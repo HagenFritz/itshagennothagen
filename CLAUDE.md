@@ -35,10 +35,12 @@ colors there, not inline.
 - Cloudflare auto-deploys `main` on merge and builds per-PR previews.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
   `npm run format`.
-- Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`.
-  Local dev with a bound local D1:
-  `npm run build && npx wrangler pages dev dist`. Apply the schema first with
-  `npx wrangler d1 execute weed-whacker-leaderboard --local --file=functions/schema.sql`.
+- Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`,
+  so the leaderboard shows "unavailable" on port 4321. Use `npm run dev` for
+  everything except the leaderboard; use `npm run dev:api` (builds, applies the
+  local D1 schema, serves on port 8788 via `wrangler pages dev dist`) when
+  working on the API or submit/board flow. `npm run db:local` applies the schema
+  to the local D1 on its own (idempotent).
 - Leaderboard rate limiting keys on `CF-Connecting-IP`, which is only
   trustworthy behind the Cloudflare edge. The `*.pages.dev` deployment and PR
   preview URLs are directly reachable and can spoof that header to reset the
