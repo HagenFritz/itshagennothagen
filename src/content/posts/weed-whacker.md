@@ -11,19 +11,11 @@ something from an idea is more plausible than ever. Weed Whacker is my first
 cut: a game where you clear weeds, earn a little cash, and buy more land to grow
 on.
 
-It started as a Python/Pygame prototype and ported to TypeScript so it runs
-right in the browser. The game logic lives in a headless sim core with the
-rendering, input, and sound bolted on around it, which keeps the door open for
-where I want to take this next.
-
 The version here is just a taste. It is a one-minute run so scores stay
-comparable on the leaderboard, but that timer is a demo thing, not the shape of
-the real game. It exists to show the idea and let people actually play it.
-
-This is a slice of something bigger. The plan, if it ever gets built, is to grow
-it: more tools beyond the starting hoe, different kinds of weeds,
-weather that changes how a run plays, and some player customization. No
-timeline, no promises.
+comparable on the leaderboard. This is a slice of something bigger. The plan (if
+it ever gets built) is to grow: more tools beyond the starting hoe, different
+kinds of weeds, weather that changes how a run plays, and some player
+customization.
 
 ## Play it
 
