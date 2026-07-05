@@ -82,15 +82,23 @@ export const onRequestPost: PagesFunction<Env> = async ({ env, request }) => {
       return Response.json({ error: 'invalid_token' }, { status: 401 })
     }
 
-    const better = await env.DB.prepare(
-      `SELECT COUNT(*) AS n FROM scores
-       WHERE score > ? OR (score = ? AND created_at < ?)`,
-    )
-      .bind(score, score, now)
-      .first<{ n: number }>()
-
-    return Response.json({ placement: (better?.n ?? 0) + 1 })
-  } catch {
+    // The write is committed. A failure computing placement must not report the
+    // saved score as a failure, so this query gets its own catch and a
+    // placement-less success on error.
+    try {
+      const better = await env.DB.prepare(
+        `SELECT COUNT(*) AS n FROM scores
+         WHERE score > ? OR (score = ? AND created_at < ?)`,
+      )
+        .bind(score, score, now)
+        .first<{ n: number }>()
+      return Response.json({ placement: (better?.n ?? 0) + 1 })
+    } catch (err) {
+      console.error('scores POST placement query failed', err)
+      return Response.json({ placement: null })
+    }
+  } catch (err) {
+    console.error('scores POST failed', err)
     return Response.json({ error: 'server_error' }, { status: 500 })
   }
 }

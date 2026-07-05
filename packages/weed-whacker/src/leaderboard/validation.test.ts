@@ -38,6 +38,18 @@ describe('normalizeName', () => {
     expect(normalizeName('​‎﻿')).toBeNull()
   })
 
+  it('strips terminal control characters (C0/C1)', () => {
+    expect(normalizeName('x\u001B]0;pwned\u0007')).toBe('x]0;pwned')
+    expect(normalizeName('a\u001Bb')).toBe('ab')
+    expect(normalizeName('line\u0000null')).toBe('linenull')
+  })
+
+  it('rejects names with no visible glyph', () => {
+    expect(normalizeName('\u200D')).toBeNull()
+    expect(normalizeName('\u0301\u0301')).toBeNull()
+    expect(normalizeName('\u001B\u001B')).toBeNull()
+  })
+
   it('applies NFC normalization', () => {
     expect(normalizeName('é')).toBe('é')
   })
