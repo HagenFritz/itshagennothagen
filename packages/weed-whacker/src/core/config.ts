@@ -15,7 +15,7 @@ export const TILE_BASE_COST = 10
 // let a player buy out the whole board in the first 20 seconds.
 export const TILE_COST_INCREMENT = 5
 
-export const RUN_DURATION_MS = 180_000
+export const RUN_DURATION_MS = 60_000
 export const TIMER_WARNING_MS = 10_000
 
 // 50 divides every cooldown and duration above exactly, so simulated

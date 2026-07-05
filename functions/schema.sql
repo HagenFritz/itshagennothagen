@@ -3,15 +3,15 @@
 -- Future ALTER TABLE steps need their own runbook notes since IF NOT EXISTS
 -- does not cover column adds.
 --
--- The score CHECK literal duplicates MAX_SCORE from
--- packages/weed-whacker/src/core/config.ts by design: DDL is the only guard
--- on the manual-wrangler write path. App validation stays authoritative.
--- Name CHECK counts code points (SQLite length()); the byte cap is app-side.
+-- The score CHECK literal duplicates MAX_SCORE (RUN_DURATION_MS /
+-- CHOP_COOLDOWN_MS) from packages/weed-whacker/src/core/config.ts by design:
+-- DDL is the only guard on the manual-wrangler write path. App validation
+-- stays authoritative. Name CHECK counts code points (SQLite length()).
 
 CREATE TABLE IF NOT EXISTS scores (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 20),
-  score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 180),
+  score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 60),
   nonce TEXT NOT NULL UNIQUE,
   ip_hash TEXT NOT NULL,
   created_at INTEGER NOT NULL
