@@ -1,0 +1,240 @@
+---
+import Base from '../../layouts/Base.astro'
+import playlistsData from '../../data/playlists.json'
+
+type Playlist = { url: string; tags: string[]; notes?: string }
+const playlists = playlistsData as Playlist[]
+---
+
+<Base title="Playlist Tracker · Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Playlist Tracker</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Tracking my Spotify playlists as I sort my liked songs into them. Cover art
+    and track counts load live from Spotify; tags are mine. Click a playlist to
+    see its tracks.
+  </p>
+
+  <ul id="playlist-grid" class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      playlists.map((p) => (
+        <li
+          class="playlist-card rounded-lg border border-border bg-card p-4"
+          data-url={p.url}
+        >
+          <button type="button" class="open-dialog flex w-full gap-3 text-left">
+            <div class="cover-slot h-16 w-16 shrink-0 rounded bg-muted" />
+            <div class="min-w-0 flex-1">
+              <div class="name-slot truncate font-medium text-foreground">
+                Loading…
+              </div>
+              <div class="count-slot text-sm text-muted-foreground" />
+            </div>
+          </button>
+          <div class="mt-3 flex flex-wrap gap-1">
+            {p.tags.map((t) => (
+              <span class="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                {t}
+              </span>
+            ))}
+          </div>
+          {p.notes && (
+            <p class="mt-2 text-sm text-muted-foreground">{p.notes}</p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+
+  <dialog
+    id="tracks-dialog"
+    class="m-auto w-[min(90vw,32rem)] rounded-lg border border-border bg-card p-0 text-foreground backdrop:bg-black/60"
+  >
+    <div class="relative p-5">
+      <button
+        id="dialog-close"
+        aria-label="Close"
+        class="absolute right-3 top-3 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+          ><path
+            fill-rule="evenodd"
+            d="M4.3 4.3a1 1 0 0 1 1.4 0L10 8.6l4.3-4.3a1 1 0 1 1 1.4 1.4L11.4 10l4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4z"
+            clip-rule="evenodd"></path></svg
+        >
+      </button>
+      <div class="flex items-center gap-3">
+        <div id="dialog-cover" class="h-14 w-14 shrink-0 rounded bg-muted">
+        </div>
+        <div class="min-w-0">
+          <div id="dialog-name" class="truncate text-lg font-semibold"></div>
+          <a
+            id="dialog-spotify-link"
+            target="_blank"
+            rel="noreferrer"
+            class="text-sm text-primary underline underline-offset-2"
+          >
+            Open in Spotify
+          </a>
+        </div>
+      </div>
+      <ol
+        id="dialog-tracks"
+        class="mt-4 max-h-[60vh] space-y-1 overflow-y-auto text-sm"
+      >
+        <li class="text-muted-foreground">Loading…</li>
+      </ol>
+    </div>
+  </dialog>
+</Base>
+
+<script>
+  import playlistsData from '../../data/playlists.json'
+
+  type Playlist = { url: string; tags: string[]; notes?: string }
+  const playlists = playlistsData as Playlist[]
+
+  type PlaylistInfo = {
+    id: string
+    name: string
+    image: string | null
+    trackCount: number
+  }
+
+  type Track = { name: string; artists: string }
+
+  function extractPlaylistId(url: string): string | null {
+    const match = url.match(/playlist[/:]([a-zA-Z0-9]+)/)
+    return match?.[1] ?? null
+  }
+
+  const grid = document.getElementById('playlist-grid')!
+  const infoById = new Map<string, PlaylistInfo>()
+
+  async function loadPlaylistInfo() {
+    if (playlists.length === 0) return
+    const ids = playlists.map((p) => p.url).join(',')
+    const res = await fetch(
+      `/api/spotify-playlists?ids=${encodeURIComponent(ids)}`,
+    )
+    if (!res.ok) return
+    const { playlists: info } = (await res.json()) as {
+      playlists: PlaylistInfo[]
+    }
+    info.forEach((p) => infoById.set(p.id, p))
+
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>('.playlist-card'),
+    )
+    cards.forEach((card) => {
+      const id = card.dataset.url ? extractPlaylistId(card.dataset.url) : null
+      const match = id ? infoById.get(id) : undefined
+      if (!match) return
+
+      const nameEl = card.querySelector<HTMLElement>('.name-slot')!
+      const countEl = card.querySelector<HTMLElement>('.count-slot')!
+      const coverEl = card.querySelector<HTMLElement>('.cover-slot')!
+
+      nameEl.textContent = match.name
+      countEl.textContent = `${match.trackCount} track${match.trackCount === 1 ? '' : 's'}`
+      if (match.image) {
+        coverEl.style.backgroundImage = `url(${match.image})`
+        coverEl.style.backgroundSize = 'cover'
+      }
+    })
+
+    cards
+      .sort((a, b) => {
+        const aId = extractPlaylistId(a.dataset.url ?? '')
+        const bId = extractPlaylistId(b.dataset.url ?? '')
+        const aName = (aId && infoById.get(aId)?.name) || ''
+        const bName = (bId && infoById.get(bId)?.name) || ''
+        return aName.localeCompare(bName)
+      })
+      .forEach((card) => grid.appendChild(card))
+  }
+
+  const dialog = document.getElementById('tracks-dialog') as HTMLDialogElement
+  const dialogCover = document.getElementById('dialog-cover')!
+  const dialogName = document.getElementById('dialog-name')!
+  const dialogLink = document.getElementById(
+    'dialog-spotify-link',
+  ) as HTMLAnchorElement
+  const dialogTracks = document.getElementById('dialog-tracks')!
+
+  const trackCache = new Map<string, Promise<Track[]>>()
+
+  function fetchTracks(id: string): Promise<Track[]> {
+    let p = trackCache.get(id)
+    if (!p) {
+      p = fetch(`/api/spotify-playlist-tracks?id=${id}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((data: { tracks: Track[] }) => data.tracks)
+      p.catch((err) => {
+        console.error('failed to load tracks for', id, err)
+        trackCache.delete(id)
+      })
+      trackCache.set(id, p)
+    }
+    return p
+  }
+
+  function loadingItem(text: string): HTMLLIElement {
+    const li = document.createElement('li')
+    li.className = 'text-muted-foreground'
+    li.textContent = text
+    return li
+  }
+
+  function trackItem(t: Track): HTMLLIElement {
+    const li = document.createElement('li')
+    li.className = 'border-b border-border py-1.5 last:border-0'
+    const name = document.createElement('div')
+    name.className = 'truncate text-foreground'
+    name.textContent = t.name
+    const artists = document.createElement('div')
+    artists.className = 'truncate text-xs text-muted-foreground'
+    artists.textContent = t.artists
+    li.append(name, artists)
+    return li
+  }
+
+  async function openDialog(url: string) {
+    const id = extractPlaylistId(url)
+    if (!id) return
+    const info = infoById.get(id)
+
+    dialogName.textContent = info?.name ?? 'Loading…'
+    dialogLink.href = url
+    dialogCover.style.backgroundImage = info?.image ? `url(${info.image})` : ''
+    dialogCover.style.backgroundSize = 'cover'
+    dialogTracks.replaceChildren(loadingItem('Loading…'))
+    dialog.showModal()
+
+    const tracks = await fetchTracks(id).catch(() => [] as Track[])
+    if (dialogLink.href !== url) return
+    dialogTracks.replaceChildren(
+      ...(tracks.length
+        ? tracks.map(trackItem)
+        : [loadingItem('Could not load tracks.')]),
+    )
+  }
+
+  grid.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(
+      '.open-dialog',
+    )
+    if (!btn) return
+    const card = btn.closest<HTMLElement>('.playlist-card')
+    if (card?.dataset.url) openDialog(card.dataset.url)
+  })
+
+  document
+    .getElementById('dialog-close')!
+    .addEventListener('click', () => dialog.close())
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close()
+  })
+
+  loadPlaylistInfo()
+</script>

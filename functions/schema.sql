@@ -23,3 +23,17 @@ CREATE INDEX IF NOT EXISTS idx_scores_top ON scores (score DESC, created_at ASC)
 -- Rate-limit count: recent submits per ip_hash. Without this every submit
 -- full-scans, making the limiter the cheapest thing to attack.
 CREATE INDEX IF NOT EXISTS idx_scores_rate ON scores (ip_hash, created_at);
+
+-- Shared sliding-window request log for the Spotify proxy endpoints
+-- (spotify-playlists, spotify-playlist-tracks). One row per request; old
+-- rows are pruned by the same statement that checks the window so the
+-- table can't grow unbounded between deploys.
+CREATE TABLE IF NOT EXISTS api_requests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  route TEXT NOT NULL,
+  ip_hash TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_api_requests_rate
+  ON api_requests (route, ip_hash, created_at);

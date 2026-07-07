@@ -19,12 +19,26 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   and the chop sound live in `public/games/weed-whacker/`.
 - **Cloudflare Pages Functions**: backend lives in `functions/` at the repo root
   (no adapter; file routing, e.g. `functions/api/scores.ts` → `/api/scores`).
-  The Weed Whacker leaderboard runs on D1 (`wrangler.toml` binds a production
-  and a preview database; schema in `functions/schema.sql`). Validation helpers
-  are shared with the sim from `packages/weed-whacker/src/leaderboard/`.
-  `functions/` is excluded from the root `tsconfig` and has its own; the root
-  `typecheck` script covers it (`tsc -p functions`), and root `test` runs its
-  Vitest suite.
+  One shared D1 database (`wrangler.toml` binds a production and a preview
+  instance; schema in `functions/schema.sql`) backs both the Weed Whacker
+  leaderboard (`scores` table) and a sliding-window rate limiter shared by the
+  Spotify playlist-tracker endpoints (`api_requests` table). Validation helpers
+  are shared with the sim from `packages/weed-whacker/src/leaderboard/`; the
+  Spotify token cache/fetch helpers live in `functions/api/_spotify.ts`, the
+  rate limiter in `functions/api/_rate-limit.ts` (underscore-prefixed files are
+  excluded from Pages Functions routing). `functions/` is excluded from the root
+  `tsconfig` and has its own; the root `typecheck` script covers it
+  (`tsc -p functions`), and root `test` runs its Vitest suite.
+- **`/labs/playlists`**: fetches live cover art, track counts, and tracklists
+  for the playlists in `src/data/playlists.json` from Spotify's
+  client-credentials API. Requires `SPOTIFY_CLIENT_ID`/`SPOTIFY_CLIENT_SECRET`
+  (production secrets via `wrangler pages secret put`; local dev via
+  `.dev.vars`, gitignored).
+- **`.claude/skills/`**: project-scoped Claude Code skills. `categorize-song`
+  matches a liked song against `src/data/playlists.json`, logging misses to
+  `docs/music/unsorted-songs.md`. `album-cover` generates a topographic-gradient
+  cover image + SAT-word title for a playlist (builds on the global
+  `generate-image` skill in `~/.claude/skills/`).
 
 ## Theme
 
@@ -81,6 +95,8 @@ colors there, not inline.
 
 ## Related
 
+- **PR #16**: Add the playlist tracker (D1-rate-limited Spotify proxy +
+  /labs/playlists), the categorize-song and album-cover skills, and a blog post.
 - **PR #15**: Add the global leaderboard (Cloudflare D1 + Pages Functions):
   token/score API, shared validation, /play submit UI, and a launch blog post
   (PR 3 of 3).

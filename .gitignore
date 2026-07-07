@@ -41,3 +41,6 @@ docs/side-quests/
 # Playwright MCP artifacts
 .playwright-mcp/
 /*.png
+
+# album-cover skill scratch output (staging area, not final storage)
+docs/music/covers/
