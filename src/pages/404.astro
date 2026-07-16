@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro'
+---
+
+<Base title="Not found · Hagen Fritz">
+  <section class="flex flex-col items-start gap-4 py-12">
+    <p class="text-sm uppercase tracking-wide text-muted-foreground">404</p>
+    <h1 class="text-4xl font-bold tracking-tight">This page doesn't exist.</h1>
+    <p class="max-w-[70ch] text-muted-foreground">
+      Maybe it moved, maybe the link had a typo, maybe it never existed at all.
+      Either way, there's nothing growing here.
+    </p>
+    <div class="mt-2 flex gap-3">
+      <a
+        href="/"
+        class="rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
+      >
+        Back home
+      </a>
+      <a
+        href="/blog"
+        class="rounded-md border border-border px-4 py-2 text-muted-foreground transition-colors hover:text-foreground"
+      >
+        Read the blog
+      </a>
+    </div>
+  </section>
+</Base>

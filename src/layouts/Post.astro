@@ -9,14 +9,22 @@ interface Props {
 const { post } = Astro.props
 const { title, date, tags } = post.data
 
+// Frontmatter dates parse as UTC midnight; format in UTC so the shown day
+// never shifts with the build machine's timezone.
 const fmt = date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: 'UTC',
 })
 ---
 
-<Base title={`${title} · Hagen Fritz`} description={post.data.summary}>
+<Base
+  title={`${title} · Hagen Fritz`}
+  description={post.data.summary}
+  ogType="article"
+  publishedDate={date}
+>
   <article>
     <header class="mb-8 space-y-3">
       <a href="/blog" class="text-sm text-muted-foreground hover:text-primary">
@@ -26,7 +34,7 @@ const fmt = date.toLocaleDateString('en-US', {
       <div
         class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
       >
-        <time>{fmt}</time>
+        <time datetime={date.toISOString().slice(0, 10)}>{fmt}</time>
         {
           tags.map((t) => (
             <span class="rounded bg-muted px-1.5 py-0.5 text-[11px]">{t}</span>
