@@ -6,6 +6,10 @@ export const API_BASE = 'https://api.spotify.com/v1'
 const TOKEN_CACHE_KEY = 'https://cache.internal/spotify-token'
 const TOKEN_CACHE_TTL_S = 55 * 60
 
+// A hung Spotify request should fail the caller's request, not pin it until
+// the Worker is killed. Timeouts surface as an AbortError -> generic 500.
+const FETCH_TIMEOUT_MS = 10_000
+
 async function fetchAndCacheToken(env: Env): Promise<string> {
   const creds = btoa(`${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`)
   const res = await fetch(TOKEN_URL, {
@@ -15,6 +19,7 @@ async function fetchAndCacheToken(env: Env): Promise<string> {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: 'grant_type=client_credentials',
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   })
   if (!res.ok) throw new Error(`token_${res.status}`)
   const data = await res.json<{ access_token?: string }>()
@@ -55,12 +60,16 @@ export async function spotifyFetch(env: Env, url: string): Promise<Response> {
   const token = await getAccessToken(env)
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   })
 
   if (res.status === 401) {
     await invalidateAccessToken()
     const freshToken = await fetchAndCacheToken(env)
-    return fetch(url, { headers: { Authorization: `Bearer ${freshToken}` } })
+    return fetch(url, {
+      headers: { Authorization: `Bearer ${freshToken}` },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    })
   }
 
   if (res.status === 429) {
