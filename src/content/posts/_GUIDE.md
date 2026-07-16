@@ -2,7 +2,7 @@
 
 This file starts with `_`, so the content loader's glob (`**/[^_]*.md` in
 `src/content.config.ts`) skips it. It is never loaded, never routed, never
-listed. Use it as scratch/notes too — any `_*.md` is ignored.
+listed. Use it as scratch/notes too; any `_*.md` is ignored.
 
 ## Make a new post
 
@@ -23,9 +23,9 @@ listed. Use it as scratch/notes too — any `_*.md` is ignored.
 3. Write the body in Markdown below the frontmatter.
 
 The schema lives in `src/content.config.ts`. A missing required field or wrong
-type fails `npm run check` and the build — that's the guardrail.
+type fails `npm run check` and the build; that's the guardrail.
 
-## Tags — they autopopulate, don't edit anything else
+## Tags: they autopopulate, don't edit anything else
 
 The blog index (`src/pages/blog/index.astro`) builds the filter buttons from the
 posts themselves: it collects every `tags` value across all posts, dedupes, and
@@ -40,21 +40,32 @@ So: just edit `tags:` in the post. Nothing else to change.
 
 ## draft
 
-`draft: true` hides a post everywhere — the index, the route, the homepage
+`draft: true` hides a post everywhere: the index, the route, the homepage
 "recent" list all filter with `!data.draft`. Use it to commit a WIP without
 publishing. Flip to `false` (or delete the line) to ship.
 
 ## Before you push
 
-- `npm run format` — rewraps prose to 80 cols (Prettier `proseWrap: always`) and
-  formats everything. CI fails if you skip it.
-- `npm run check` — runs `astro check`; catches frontmatter/schema errors.
-- `npm run build` — final sanity check; this is what Cloudflare runs.
+- `npm run format` · rewraps prose to 80 cols (Prettier `proseWrap: always`) and
+  formats everything. CI fails if you skip it. Note: this directory is in
+  `.prettierignore` (embedded HTML/JS would get mangled), so wrap post prose by
+  hand.
+- `npm run check` · runs `astro check`; catches frontmatter/schema errors.
+- `npm run build` · final sanity check; this is what Cloudflare runs.
+- `npm run lint:prose` · runs Vale on `src/content`; catches em dashes and
+  repeated words. CI runs it too.
 - Spelling: CI runs codespell on `src/content`. Proper nouns are usually fine;
   real-word typos get caught.
 
-`main` is branch-protected — open a PR, let CI pass, merge. Cloudflare
+`main` is branch-protected: open a PR, let CI pass, merge. Cloudflare
 auto-deploys on merge and builds a preview per PR.
+
+## HTML in posts
+
+Raw HTML is fine in post bodies. Before reaching for inline style attributes,
+check the post HTML helper classes in `src/styles/global.css` (documented in
+`CLAUDE.md`): `figure-center`, `pixel-img`, `icon-rows`, `stat-bars`. No em
+dashes in prose; Vale will fail CI on them.
 
 ## Linking to a Lab tool
 
@@ -66,6 +77,6 @@ interactive companion (e.g. `/labs/pokemon-matcher`):
 2. Link it in the post body (a "Try it yourself" section works well).
 3. Add a card to `src/pages/lab.astro` (one entry in the `tools` array).
 4. Add `lab` to the post's `tags:`. This is the convention for "this post has a
-   Lab companion" — it surfaces the post under the `lab` filter on the blog
+   Lab companion"; it surfaces the post under the `lab` filter on the blog
    index. Note the tag is only a label; it does not auto-link to `/lab`. The
    real link is the one you add in step 2.

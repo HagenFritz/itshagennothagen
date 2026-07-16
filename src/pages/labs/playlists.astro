@@ -141,6 +141,7 @@ const playlists = playlistsData as Playlist[]
         coverEl.style.backgroundImage = `url(${match.image})`
         coverEl.style.backgroundSize = 'cover'
       }
+      card.dataset.loaded = 'true'
     })
 
     cards
@@ -152,6 +153,19 @@ const playlists = playlistsData as Playlist[]
         return aName.localeCompare(bName)
       })
       .forEach((card) => grid.appendChild(card))
+  }
+
+  // Any card the batch fetch didn't fill (endpoint down, playlist deleted or
+  // private) would otherwise sit on "Loading…" forever.
+  function markUnloaded() {
+    document
+      .querySelectorAll<HTMLElement>('.playlist-card:not([data-loaded])')
+      .forEach((card) => {
+        card.querySelector<HTMLElement>('.name-slot')!.textContent =
+          'Playlist unavailable'
+        card.querySelector<HTMLElement>('.count-slot')!.textContent =
+          'Could not load from Spotify'
+      })
   }
 
   const dialog = document.getElementById('tracks-dialog') as HTMLDialogElement
@@ -237,4 +251,6 @@ const playlists = playlistsData as Playlist[]
   })
 
   loadPlaylistInfo()
+    .catch((err) => console.error('failed to load playlists', err))
+    .finally(markUnloaded)
 </script>

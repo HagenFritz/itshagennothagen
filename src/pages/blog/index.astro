@@ -13,6 +13,7 @@ const fmt = (d: Date) =>
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'UTC',
   })
 ---
 
@@ -56,7 +57,10 @@ const fmt = (d: Date) =>
               <span class="font-medium group-hover:text-primary">
                 {post.data.title}
               </span>
-              <time class="shrink-0 text-xs text-muted-foreground">
+              <time
+                datetime={post.data.date.toISOString().slice(0, 10)}
+                class="shrink-0 text-xs text-muted-foreground"
+              >
                 {fmt(post.data.date)}
               </time>
             </div>

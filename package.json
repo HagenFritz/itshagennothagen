@@ -16,9 +16,11 @@
     "test": "npm test --workspaces --if-present && vitest run --config functions/vitest.config.ts functions",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint:prose": "node_modules/@vvago/vale/bin/vale src/content"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/inter": "^5.2.8",
     "@tailwindcss/vite": "^4.3.1",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@types/node": "^24.12.3",
+    "@vvago/vale": "^3.15.1",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^6.0.3",

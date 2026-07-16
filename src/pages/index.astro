@@ -64,7 +64,10 @@ const taglines = [
 
 <script is:inline define:vars={{ taglines }}>
   const el = document.getElementById('tagline')
-  if (el) {
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches
+  if (el && !reduceMotion) {
     let phrase = 0
     let char = 0
     let deleting = false
