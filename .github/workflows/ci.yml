@@ -31,6 +31,9 @@ jobs:
       - name: Tests
         run: npm test
 
+      - name: Prose lint
+        run: npm run lint:prose
+
       - name: Build
         run: npm run build
 
