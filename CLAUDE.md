@@ -74,12 +74,33 @@ colors there, not inline.
   rewraps it. This keeps line-level git diffs clean (a one-word edit touches one
   line, not the whole paragraph). Note: Prettier reflows multi-line paragraphs
   but won't split a lone unbroken line, so don't hand-author single-line
-  paragraphs.
+  paragraphs. Exception: `src/content/posts/` is in `.prettierignore` (embedded
+  HTML/JS in posts would get mangled), so blog post prose is NOT rewrapped; wrap
+  it by hand.
 
 ## Writing style
 
 - Do not use em dashes (—) anywhere, in prose or code comments. Rewrite with a
-  period, comma, colon, or parentheses instead.
+  period, comma, colon, or parentheses instead. For label-description pairs
+  (schedule lines, command lists), use a middle dot (·). Vale enforces this on
+  `src/content` (`npm run lint:prose`, also in CI).
+
+## Post HTML helpers
+
+Reusable classes for hand-authored HTML inside blog posts, defined in the "Post
+HTML helpers" section of `src/styles/global.css`. Use these instead of inline
+style attributes:
+
+- `figure-center`: centered figure; add `pixel-img` on the img for sprites.
+- `icon-rows` > `row` > `key` (`emoji` + `name`) + `desc`: emoji-keyed
+  label-description rows (see pokemon-matcher.md).
+- `stat-bars` > `row` > `label` + `bar` > `fill` (inline `width: N%`) + `val`
+  (add `max` to bold the top stat): horizontal bar chart.
+
+When a second post needs a pattern that exists inline somewhere, extract it here
+first. Good future candidates: pull quote, side-by-side image pair, big-number
+callout. Keep true one-off widget styles (like the trip route map canvas) scoped
+inline in their post.
 
 ## Writing about Hagen — accuracy notes
 
