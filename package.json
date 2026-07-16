@@ -17,7 +17,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:prose": "vale src/content"
+    "lint:prose": "node_modules/@vvago/vale/bin/vale src/content"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
