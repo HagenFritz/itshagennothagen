@@ -5,68 +5,60 @@ summary: A PowerPoint-night project that grew into something more. I mapped my v
 tags: [pokemon, python, lab]
 ---
 
-This idea came to me when I brainstorming for a PowerPoint night I was having with friends. I wanted to fuse three things about me: my research-y / quantitative side, Pokemon knowledge, and programming skills. The result was a script that takes a person's volleyball stat breakdown and tells
-them which Pokémon they are.
+I wrote a script that takes a person's volleyball stat breakdown and tells them
+which Pokémon they are. The idea came to me while brainstorming for a PowerPoint
+night I was having with friends. I wanted to fuse three things about me: my
+research-y / quantitative side, Pokemon knowledge, and programming skills.
 
 ## The stat to skill mapping
 
 Pokémon have six base stats: HP, Attack, Defense, Special Atk, Special Def, and
 Speed. I mapped each of these stats to different beach volleyball dimensions:
 
-<div style="margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.75rem;">
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">🩺</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">HP</span>
+<div class="icon-rows">
+  <div class="row">
+    <div class="key">
+      <span class="emoji">🩺</span>
+      <span class="name">HP</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
+    <div class="desc">
       Sustained energy during a rally<br />Ability to play many games
     </div>
   </div>
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">🗡️</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">ATK</span>
+  <div class="row">
+    <div class="key">
+      <span class="emoji">🗡️</span>
+      <span class="name">ATK</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
-      Serve pressure<br />Hitting with power
-    </div>
+    <div class="desc">Serve pressure<br />Hitting with power</div>
   </div>
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">🛡️</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">DEF</span>
+  <div class="row">
+    <div class="key">
+      <span class="emoji">🛡️</span>
+      <span class="name">DEF</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
-      Digging ability<br />Blocking; pressing and hands
-    </div>
+    <div class="desc">Digging ability<br />Blocking; pressing and hands</div>
   </div>
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">🪄</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">SPA</span>
+  <div class="row">
+    <div class="key">
+      <span class="emoji">🪄</span>
+      <span class="name">SPA</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
-      Cutting/shooting<br />Pokies/cobras<br />Tooling
-    </div>
+    <div class="desc">Cutting/shooting<br />Pokies/cobras<br />Tooling</div>
   </div>
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">🧿</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">SPD</span>
+  <div class="row">
+    <div class="key">
+      <span class="emoji">🧿</span>
+      <span class="name">SPD</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
-      Running down shots<br />Setting
-    </div>
+    <div class="desc">Running down shots<br />Setting</div>
   </div>
-  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
-    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 7rem;">
-      <span style="font-size: 1.5rem;">💨</span>
-      <span style="font-weight: 600; letter-spacing: 0.05em;">SPE</span>
+  <div class="row">
+    <div class="key">
+      <span class="emoji">💨</span>
+      <span class="name">SPE</span>
     </div>
-    <div style="flex: 1; min-width: 14rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--card); padding: 0.6rem 0.9rem; line-height: 1.5;">
-      Speed<br />Strategy
-    </div>
+    <div class="desc">Speed<br />Strategy</div>
   </div>
 </div>
 
@@ -101,42 +93,42 @@ and ignores their length entirely. Two stat breakdowns point the same direction 
 they emphasize the same things in the same proportions, regardless of how big the
 underlying numbers are.
 
-This process lead to some interesting (and surprising) results.
+This process led to some interesting (and surprising) results.
 
 ## A worked example
 
 Take one of my teammates. Let's call him Devin. He's a great defender, both digging hard-driven hits and chasing down cut/line shots. For that reason, I rated his defense and special defense the highest. If he is good at running shots down, his speed is also naturally high. So I rated his kit the following way:
 
-<div style="margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.5rem; max-width: 32rem;">
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">HP</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 65%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums;">65</span>
+<div class="stat-bars">
+  <div class="row">
+    <span class="label">HP</span>
+    <div class="bar"><div class="fill" style="width: 65%"></div></div>
+    <span class="val">65</span>
   </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">ATK</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 50%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums;">50</span>
+  <div class="row">
+    <span class="label">ATK</span>
+    <div class="bar"><div class="fill" style="width: 50%"></div></div>
+    <span class="val">50</span>
   </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">DEF</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 100%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;">100</span>
+  <div class="row">
+    <span class="label">DEF</span>
+    <div class="bar"><div class="fill" style="width: 100%"></div></div>
+    <span class="val max">100</span>
   </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">SPA</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 60%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums;">60</span>
+  <div class="row">
+    <span class="label">SPA</span>
+    <div class="bar"><div class="fill" style="width: 60%"></div></div>
+    <span class="val">60</span>
   </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">SPD</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 80%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums;">80</span>
+  <div class="row">
+    <span class="label">SPD</span>
+    <div class="bar"><div class="fill" style="width: 80%"></div></div>
+    <span class="val">80</span>
   </div>
-  <div style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="width: 3rem; font-weight: 600; letter-spacing: 0.05em; color: var(--muted-foreground);">SPE</span>
-    <div style="flex: 1; height: 1.4rem; background: var(--muted); border-radius: 0.4rem; overflow: hidden;"><div style="width: 65%; height: 100%; background: var(--primary);"></div></div>
-    <span style="width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums;">65</span>
+  <div class="row">
+    <span class="label">SPE</span>
+    <div class="bar"><div class="fill" style="width: 65%"></div></div>
+    <span class="val">65</span>
   </div>
 </div>
 
@@ -154,13 +146,13 @@ Feed that into the script and the top match comes back at **0.9935** similarity 
 
 > Suicune. A divine, graceful Pokémon said to embody the compassion of a pure spring and the north wind. It races across the world purifying fouled water wherever it appears.
 
-<figure style="margin: 1.5rem 0; display: flex; justify-content: center;">
+<figure class="figure-center">
   <img
     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/245.gif"
     alt="Animated Suicune sprite"
     width="120"
     loading="lazy"
-    style="image-rendering: pixelated; height: auto;"
+    class="pixel-img"
   />
 </figure>
 
@@ -175,13 +167,13 @@ A popular, strong legendary Pokemon! Nice! However... the next best match was:
 
 > Burmy. To shelter itself from cold, wintry winds, it covers itself with a cloak made of twigs and leaves.
 
-<figure style="margin: 1.5rem 0; display: flex; justify-content: center;">
+<figure class="figure-center">
   <img
     src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/412.gif"
     alt="Animated Burmy sprite"
     width="80"
     loading="lazy"
-    style="image-rendering: pixelated; height: auto;"
+    class="pixel-img"
   />
 </figure>
 
@@ -196,7 +188,7 @@ length. On the right, are the same three breakdowns drawn as _ratios_ on stat ax
 hexagons land almost on top of each other.
 
 <figure style="margin: 1.75rem 0;">
-  <svg viewBox="0 0 660 320" role="img" aria-label="Left: three vectors of very different lengths but nearly the same direction — Suicune, Devin, and Burmy. Right: a radar chart overlaying all three normalized stat lines as nearly identical hexagons." style="width: 100%; height: auto; max-width: 660px;">
+  <svg viewBox="0 0 660 320" role="img" aria-label="Left: three vectors of very different lengths but nearly the same direction (Suicune, Devin, and Burmy). Right: a radar chart overlaying all three normalized stat lines as nearly identical hexagons." style="width: 100%; height: auto; max-width: 660px;">
     <!-- ── Left panel: three vectors ── -->
     <g transform="translate(20,0)">
       <text x="125" y="22" text-anchor="middle" fill="var(--muted-foreground)" font-size="13" font-weight="600" letter-spacing="0.05em">SAME DIRECTION, ANY LENGTH</text>
@@ -248,3 +240,6 @@ Claude and I ported the matcher from Python to JS to run right in the browser. D
 stats and see which Pokémon matches your beach volleyball stat shape:
 
 **[Pokemon Stat Matcher](/labs/pokemon-matcher)**
+
+And if you land on a Burmy, remember: somewhere out there is a Suicune with the
+exact same shape.

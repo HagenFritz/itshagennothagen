@@ -1,15 +1,15 @@
 ---
 title: 'Weed Whacker: A Tiny Pixel-Art Game'
 date: 2026-07-05
-summary: 'A small, simple pixel-art game I started building. A tiny first cut of a bigger idea.'
+summary: 'Clear weeds, earn cash, buy land. One minute on the clock. The first playable cut of a pixel-art game I want to grow.'
 tags: [game, lab]
 ---
 
-I have wanted to build a pixel-art game for a while. Not a big one, just
-something small and simple to get started on. Now with AI's help, creating
-something from an idea is more plausible than ever. Weed Whacker is my first
-cut: a game where you clear weeds, earn a little cash, and buy more land to grow
-on.
+Weed Whacker is a game where you clear weeds, earn a little cash, and buy more
+land to grow on. I have wanted to build a pixel-art game for a while. Not a big
+one, just something small and simple to get started on. Now with AI's help,
+creating something from an idea is more plausible than ever, and this is my
+first cut.
 
 The version here is just a taste. It is a one-minute run so scores stay
 comparable on the leaderboard. This is a slice of something bigger. The plan (if

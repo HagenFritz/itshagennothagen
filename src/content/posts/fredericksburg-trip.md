@@ -9,22 +9,22 @@ My friend and I have been more conscious about taking trips for each other's bir
 
 ## Thursday, June 25
 
-**12:00 PM to 2:00 PM** — HEB run, last-minute packing additions, pack up the car (his)
+**12:00 PM to 2:00 PM** · HEB run, last-minute packing additions, pack up the car (his)
 
-**2:00 PM** — Drive out to Fredericksburg
+**2:00 PM** · Drive out to Fredericksburg
 
-**4:00 PM** — Check in, unpack, and check out the Airbnb.
+**4:00 PM** · Check in, unpack, and check out the Airbnb.
 
-**6:00 PM** — Cook and eat dinner at the Airbnb.
+**6:00 PM** · Cook and eat dinner at the Airbnb.
 
-**8:00 PM** — Head to **Cultures Grill & Bar** (318 E Main St). US game kicks off
+**8:00 PM** · Head to **Cultures Grill & Bar** (318 E Main St). US game kicks off
 at 9:00 PM.
 
-**11:00 PM** — Back to the Airbnb.
+**11:00 PM** · Back to the Airbnb.
 
 ## Friday, June 26
 
-**~8:30 AM** — Drive to Enchanted Rock State Natural Area (~20 minutes from
+**~8:30 AM** · Drive to Enchanted Rock State Natural Area (~20 minutes from
 Fredericksburg).
 
 > [!NOTE]
@@ -174,24 +174,24 @@ country with a river to follow and some exposed granite.
 </script>
 </div>
 
-**~12:30 PM** — Back at the Airbnb. Shower, get ready.
+**~12:30 PM** · Back at the Airbnb. Shower, get ready.
 
-**~1:30 PM** — Head to **West End Pizza Co.** (207 E San Antonio St) for the
+**~1:30 PM** · Head to **West End Pizza Co.** (207 E San Antonio St) for the
 France game at 2:00 PM.
 
-**~4:00 PM** — After the game, walk around downtown Fredericksburg for a couple
+**~4:00 PM** · After the game, walk around downtown Fredericksburg for a couple
 hours. No particular agenda, just meander up and down Main Street and duck into
 whatever looks interesting.
 
-**~6:00 PM** — Back to the Airbnb. Cook dinner, hot tub.
+**~6:00 PM** · Back to the Airbnb. Cook dinner, hot tub.
 
 ## Saturday, June 27
 
-**Morning** — Slow morning, same as Friday.
+**Morning** · Slow morning, same as Friday.
 
-**9:45 AM** — Head to the shuttle pickup.
+**9:45 AM** · Head to the shuttle pickup.
 
-**10:00 AM to 6:00 PM** — 290 Wine Shuttle, departing from 308 S Washington St
+**10:00 AM to 6:00 PM** · 290 Wine Shuttle, departing from 308 S Washington St
 (upper parking lot, Inn on Barons Creek).
 
 | Time | Stop | Food | Why |
@@ -202,9 +202,9 @@ whatever looks interesting.
 | ~2:30 PM | Longhorn Cellars (315 RR 1376) | Wine-paired tapas | Cozy barn; Bordeaux blend (Cab/Merlot/Petit Verdot); pet-friendly patio |
 | ~4:00 PM | Becker Vineyards (464 Becker Farms Rd, Stonewall) | Picnic grounds | Bordeaux/Rhone style; solid Cab Sauv; big but not rowdy |
 
-**6:00 PM** — Shuttle ends.
+**6:00 PM** · Shuttle ends.
 
-**6:30 PM** — Portugal game.
+**6:30 PM** · Portugal game.
 
 - **Option A:** HEB pre-made meals (not sure I want to cook after a full day of wine tasting). Watch from the Airbnb.
 - **Option B:** **Sozial Haus** (107 S Llano St). Relaxed bar, large TVs, full
@@ -212,7 +212,7 @@ whatever looks interesting.
 
 ## Sunday, June 28
 
-**Morning** — Slow morning. Coffee, games, pack up. Depart when ready.
+**Morning** · Slow morning. Coffee, games, pack up. Depart when ready.
 
 ## Game Quick Reference
 

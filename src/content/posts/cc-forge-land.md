@@ -1,7 +1,7 @@
 ---
 title: 'Landing a PR With One Command'
 date: 2026-06-23
-summary: 'A look at /land, the cc-forge skill that takes an open PR from "ready" to merged-and-synced in one command.'
+summary: '/land takes an open PR from "ready" to merged-and-synced in one command. A breakdown of how the cc-forge skill works.'
 tags: [claude-code, tooling]
 ---
 
@@ -20,7 +20,7 @@ In brief, here is what happens when you run `/land`:
 1. **Stamp provenance**: It adds an entry to the relevant `CLAUDE.md` with the PR link and a summary. This builds a running record of why a directory looks the way it does and helps actually implement the _compound_ part that `cc-forge` was inspired by.
 2. **Verify**: It runs any tests mentioned in the PR and watches GitHub Actions (`gh pr checks --watch`).
 3. **Fix**: If CI fails, the agent diagnoses the issue, proposes a fix, and commits it. (This loops up to three times, but always asks for your confirmation before pushing).
-4. **Merge**: Once green, it squash-merges the PR and deletes and remote branch.
+4. **Merge**: Once green, it squash-merges the PR and deletes the remote branch.
 5. **Sync**: It checks out `main`, pulls the latest, and then deletes the local PR branch.
 
 ## Automating the Predictable

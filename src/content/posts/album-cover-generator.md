@@ -7,10 +7,11 @@ summary:
 tags: [claude-code, music, lab]
 ---
 
-I wanted to organize my Spotify liked songs into mood/genre based playlists. A colleague of mine does
-something similar with his own music: dedicated albums for specific genres,
-each with a unifying visual theme. I wanted that for mine too, so I built a
-Claude Code skill that generates a cover for each playlist.
+I built a Claude Code skill that generates an album cover for each of my
+Spotify playlists. It started when I was organizing my liked songs into
+mood/genre based playlists. A colleague of mine does something similar with his
+own music: dedicated albums for specific genres, each with a unifying visual
+theme. I wanted that for mine too.
 
 ## The template
 
@@ -49,16 +50,18 @@ wanted grouped together, no genre in mind yet. The MIR questions landed on
 tech house, the skill picked "Propulsive" as the word, and the cover came
 back in sharp red ridgelines, matching the energy.
 
-<figure style="margin: 1.5rem 0; display: flex; justify-content: center;">
+<figure class="figure-center">
   <img
     src="/blog/album-cover-propulsive.png"
     alt="Propulsive album cover: sharp red topographic contour lines on a near-black background"
     width="320"
     loading="lazy"
-    style="border-radius: 0.5rem; height: auto;"
   />
 </figure>
 
 ## See the playlists
+
+The playlists these covers belong to are all on my tracker, with art and track
+counts pulled live from Spotify. More covers show up there as I sort more songs.
 
 **[Playlist Tracker](/labs/playlists)**

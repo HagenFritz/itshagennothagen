@@ -1,30 +1,33 @@
 ---
 title: 'cc-forge: My Workflow Toolkit for Claude Code'
 date: 2026-06-20
-summary: 'My GitHub workflows and a plugin I stumbled upon became cc-forge: a collection of skills and subagents I use in Claude Code that you can cherry-pick from.'
+summary: 'cc-forge is the collection of Claude Code skills and subagents I actually build with. It started as a few GitHub shortcuts and grew into a workflow you can cherry-pick from.'
 tags: [claude-code, tooling]
 ---
 
-Claude Code has become a real part of how I build, and I wanted to start shaping
-it to fit the way I work rather than reaching for defaults or repeating the same things over and over. So I
-began writing my own skills, starting with the GitHub steps I ran on nearly every
-task. That first set grew into a small collection, which I gathered into one
-place: [cc-forge](https://github.com/HagenFritz/cc-forge).
+[cc-forge](https://github.com/HagenFritz/cc-forge) is my collection of Claude
+Code skills and subagents, the ones I actually build with, gathered into one
+place you can cherry-pick from. Claude Code has become a real part of how I
+build, and I wanted to start shaping it to fit the way I work rather than
+reaching for defaults or repeating the same things over and over. So I began
+writing my own skills, starting with the GitHub steps I ran on nearly every
+task, and that first set grew into cc-forge.
 
 ## It started with my GitHub flow
 
 The first skills I wrote were for the steps I run on nearly every task: open an
-issue, cut a branch from that issue, do the work, open a PR. I had
-opinions about each of those — how issues should be templated, how branches
-should be named, what a PR description should contain — and writing skills let me
-bake those opinions in once instead of re-typing them every time.
+issue, cut a branch from that issue, do the work, open a PR. I had opinions
+about each of those (how issues should be templated, how branches should be
+named, what a PR description should contain) and writing skills let me bake
+those opinions in once instead of re-typing them every time.
 
 So the starting point for cc-forge was this flow:
 
-- `/issue-from-context` — turn whatever we just discussed into a tracked issue,
+- `/issue-from-context` · turn whatever we just discussed into a tracked issue,
   using my template.
-- `/branch-from-context` — cut a branch straight from an issue either from context or by providing the issue number.
-- `/ship` — open the PR with my structure already filled in.
+- `/branch-from-context` · cut a branch straight from an issue either from
+  context or by providing the issue number.
+- `/ship` · open the PR with my structure already filled in.
 
 That was the whole project at first: my common GitHub steps, with my templates,
 one skill each.
@@ -64,7 +67,7 @@ carries into the next change. The literal _compounding_ part of "compound
 engineering"...
 
 However, some of this is genuine hesitation. `/compound`
-writes solution docs that later get retrieved and trusted by `/plan`. That could be a doubled-edged sword. I'm still learning a lot, and I'm not confident every fix implemented is actually right. Bad knowledge compounds exactly like good knowledge. On top of that, our codebase moves fast. A solution
+writes solution docs that later get retrieved and trusted by `/plan`. That could be a double-edged sword. I'm still learning a lot, and I'm not confident every fix implemented is actually right. Bad knowledge compounds exactly like good knowledge. On top of that, our codebase moves fast. A solution
 that's correct today can quietly go stale. The idea of the tool
 faithfully retaining something wrong, then building on it, is enough to make me
 hold off until I trust my own judgment more. 
