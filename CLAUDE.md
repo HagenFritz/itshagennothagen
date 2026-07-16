@@ -5,7 +5,9 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
 
 ## Stack
 
-- **Astro** (static output) — pages in `src/pages/`, file-based routing.
+- **Astro** (static output) — pages in `src/pages/`, file-based routing. Custom
+  404 page (`src/pages/404.astro`), RSS feed (`src/pages/rss.xml.ts` →
+  `/rss.xml`), security headers in `public/_headers`.
 - **Tailwind v4** via the Vite plugin (`@tailwindcss/vite`). No
   `tailwind.config`; theme tokens live in `src/styles/global.css`.
 - **Inter** (self-hosted via `@fontsource-variable/inter`).
@@ -53,10 +55,11 @@ colors there, not inline.
   must pass CI (`Build & checks` + `Spell check`).
 - CI runs prettier check, `astro check`, typecheck (`npm run typecheck`, covers
   workspaces plus `functions/`), tests (`npm test`, workspaces plus the
-  `functions/` Vitest suite), build, and codespell on `src/content`.
+  `functions/` Vitest suite), prose lint (`npm run lint:prose`, Vale on
+  `src/content`), build, and codespell on `src/content`.
 - Cloudflare auto-deploys `main` on merge and builds per-PR previews.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
-  `npm run format`.
+  `npm run format`, `npm run lint:prose`.
 - Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`,
   so the leaderboard shows "unavailable" on port 4321. Use `npm run dev` for
   everything except the leaderboard; use `npm run dev:api` (builds, applies the
@@ -116,6 +119,9 @@ inline in their post.
 
 ## Related
 
+- **PR #17**: Harden the site (404 page, RSS feed, security headers, Spotify
+  timeouts, UTC dates), add Vale prose linting to CI, and run a writing pass
+  with shared post HTML helpers.
 - **PR #16**: Add the playlist tracker (D1-rate-limited Spotify proxy +
   /labs/playlists), the categorize-song and album-cover skills, and a blog post.
 - **PR #15**: Add the global leaderboard (Cloudflare D1 + Pages Functions):
