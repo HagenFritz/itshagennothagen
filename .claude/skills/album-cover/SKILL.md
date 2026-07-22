@@ -50,11 +50,34 @@ so progress is visible instead of implicit.
 
 ## Step 2 — SAT word
 
-- **Given a word:** use it, mark this task completed, move on.
+First, gather the words already in use so you never propose a duplicate. The
+names live on Spotify, not in the repo, so resolve them from the playlist IDs in
+`src/data/playlists.json` (creds in `.dev.vars`):
+
+```
+set -a; . ./.dev.vars; set +a
+TOKEN=$(curl -s -X POST https://accounts.spotify.com/api/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials&client_id=$SPOTIFY_CLIENT_ID&client_secret=$SPOTIFY_CLIENT_SECRET" \
+  | jq -r '.access_token // empty')
+
+jq -r '.[].url' src/data/playlists.json | sed 's#.*/playlist/##' | while read -r id; do
+  curl -s "https://api.spotify.com/v1/playlists/$id?fields=name" \
+    -H "Authorization: Bearer $TOKEN" | jq -r '.name // empty'
+done
+```
+
+Also list `docs/music/covers/*.png` — a cover may exist for a word whose
+playlist isn't tracked yet. Treat the union of both as taken. If the API call
+fails (missing `.dev.vars`, network), fall back to the covers directory alone
+and say so rather than skipping the check silently.
+
+- **Given a word:** use it even if it collides, but say so plainly first.
 - **Otherwise:** pick a SAT-level word that precisely captures the sonic and
-  emotional character of the genre. Use AskUserQuestion to confirm it — option 1
-  is your word with its definition and a 2-3 sentence rationale in the
-  description field, option 2 is "Other" for his own word.
+  emotional character of the genre, excluding every taken word. Use
+  AskUserQuestion to confirm it — option 1 is your word with its definition and
+  a 2-3 sentence rationale in the description field, option 2 is "Other" for his
+  own word. Alternates you offer must be unused too.
 
 ## Step 3 — Color reasoning
 
