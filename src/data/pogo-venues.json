@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Doxa Coffee Roasters",
+    "kind": "cafe",
+    "lat": 30.22963,
+    "lon": -97.832117,
+    "notes": "Coffee roaster on Monterey Oaks. Sits inside the Austin Oaks Church gym cluster.",
+    "area": "Austin Oaks"
+  },
+  {
+    "name": "Panera Bread",
+    "kind": "bakery",
+    "lat": 30.270336,
+    "lon": -97.789745,
+    "notes": "Nearly even drive for both of us. Trader Joe's mural gym is right outside; two more in Treemont within a short walk.",
+    "area": "Treemont"
+  },
+  {
+    "name": "Kerbey Lane Cafe - Southwest",
+    "kind": "diner",
+    "lat": 30.2226011,
+    "lon": -97.8413817,
+    "notes": "Its own sign is a gym. Arbor Trails gyms are a short walk south.",
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "Kerbey Lane Cafe - South",
+    "kind": "diner",
+    "lat": 30.2423413,
+    "lon": -97.7833464,
+    "notes": "Wholly Cow gym sits right at the 80m edge - may need the right table.",
+    "area": "South Lamar"
+  },
+  {
+    "name": "Kerbey Lane Cafe - Westlake",
+    "kind": "diner",
+    "lat": 30.2922167,
+    "lon": -97.8272948,
+    "notes": "P. Terry's gym is 147m away, just out of range.",
+    "area": "Westlake"
+  },
+  {
+    "name": "la Madeleine (Sunset Valley)",
+    "kind": "bakery",
+    "lat": 30.2296709,
+    "lon": -97.8196598,
+    "notes": "French bakery-cafe. Brodie Tower is 91m away, just outside range; the three-gym Sunset Valley cluster is a 250m walk north.",
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Tacodeli (Slaughter)",
+    "kind": "tacos",
+    "lat": 30.2005834,
+    "lon": -97.8689826,
+    "notes": "Breakfast tacos. Same center as Summer Moon, ~75m apart.",
+    "area": "Slaughter"
+  },
+  {
+    "name": "Summer Moon Coffee (Slaughter)",
+    "kind": "cafe",
+    "lat": 30.2004436,
+    "lon": -97.8698217,
+    "notes": "Same center as Tacodeli.",
+    "area": "Slaughter"
+  },
+  {
+    "name": "Phoebe's Diner - Shady Hollow",
+    "kind": "diner",
+    "lat": 30.1849509,
+    "lon": -97.8473161,
+    "notes": "Diner in Shady Hollow. Closest venue to your friend so far.",
+    "area": "Shady Hollow"
+  },
+  {
+    "name": "Phoebe's Diner - Oltorf",
+    "kind": "diner",
+    "lat": 30.2415242,
+    "lon": -97.7592948,
+    "notes": "Second Phoebe's location, east side.",
+    "area": "Oltorf"
+  },
+  {
+    "name": "Magnolia Cafe (Oltorf)",
+    "kind": "diner",
+    "lat": 30.2444565,
+    "lon": -97.7519537,
+    "notes": "Austin diner institution, breakfast all day.",
+    "area": "Bouldin Creek"
+  },
+  {
+    "name": "Dish Society (South Congress)",
+    "kind": "breakfast",
+    "lat": 30.2488772,
+    "lon": -97.755692,
+    "notes": "Farm-to-table breakfast.",
+    "area": "Bouldin Creek"
+  },
+  {
+    "name": "Snooze, an A.M. Eatery (Arbor Trails)",
+    "kind": "breakfast",
+    "lat": 30.2219782,
+    "lon": -97.8398043,
+    "notes": "Breakfast-focused. Sits inside the Arbor Trails gym cluster.",
+    "area": "Arbor Trails"
+  }
+]
