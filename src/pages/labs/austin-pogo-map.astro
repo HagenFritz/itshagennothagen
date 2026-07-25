@@ -1,0 +1,741 @@
+---
+import Base from '../../layouts/Base.astro'
+import gymsData from '../../data/pogo-gyms.json'
+import venuesData from '../../data/pogo-venues.json'
+
+type Gym = { name: string; lat: number; lon: number; area?: string }
+type Venue = {
+  name: string
+  kind: string
+  lat: number
+  lon: number
+  area?: string
+  notes?: string
+}
+
+const gyms = gymsData as Gym[]
+const venues = venuesData as Venue[]
+const areas = [...new Set(gyms.map((g) => g.area).filter(Boolean))]
+const venueAreas = [
+  ...new Set(venues.map((v) => v.area).filter(Boolean)),
+].sort()
+const kinds = [...new Set(venues.map((v) => v.kind))].sort()
+---
+
+<Base title="Austin Pokémon GO Map · Hagen Fritz">
+  <h1 class="text-3xl font-semibold tracking-tight">Austin Pokémon GO Map</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Breakfast spots scored by how many gyms sit inside the 80m raid radius. <a
+      href="/blog/austin-pogo-map"
+      class="text-primary underline underline-offset-2">Why I built it</a
+    >.
+  </p>
+
+  <div class="mt-6 flex flex-wrap items-center gap-3">
+    <label class="flex items-center gap-2 text-sm text-muted-foreground">
+      Radius
+      <input
+        id="radius"
+        type="range"
+        min="40"
+        max="400"
+        step="10"
+        value="80"
+        class="accent-primary"
+      />
+      <span id="radius-val" class="font-mono tabular-nums text-foreground"
+        >80 m</span
+      >
+    </label>
+    <button
+      id="reset-view"
+      class="rounded border border-border px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
+      >Reset view</button
+    >
+  </div>
+
+  <div
+    class="relative mt-4 overflow-hidden rounded-lg border border-border bg-card"
+  >
+    <canvas id="map" width="1000" height="660" class="block w-full"></canvas>
+    <div class="absolute right-2 top-2 flex flex-col gap-1">
+      <button
+        id="zoom-in"
+        aria-label="Zoom in"
+        class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
+        >+</button
+      >
+      <button
+        id="zoom-out"
+        aria-label="Zoom out"
+        class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
+        >&minus;</button
+      >
+    </div>
+    <div
+      class="absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+    >
+      ©&nbsp;<a
+        href="https://www.openstreetmap.org/copyright"
+        class="underline underline-offset-2">OpenStreetMap</a
+      >
+    </div>
+  </div>
+
+  <div
+    class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+  >
+    <span class="flex items-center gap-1.5">
+      <span class="inline-block h-2.5 w-2.5 rounded-[2px] bg-forest"></span>
+      Venue, 2+ gyms
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="inline-block h-2.5 w-2.5 rounded-[2px] bg-primary"></span>
+      Venue
+    </span>
+    <span class="flex items-center gap-1.5">
+      <span class="inline-block h-2.5 w-2.5 rounded-full bg-navy-bright"></span>
+      Gym
+    </span>
+    <span>Hover a gym for its name · drag to pan</span>
+  </div>
+
+  <div class="mt-6 flex flex-wrap items-start gap-2">
+    {
+      [
+        {
+          group: 'coverage',
+          label: 'Gyms in range',
+          opts: [
+            ['1', '1+ in range'],
+            ['2', '2+ in range'],
+            ['3', '3+ in range'],
+          ],
+        },
+        { group: 'kind', label: 'Type', opts: kinds.map((k) => [k, k]) },
+        {
+          group: 'area',
+          label: 'Area',
+          opts: venueAreas.map((a) => [a, a]),
+        },
+      ].map(({ group, label, opts }) => (
+        <details class="filter-menu" data-group={group}>
+          <summary class="filter-trigger">
+            <span class="filter-label">{label}</span>
+            <span class="filter-count" hidden />
+            <svg
+              class="filter-caret"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path d="M3 4.5 6 7.5 9 4.5" stroke-linecap="round" />
+            </svg>
+          </summary>
+          <div class="filter-popover">
+            {opts.map(([val, text]) => (
+              <label class="filter-option">
+                <input type="checkbox" value={val} />
+                <span class="filter-check" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor">
+                    <path
+                      d="M2.5 6.2 4.8 8.5 9.5 3.8"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                {text}
+              </label>
+            ))}
+            <button type="button" class="filter-clear">
+              Clear
+            </button>
+          </div>
+        </details>
+      ))
+    }
+    <button type="button" id="clear-all" class="filter-trigger" hidden
+      >Clear all</button
+    >
+  </div>
+
+  <details class="group mt-10" open>
+    <summary
+      class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight"
+    >
+      <span
+        class="text-muted-foreground transition-transform group-open:rotate-90"
+        >&rsaquo;</span
+      >
+      Places
+      <span
+        id="places-count"
+        class="text-base font-normal text-muted-foreground"
+        >({venues.length})</span
+      >
+    </summary>
+    <ul id="venue-list" class="mt-4 space-y-3">
+      {
+        venues.map((v) => (
+          <li
+            class="venue-card rounded-lg border border-border bg-card p-4"
+            data-lat={v.lat}
+            data-lon={v.lon}
+            data-name={v.name}
+            data-kind={v.kind}
+            data-area={v.area}
+          >
+            <div class="flex items-baseline justify-between gap-3">
+              <span class="flex flex-wrap items-baseline gap-x-2">
+                <span class="font-medium">{v.name}</span>
+                <span class="text-xs text-muted-foreground">
+                  {v.kind} · {v.area}
+                </span>
+              </span>
+              <div class="flex shrink-0 items-center gap-2">
+                <span class="score-slot rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground" />
+                <button
+                  type="button"
+                  class="locate-btn rounded border border-border p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  aria-label={`Show ${v.name} on the map`}
+                  title="Show on map"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  >
+                    <circle cx="10" cy="10" r="3.2" />
+                    <path d="M10 1.6v2.6M10 15.8v2.6M1.6 10h2.6M15.8 10h2.6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            {v.notes && (
+              <p class="mt-2 text-sm text-muted-foreground">{v.notes}</p>
+            )}
+            <ul class="nearby-slot mt-2 space-y-0.5 text-sm text-muted-foreground" />
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+
+  <details class="group mt-8">
+    <summary
+      class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight"
+    >
+      <span
+        class="text-muted-foreground transition-transform group-open:rotate-90"
+        >&rsaquo;</span
+      >
+      Gyms
+      <span class="text-base font-normal text-muted-foreground"
+        >({gyms.length})</span
+      >
+    </summary>
+    {
+      areas.map((area) => (
+        <div class="mt-4">
+          <h3 class="text-sm font-medium text-muted-foreground">{area}</h3>
+          <ul class="mt-1.5 space-y-1 text-sm">
+            {gyms
+              .filter((g) => g.area === area)
+              .map((g) => (
+                <li class="flex flex-wrap items-baseline gap-x-2">
+                  <span>{g.name}</span>
+                  <span class="font-mono text-xs text-muted-foreground tabular-nums">
+                    {g.lat.toFixed(5)}, {g.lon.toFixed(5)}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))
+    }
+  </details>
+</Base>
+
+<script>
+  import gymsData from '../../data/pogo-gyms.json'
+  import venuesData from '../../data/pogo-venues.json'
+
+  type Point = { name: string; lat: number; lon: number }
+  type VenuePoint = Point & { kind: string; area?: string }
+  const gyms = gymsData as Point[]
+  const venues = venuesData as VenuePoint[]
+
+  const TILE = 256
+  const canvas = document.getElementById('map') as HTMLCanvasElement
+  const ctx = canvas.getContext('2d')!
+  const radiusInput = document.getElementById('radius') as HTMLInputElement
+  const radiusVal = document.getElementById('radius-val')!
+
+  const bounds = {
+    minLat: Math.min(...[...gyms, ...venues].map((p) => p.lat)),
+    maxLat: Math.max(...[...gyms, ...venues].map((p) => p.lat)),
+    minLon: Math.min(...[...gyms, ...venues].map((p) => p.lon)),
+    maxLon: Math.max(...[...gyms, ...venues].map((p) => p.lon)),
+  }
+  const home = {
+    lat: (bounds.minLat + bounds.maxLat) / 2,
+    lon: (bounds.minLon + bounds.maxLon) / 2,
+  }
+
+  let zoom = 13
+  let center = { ...home }
+  let radius = 80
+  let selected: string | null = null
+  let hovered: { name: string; lat: number; lon: number } | null = null
+  const filters: Record<string, Set<string>> = {
+    coverage: new Set(),
+    kind: new Set(),
+    area: new Set(),
+  }
+
+  function visibleVenues() {
+    return venues.filter((v) => {
+      if (filters.kind.size && !filters.kind.has(v.kind)) return false
+      if (filters.area.size && !filters.area.has(v.area ?? '')) return false
+      if (filters.coverage.size) {
+        const hits = gyms.filter((g) => metersBetween(v, g) <= radius).length
+        // OR across selected thresholds: 1+ is satisfied by anything >= 1
+        const ok = [...filters.coverage].some((t) => hits >= Number(t))
+        if (!ok) return false
+      }
+      return true
+    })
+  }
+
+  const lonToX = (lon: number, z: number) =>
+    ((lon + 180) / 360) * Math.pow(2, z) * TILE
+  const latToY = (lat: number, z: number) => {
+    const s = Math.sin((lat * Math.PI) / 180)
+    return (
+      (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) *
+      Math.pow(2, z) *
+      TILE
+    )
+  }
+  const xToLon = (x: number, z: number) =>
+    (x / (Math.pow(2, z) * TILE)) * 360 - 180
+  const yToLat = (y: number, z: number) => {
+    const n = Math.PI - (2 * Math.PI * y) / (Math.pow(2, z) * TILE)
+    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+  }
+
+  const project = (lat: number, lon: number) => ({
+    x: lonToX(lon, zoom) - lonToX(center.lon, zoom) + canvas.width / 2,
+    y: latToY(lat, zoom) - latToY(center.lat, zoom) + canvas.height / 2,
+  })
+  const unproject = (px: number, py: number) => ({
+    lat: yToLat(latToY(center.lat, zoom) - canvas.height / 2 + py, zoom),
+    lon: xToLon(lonToX(center.lon, zoom) - canvas.width / 2 + px, zoom),
+  })
+  const metersPerPixel = () =>
+    (156543.03392 * Math.cos((center.lat * Math.PI) / 180)) / Math.pow(2, zoom)
+
+  function metersBetween(a: Point, b: Point) {
+    const R = 6371000
+    const rad = Math.PI / 180
+    const dLat = (b.lat - a.lat) * rad
+    const dLon = (b.lon - a.lon) * rad
+    const h =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2
+    return 2 * R * Math.asin(Math.sqrt(h))
+  }
+
+  const tiles = new Map<string, HTMLImageElement>()
+  function getTile(tx: number, ty: number, z: number) {
+    const key = `${z}/${tx}/${ty}`
+    const cached = tiles.get(key)
+    if (cached) return cached
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => draw()
+    img.onerror = () => img.setAttribute('data-failed', 'true')
+    img.src = `https://tile.openstreetmap.org/${z}/${tx}/${ty}.png`
+    tiles.set(key, img)
+    return img
+  }
+
+  function draw() {
+    ctx.fillStyle = '#131a2e'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    const ox = lonToX(center.lon, zoom) - canvas.width / 2
+    const oy = latToY(center.lat, zoom) - canvas.height / 2
+    const span = Math.pow(2, zoom)
+    for (
+      let tx = Math.floor(ox / TILE);
+      tx <= Math.floor((ox + canvas.width) / TILE);
+      tx++
+    ) {
+      for (
+        let ty = Math.floor(oy / TILE);
+        ty <= Math.floor((oy + canvas.height) / TILE);
+        ty++
+      ) {
+        if (ty < 0 || ty >= span) continue
+        const img = getTile(((tx % span) + span) % span, ty, zoom)
+        if (img.complete && !img.hasAttribute('data-failed')) {
+          ctx.drawImage(img, tx * TILE - ox, ty * TILE - oy, TILE, TILE)
+        }
+      }
+    }
+
+    ctx.globalCompositeOperation = 'multiply'
+    ctx.fillStyle = 'rgba(19,26,46,0.85)'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.globalCompositeOperation = 'source-over'
+    ctx.fillStyle = 'rgba(11,15,26,0.25)'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    const rPx = radius / metersPerPixel()
+    for (const g of gyms) {
+      const p = project(g.lat, g.lon)
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, rPx, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(59,91,219,0.12)'
+      ctx.fill()
+      ctx.strokeStyle = 'rgba(59,91,219,0.7)'
+      ctx.lineWidth = 1.5
+      ctx.setLineDash([5, 4])
+      ctx.stroke()
+      ctx.setLineDash([])
+    }
+
+    for (const g of gyms) {
+      const p = project(g.lat, g.lon)
+      circle(p, 4.5, '#3b5bdb')
+    }
+
+    const shown = visibleVenues()
+    for (const v of shown) {
+      const p = project(v.lat, v.lon)
+      const hits = gyms.filter((g) => metersBetween(v, g) <= radius).length
+      const isSel = v.name === selected
+      const fill = hits >= 2 ? '#1f7a43' : '#c2410c'
+      if (isSel) {
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, 15, 0, Math.PI * 2)
+        ctx.strokeStyle = 'rgba(238,242,251,0.5)'
+        ctx.lineWidth = 1.5
+        ctx.stroke()
+      }
+      square(p, isSel ? 8 : 6.5, fill)
+    }
+
+    // labels last so they sit above every marker
+    if (hovered) label(project(hovered.lat, hovered.lon), hovered.name, true)
+    for (const v of shown) {
+      if (v.name === selected || (zoom >= 15 && !hovered)) {
+        label(project(v.lat, v.lon), v.name, false)
+      }
+    }
+
+    drawScale()
+  }
+
+  function circle(p: { x: number; y: number }, r: number, fill: string) {
+    ctx.beginPath()
+    ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
+    ctx.fillStyle = fill
+    ctx.fill()
+    ctx.strokeStyle = '#0b0f1a'
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+  }
+
+  function square(p: { x: number; y: number }, size: number, fill: string) {
+    const h = size / 2
+    const r = 1.5
+    ctx.beginPath()
+    ctx.roundRect(p.x - h, p.y - h, size, size, r)
+    ctx.fillStyle = fill
+    ctx.fill()
+    ctx.strokeStyle = '#0b0f1a'
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+  }
+
+  function label(p: { x: number; y: number }, text: string, emphasis: boolean) {
+    ctx.font = '500 11.5px ui-sans-serif, system-ui, -apple-system, sans-serif'
+    const padX = 7
+    const padY = 5
+    const w = ctx.measureText(text).width
+    const boxW = w + padX * 2
+    const boxH = 22
+    const x = p.x - boxW / 2
+    const y = p.y + 11
+
+    ctx.beginPath()
+    ctx.roundRect(x, y, boxW, boxH, 6)
+    ctx.fillStyle = emphasis ? 'rgba(19,26,46,0.98)' : 'rgba(19,26,46,0.94)'
+    ctx.fill()
+    ctx.strokeStyle = emphasis ? 'rgba(194,65,12,0.9)' : 'rgba(40,50,86,0.9)'
+    ctx.lineWidth = 1
+    ctx.stroke()
+
+    ctx.fillStyle = '#eef2fb'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(text, p.x, y + boxH / 2 + 0.5)
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
+  }
+
+  function drawScale() {
+    const mpp = metersPerPixel()
+    const target = 110
+    const choice = [50, 100, 200, 500, 1000, 2000].reduce((a, b) =>
+      Math.abs(b / mpp - target) < Math.abs(a / mpp - target) ? b : a,
+    )
+    const px = choice / mpp
+    const x = 16
+    const y = canvas.height - 20
+    ctx.strokeStyle = '#eef2fb'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(x, y - 5)
+    ctx.lineTo(x, y)
+    ctx.lineTo(x + px, y)
+    ctx.lineTo(x + px, y - 5)
+    ctx.stroke()
+    ctx.fillStyle = '#eef2fb'
+    ctx.font = '11px ui-sans-serif, system-ui, sans-serif'
+    ctx.fillText(`${choice} m`, x + px + 7, y + 1)
+  }
+
+  function renderList() {
+    const shownNames = new Set(visibleVenues().map((v) => v.name))
+    const count = document.getElementById('places-count')!
+    count.textContent =
+      shownNames.size === venues.length
+        ? `(${venues.length})`
+        : `(${shownNames.size} of ${venues.length})`
+    for (const card of document.querySelectorAll<HTMLElement>('.venue-card')) {
+      card.hidden = !shownNames.has(card.dataset.name!)
+      const lat = Number(card.dataset.lat)
+      const lon = Number(card.dataset.lon)
+      const ranked = gyms
+        .map((g) => ({ g, d: metersBetween({ name: '', lat, lon }, g) }))
+        .sort((a, b) => a.d - b.d)
+      const inRange = ranked.filter((r) => r.d <= radius)
+
+      const score = card.querySelector('.score-slot')!
+      score.textContent =
+        inRange.length === 0
+          ? 'no gyms in range'
+          : `${inRange.length} gym${inRange.length > 1 ? 's' : ''} in range`
+      card.classList.toggle('border-forest', inRange.length >= 2)
+
+      const nearby = card.querySelector('.nearby-slot')!
+      nearby.textContent = ''
+      for (const { g, d } of ranked.slice(0, 3)) {
+        const li = document.createElement('li')
+        li.textContent = `${g.name} · ${Math.round(d)} m`
+        if (d <= radius) li.className = 'text-forest'
+        nearby.appendChild(li)
+      }
+    }
+  }
+
+  function update() {
+    draw()
+    renderList()
+  }
+
+  radiusInput.addEventListener('input', () => {
+    radius = Number(radiusInput.value)
+    radiusVal.textContent = `${radius} m`
+    update()
+  })
+
+  document.getElementById('reset-view')!.addEventListener('click', () => {
+    center = { ...home }
+    zoom = 13
+    selected = null
+    for (const c of document.querySelectorAll('.venue-card'))
+      c.classList.remove('border-primary')
+    draw()
+  })
+
+  function setZoom(next: number) {
+    const clamped = Math.max(11, Math.min(18, next))
+    if (clamped === zoom) return
+    zoom = clamped
+    draw()
+  }
+  document
+    .getElementById('zoom-in')!
+    .addEventListener('click', () => setZoom(zoom + 1))
+  document
+    .getElementById('zoom-out')!
+    .addEventListener('click', () => setZoom(zoom - 1))
+
+  for (const card of document.querySelectorAll<HTMLElement>('.venue-card')) {
+    card.querySelector('.locate-btn')!.addEventListener('click', () => {
+      center = { lat: Number(card.dataset.lat), lon: Number(card.dataset.lon) }
+      zoom = 16
+      selected = card.dataset.name ?? null
+      for (const c of document.querySelectorAll('.venue-card'))
+        c.classList.toggle('border-primary', c === card)
+      draw()
+      document
+        .getElementById('map')!
+        .scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }
+
+  let drag: { x: number; y: number } | null = null
+  canvas.addEventListener('pointerdown', (e) => {
+    const r = canvas.getBoundingClientRect()
+    const s = canvas.width / r.width
+    drag = { x: (e.clientX - r.left) * s, y: (e.clientY - r.top) * s }
+    canvas.setPointerCapture(e.pointerId)
+  })
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag) return
+    const r = canvas.getBoundingClientRect()
+    const s = canvas.width / r.width
+    const nx = (e.clientX - r.left) * s
+    const ny = (e.clientY - r.top) * s
+    center = {
+      lat: yToLat(latToY(center.lat, zoom) - (ny - drag.y), zoom),
+      lon: xToLon(lonToX(center.lon, zoom) - (nx - drag.x), zoom),
+    }
+    drag = { x: nx, y: ny }
+    draw()
+  })
+  canvas.addEventListener('pointerup', () => {
+    drag = null
+  })
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (drag) return
+    const r = canvas.getBoundingClientRect()
+    const s = canvas.width / r.width
+    const mx = (e.clientX - r.left) * s
+    const my = (e.clientY - r.top) * s
+    let best: typeof hovered = null
+    let bestD = 14
+    for (const g of gyms) {
+      const p = project(g.lat, g.lon)
+      const d = Math.hypot(p.x - mx, p.y - my)
+      if (d < bestD) {
+        bestD = d
+        best = g
+      }
+    }
+    if (best?.name !== hovered?.name) {
+      hovered = best
+      canvas.style.cursor = best ? 'pointer' : 'grab'
+      draw()
+    }
+  })
+
+  canvas.addEventListener('pointerleave', () => {
+    if (hovered) {
+      hovered = null
+      draw()
+    }
+  })
+
+  const menus = [
+    ...document.querySelectorAll<HTMLDetailsElement>('.filter-menu'),
+  ]
+
+  function syncMenu(menu: HTMLDetailsElement) {
+    const group = menu.dataset.group!
+    const count = filters[group].size
+    const badge = menu.querySelector<HTMLElement>('.filter-count')!
+    badge.textContent = String(count)
+    badge.hidden = count === 0
+    menu.classList.toggle('is-active', count > 0)
+    document.getElementById('clear-all')!.hidden = menus.every(
+      (m) => filters[m.dataset.group!].size === 0,
+    )
+  }
+
+  for (const menu of menus) {
+    const group = menu.dataset.group!
+    for (const box of menu.querySelectorAll<HTMLInputElement>(
+      'input[type=checkbox]',
+    )) {
+      box.addEventListener('change', () => {
+        if (box.checked) filters[group].add(box.value)
+        else filters[group].delete(box.value)
+        syncMenu(menu)
+        update()
+      })
+    }
+    menu.querySelector('.filter-clear')!.addEventListener('click', () => {
+      filters[group].clear()
+      for (const box of menu.querySelectorAll<HTMLInputElement>(
+        'input[type=checkbox]',
+      ))
+        box.checked = false
+      syncMenu(menu)
+      update()
+    })
+  }
+
+  document.getElementById('clear-all')!.addEventListener('click', () => {
+    for (const menu of menus) {
+      filters[menu.dataset.group!].clear()
+      for (const box of menu.querySelectorAll<HTMLInputElement>(
+        'input[type=checkbox]',
+      ))
+        box.checked = false
+      syncMenu(menu)
+    }
+    update()
+  })
+
+  document.addEventListener('click', (e) => {
+    for (const menu of menus) {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false
+    }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return
+    for (const menu of menus) menu.open = false
+  })
+  let wheelAccum = 0
+  canvas.addEventListener(
+    'wheel',
+    (e) => {
+      e.preventDefault()
+      wheelAccum += e.deltaY
+      if (Math.abs(wheelAccum) < 120) return
+      const step = wheelAccum < 0 ? 1 : -1
+      wheelAccum = 0
+      const r = canvas.getBoundingClientRect()
+      const s = canvas.width / r.width
+      const px = (e.clientX - r.left) * s
+      const py = (e.clientY - r.top) * s
+      const before = unproject(px, py)
+      const next = Math.max(11, Math.min(18, zoom + step))
+      if (next === zoom) return
+      zoom = next
+      const after = unproject(px, py)
+      center = {
+        lat: center.lat + (before.lat - after.lat),
+        lon: center.lon + (before.lon - after.lon),
+      }
+      draw()
+    },
+    { passive: false },
+  )
+
+  update()
+</script>

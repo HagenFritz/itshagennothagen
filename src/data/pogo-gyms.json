@@ -1,0 +1,206 @@
+[
+  {
+    "name": "Canyon Gazebo",
+    "lat": 30.233727,
+    "lon": -97.83638,
+    "area": "Monterey Ranch"
+  },
+  {
+    "name": "Playscape at Monterey Ranch",
+    "lat": 30.232826,
+    "lon": -97.84007,
+    "area": "Monterey Ranch"
+  },
+  {
+    "name": "Hidden Gazebo at Monterey Ranch",
+    "lat": 30.231493,
+    "lon": -97.834656,
+    "area": "Monterey Ranch"
+  },
+  {
+    "name": "Austin Oaks Church Basketball Half-Court",
+    "lat": 30.230476,
+    "lon": -97.83163,
+    "area": "Austin Oaks"
+  },
+  {
+    "name": "Austin Oaks Church",
+    "lat": 30.22955,
+    "lon": -97.83231,
+    "area": "Austin Oaks"
+  },
+  {
+    "name": "Austin Oaks Church (sign)",
+    "lat": 30.22889,
+    "lon": -97.833595,
+    "area": "Austin Oaks"
+  },
+  {
+    "name": "Austin Murals at Trader Joe's",
+    "lat": 30.270176,
+    "lon": -97.789665,
+    "area": "Treemont"
+  },
+  {
+    "name": "Heritage Square Gazebo",
+    "lat": 30.26997,
+    "lon": -97.79183,
+    "area": "Treemont"
+  },
+  {
+    "name": "Treemont Park Stone",
+    "lat": 30.266262,
+    "lon": -97.79059,
+    "area": "Treemont"
+  },
+  {
+    "name": "P. Terry's (Las Cimas / 360)",
+    "lat": 30.291075,
+    "lon": -97.82652,
+    "area": "Westlake"
+  },
+  {
+    "name": "Wholly Cow Burgers - South Lamar",
+    "lat": 30.242867,
+    "lon": -97.78391,
+    "area": "South Lamar"
+  },
+  {
+    "name": "Kerbey Lane Cafe",
+    "lat": 30.222721,
+    "lon": -97.84135,
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "P. Terry's Turquoise Bollard",
+    "lat": 30.222298,
+    "lon": -97.838196,
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "Arbor Trails Roundabout Bench",
+    "lat": 30.221249,
+    "lon": -97.84006,
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "Arbor Trails Bench",
+    "lat": 30.21861,
+    "lon": -97.83917,
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "Metal Tulips at Chuy's William Cannon",
+    "lat": 30.217455,
+    "lon": -97.841515,
+    "area": "Arbor Trails"
+  },
+  {
+    "name": "Old Farmhouse in Sunset Valley",
+    "lat": 30.231571,
+    "lon": -97.81843,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Verizon",
+    "lat": 30.231745,
+    "lon": -97.81796,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "BJ's Brewhouse Mural",
+    "lat": 30.231775,
+    "lon": -97.81699,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Cougar Creek Bird Blind",
+    "lat": 30.226362,
+    "lon": -97.81677,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Firebowl Patio",
+    "lat": 30.226122,
+    "lon": -97.81959,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Brodie Tower",
+    "lat": 30.229048,
+    "lon": -97.82028,
+    "area": "Sunset Valley"
+  },
+  {
+    "name": "Alamo Drafthouse Slaughter Lane",
+    "lat": 30.199022,
+    "lon": -97.86865,
+    "area": "Slaughter"
+  },
+  {
+    "name": "Nxnw Grain Silo",
+    "lat": 30.200277,
+    "lon": -97.867966,
+    "area": "Slaughter"
+  },
+  {
+    "name": "Summer Moon Coffee",
+    "lat": 30.200563,
+    "lon": -97.86975,
+    "area": "Slaughter"
+  },
+  {
+    "name": "Starbucks (Brodie / Shady Hollow)",
+    "lat": 30.18276,
+    "lon": -97.84704,
+    "area": "Shady Hollow"
+  },
+  {
+    "name": "Starbucks (Sandahl)",
+    "lat": 30.184044,
+    "lon": -97.847595,
+    "area": "Shady Hollow"
+  },
+  {
+    "name": "Starbucks (Oltorf)",
+    "lat": 30.242216,
+    "lon": -97.759,
+    "area": "Oltorf"
+  },
+  {
+    "name": "South Austin Multi-Purpose Center",
+    "lat": 30.239618,
+    "lon": -97.759026,
+    "area": "Oltorf"
+  },
+  {
+    "name": "Gillis Neighborhood Park",
+    "lat": 30.240753,
+    "lon": -97.75843,
+    "area": "Oltorf"
+  },
+  {
+    "name": "Prima Dora Tulip",
+    "lat": 30.244675,
+    "lon": -97.75171,
+    "area": "Bouldin Creek"
+  },
+  {
+    "name": "Donald E. Carpenter Memorial",
+    "lat": 30.246227,
+    "lon": -97.75118,
+    "area": "Bouldin Creek"
+  },
+  {
+    "name": "Pink Lotus",
+    "lat": 30.250235,
+    "lon": -97.754745,
+    "area": "Bouldin Creek"
+  },
+  {
+    "name": "South Austin Trailer Park and Eatery",
+    "lat": 30.250765,
+    "lon": -97.75433,
+    "area": "Bouldin Creek"
+  }
+]

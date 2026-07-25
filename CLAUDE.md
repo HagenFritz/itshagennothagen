@@ -36,6 +36,13 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   client-credentials API. Requires `SPOTIFY_CLIENT_ID`/`SPOTIFY_CLIENT_SECRET`
   (production secrets via `wrangler pages secret put`; local dev via
   `.dev.vars`, gitignored).
+- **`/labs/austin-pogo-map`**: plots Pokémon GO gyms and breakfast venues from
+  `src/data/pogo-gyms.json` and `src/data/pogo-venues.json`, scoring each venue
+  by how many gyms fall inside an adjustable interaction radius (80m default).
+  Canvas renderer with a hand-rolled Web Mercator projection over OpenStreetMap
+  raster tiles, no mapping library. Both data files are hand-maintained (gym
+  locations live in Niantic's Wayfarer system, not OSM, so there is nothing to
+  query); adding entries to the JSON is all that is needed to extend the map.
 - **`.claude/skills/`**: project-scoped Claude Code skills. `categorize-song`
   matches a liked song against `src/data/playlists.json`, logging misses to
   `docs/music/unsorted-songs.md`. `album-cover` generates a topographic-gradient
@@ -105,6 +112,11 @@ first. Good future candidates: pull quote, side-by-side image pair, big-number
 callout. Keep true one-off widget styles (like the trip route map canvas) scoped
 inline in their post.
 
+Interactive UI shared across lab pages lives in `global.css` too, driven by
+`aria-pressed` or `:checked` rather than JS class toggles: `.tag-btn` (filter
+chips) and `.filter-menu` / `.filter-trigger` / `.filter-popover` /
+`.filter-option` (multi-select dropdowns, used by the pogo map).
+
 ## Writing about Hagen — accuracy notes
 
 - Current role: **Software Engineer II at Rogers-O'Brien**, building internal AI
@@ -119,6 +131,9 @@ inline in their post.
 
 ## Related
 
+- **PR #20**: Add the Austin Pokémon GO map lab page (`/labs/austin-pogo-map`):
+  canvas map over OSM tiles scoring venues by gyms within raid range, plus
+  hand-logged gym/venue data and a companion blog post.
 - **PR #17**: Harden the site (404 page, RSS feed, security headers, Spotify
   timeouts, UTC dates), add Vale prose linting to CI, and run a writing pass
   with shared post HTML helpers.
