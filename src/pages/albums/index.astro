@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content'
+import { Image } from 'astro:assets'
+import Base from '../../layouts/Base.astro'
+
+const albums = await getCollection('albums')
+
+const latestEntry = (album: (typeof albums)[number]) =>
+  [...album.data.entries].sort((a, b) => b.date.valueOf() - a.date.valueOf())[0]
+---
+
+<Base
+  title="Albums · Hagen Fritz"
+  description="Photo albums marking moments worth keeping."
+>
+  <h1 class="text-3xl font-semibold tracking-tight">Albums</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Photo collections that mark moments worth keeping. Each album is its own
+    little ritual.
+  </p>
+
+  <ul class="mt-8 space-y-4">
+    {
+      albums.map((album) => {
+        const cover = latestEntry(album)
+        return (
+          <li>
+            <a
+              href={`/albums/${album.id}`}
+              class="group flex items-center gap-5 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
+            >
+              <Image
+                src={cover.images[0].src}
+                alt={cover.images[0].alt}
+                width={160}
+                class="size-20 shrink-0 rounded-md object-cover"
+              />
+              <div class="flex flex-col gap-1">
+                <span class="font-medium group-hover:text-primary">
+                  {album.data.title}
+                </span>
+                <span class="text-sm text-muted-foreground">
+                  {album.data.tagline}
+                </span>
+                <span class="text-xs text-muted-foreground">
+                  {album.data.entries.length}{' '}
+                  {album.data.entries.length === 1 ? 'entry' : 'entries'}
+                </span>
+              </div>
+            </a>
+          </li>
+        )
+      })
+    }
+  </ul>
+</Base>

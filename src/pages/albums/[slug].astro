@@ -1,0 +1,149 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content'
+import { Image } from 'astro:assets'
+import Base from '../../layouts/Base.astro'
+
+export async function getStaticPaths() {
+  const albums = await getCollection('albums')
+  return albums.map((album) => ({
+    params: { slug: album.id },
+    props: { album },
+  }))
+}
+
+interface Props {
+  album: CollectionEntry<'albums'>
+}
+
+const { album } = Astro.props
+
+const entries = [...album.data.entries].sort(
+  (a, b) => b.date.valueOf() - a.date.valueOf(),
+)
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+---
+
+<Base
+  title={`${album.data.title} · Hagen Fritz`}
+  description={album.data.tagline}
+>
+  <a
+    href="/albums"
+    class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+  >
+    ← Albums
+  </a>
+
+  <h1 class="mt-4 text-3xl font-semibold tracking-tight">{album.data.title}</h1>
+
+  <div class="mt-6 max-w-[70ch] space-y-5 text-muted-foreground">
+    {album.data.intro.map((paragraph) => <p set:html={paragraph} />)}
+  </div>
+
+  <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      entries.map((entry) => (
+        <li>
+          <figure class="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card">
+            <div class="relative" data-carousel>
+              <div
+                class:list={[
+                  'flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+                  entry.images.length > 1 && 'cursor-pointer',
+                ]}
+                data-track
+              >
+                {entry.images.map((img) => (
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    widths={[400, 800]}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    class="aspect-square w-full shrink-0 snap-center object-cover"
+                  />
+                ))}
+              </div>
+              {entry.images.length > 1 && (
+                <div class="absolute inset-x-0 bottom-2 flex justify-center gap-1.5">
+                  {entry.images.map((_, i) => (
+                    <span
+                      class="size-1.5 rounded-full bg-white/40 transition-colors aria-[current=true]:bg-white"
+                      aria-current={i === 0 ? 'true' : 'false'}
+                      data-dot
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <figcaption class="flex flex-1 flex-col gap-1 p-4">
+              <div class="flex items-baseline justify-between gap-3">
+                <span class="font-medium">{entry.title}</span>
+                <time
+                  datetime={entry.date.toISOString().slice(0, 10)}
+                  class="shrink-0 text-xs text-muted-foreground"
+                >
+                  {fmt(entry.date)}
+                </time>
+              </div>
+              {entry.caption && (
+                <span class="text-sm text-muted-foreground">
+                  {entry.caption}
+                </span>
+              )}
+              {entry.link && (
+                <a
+                  href={entry.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="mt-auto pt-1 text-xs text-primary hover:underline"
+                >
+                  Instagram post ↗
+                </a>
+              )}
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-carousel]')
+    .forEach((carousel) => {
+      const track = carousel.querySelector<HTMLElement>('[data-track]')
+      if (!track) return
+      const slides = [...track.children] as HTMLElement[]
+      if (slides.length < 2) return
+      const dots = [...carousel.querySelectorAll<HTMLElement>('[data-dot]')]
+
+      let index = 0
+      const observer = new IntersectionObserver(
+        (observed) => {
+          for (const o of observed) {
+            if (o.isIntersecting) {
+              index = slides.indexOf(o.target as HTMLElement)
+              dots.forEach((dot, i) =>
+                dot.setAttribute('aria-current', String(i === index)),
+              )
+            }
+          }
+        },
+        { root: track, threshold: 0.6 },
+      )
+      slides.forEach((slide) => observer.observe(slide))
+
+      track.addEventListener('click', () => {
+        const next = (index + 1) % slides.length
+        track.scrollTo({ left: slides[next].offsetLeft, behavior: 'smooth' })
+      })
+    })
+</script>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Placeholder hat">
+  <rect width="800" height="800" fill="#131a2e" />
+  <path d="M215 445 a185 185 0 0 1 370 0 Z" fill="#1e2a4a" />
+  <path d="M400 260 v185" stroke="#283256" stroke-width="8" />
+  <path d="M305 285 q-14 78 -10 160" stroke="#283256" stroke-width="8" fill="none" />
+  <path d="M495 285 q14 78 10 160" stroke="#283256" stroke-width="8" fill="none" />
+  <circle cx="400" cy="252" r="15" fill="#c2410c" />
+  <path d="M175 452 Q400 545 625 452 Q400 600 175 452 Z" fill="#c2410c" />
+  <text x="400" y="680" text-anchor="middle" font-family="system-ui, sans-serif" font-size="34" fill="#9aa6c2">photo coming soon</text>
+</svg>
