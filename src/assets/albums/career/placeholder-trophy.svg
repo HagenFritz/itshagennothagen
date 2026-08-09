@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Placeholder trophy">
+  <rect width="800" height="800" fill="#131a2e" />
+  <path d="M290 240 h220 v110 a110 110 0 0 1 -220 0 Z" fill="#1e2a4a" />
+  <path d="M290 260 h-60 a70 70 0 0 0 70 90" stroke="#283256" stroke-width="10" fill="none" />
+  <path d="M510 260 h60 a70 70 0 0 1 -70 90" stroke="#283256" stroke-width="10" fill="none" />
+  <path d="M385 458 h30 v60 h-30 Z" fill="#1e2a4a" />
+  <rect x="330" y="518" width="140" height="34" rx="6" fill="#c2410c" />
+  <circle cx="400" cy="300" r="24" fill="#c2410c" />
+  <text x="400" y="680" text-anchor="middle" font-family="system-ui, sans-serif" font-size="34" fill="#9aa6c2">photo coming soon</text>
+</svg>

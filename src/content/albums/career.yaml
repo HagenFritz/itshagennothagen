@@ -1,0 +1,24 @@
+title: Career Wins
+tagline: >-
+  One keepsake per career milestone. Shipped, celebrated, shelved.
+intro:
+  - >-
+    Same ritual as the <a href="/albums/volleyball" class="text-primary
+    underline underline-offset-2">volleyball wins</a>, but more closely
+    mirroring <a href="https://larahogan.me/donuts/" target="_blank"
+    rel="noreferrer" class="text-primary underline underline-offset-2">Lara
+    Hogan's approach</a>. When something real lands at work (a promotion, a
+    launch, a project that survives contact with its users), it gets marked with
+    a can of sparkling water.
+  - >-
+    The idea is the same and follows what my friend Bruno always says:
+    "Celebrate the little wins".
+entries:
+  - images:
+      - src: ../../assets/albums/career/qdol_lychee.jpg
+        alt: Orange QDOL Charmander sparkling water can, lychee flavor
+    title: RO Compass V2
+    date: 2026-08-07
+    caption: >-
+      Shipped a rebuilt Compass backend on LangGraph's deep agent base. Launched
+      with new / updated tools and the long-anticipated voice mode 🎙️
