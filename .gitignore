@@ -44,3 +44,7 @@ docs/side-quests/
 
 # album-cover skill scratch output (staging area, not final storage)
 docs/music/covers/
+
+# Python bytecode (scripts/)
+__pycache__/
+*.pyc
