@@ -20,6 +20,22 @@
     }
   },
   {
+    "id": "austin-central-library",
+    "name": "Austin Central Library",
+    "lat": 30.265968,
+    "lon": -97.751721,
+    "category": "civic",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "The six-story central branch downtown, opened in 2017 at Cesar Chavez and Shoal Creek. Built to LEED Platinum with a rooftop garden, a reading porch over the creek, and an atrium stairway.",
+    "extra": "It was named one of Time's World's Greatest Places the year it opened, and locals mostly use it as a place to sit rather than to borrow books.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/516271467",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "austin-city-hall",
     "name": "Austin City Hall",
     "lat": 30.264788,
@@ -38,6 +54,22 @@
       "wikidata": "Q39070904",
       "wikipedia": "en:Austin City Hall (Austin, Texas)"
     }
+  },
+  {
+    "id": "austin-convention-center",
+    "name": "Austin Convention Center",
+    "lat": 30.263641,
+    "lon": -97.739478,
+    "category": "civic",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "The downtown convention center on Cesar Chavez, opened in 1992 and expanded in 2002 to about 880,000 square feet.",
+    "extra": "It is the main venue for SXSW every March. The city approved a full demolition and rebuild, closing it in 2025 for several years.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/187392350",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "austin-executive-airport",
@@ -99,6 +131,22 @@
     }
   },
   {
+    "id": "blanton-museum-of-art",
+    "name": "Blanton Museum of Art",
+    "lat": 30.280984,
+    "lon": -97.737417,
+    "category": "civic",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "One of the largest university art museums in the country, holding more than 22,000 works across 189,000 square feet on the UT campus. Strongest in Latin American art, modern and contemporary work, and European prints and drawings.",
+    "extra": "Ellsworth Kelly's 'Austin', a stone building with colored glass windows that he designed as a work of art in itself, sits on the grounds. It was his final work.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Blanton_Museum_of_Art",
+    "sourceRef": "relation/20972967",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "concordia-university-texas",
     "name": "Concordia University Texas",
     "lat": 30.418629,
@@ -117,6 +165,22 @@
       "wikidata": "Q2992101",
       "wikipedia": "en:Concordia University Texas"
     }
+  },
+  {
+    "id": "elisabet-ney-museum",
+    "name": "Elisabet Ney Museum",
+    "lat": 30.306628,
+    "lon": -97.726285,
+    "category": "civic",
+    "tier": "central",
+    "difficulty": 4,
+    "story": "The limestone studio of sculptor Elisabet Ney in Hyde Park, built in 1892 and kept as a museum since 1911. It holds the largest collection of her work anywhere.",
+    "extra": "Ney was a German portrait sculptor who had already carved Schopenhauer and Bismarck before moving to Texas. Her statues of Stephen F. Austin and Sam Houston stand in the state Capitol.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/368165766",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "esthers-follies",
@@ -225,19 +289,14 @@
     "lon": -97.741863,
     "category": "civic",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 3,
+    "story": "A 1915 classical revival theater on Congress Avenue, still running as a live venue and movie house. Listed on the National Register of Historic Places in 1976.",
+    "extra": "It opened as the Majestic on the vaudeville circuit. Harry Houdini and the Marx Brothers both played the stage before it became a cinema.",
     "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Paramount_Theatre_%28Austin%2C_Texas%29",
+    "storyUrl": "https://en.wikipedia.org/wiki/Paramount_Theatre_(Austin%2C_Texas)",
     "sourceRef": "way/328526454",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "amenity": "theatre",
-      "historic": "building",
-      "wikidata": "Q7756086",
-      "wikipedia": "en:Paramount Theatre (Austin, Texas)"
-    }
+    "status": "eligible"
   },
   {
     "id": "perry-castaneda-library",
@@ -360,44 +419,112 @@
     }
   },
   {
+    "id": "mueller",
+    "name": "Mueller",
+    "lat": 30.296322,
+    "lon": -97.697844,
+    "category": "district",
+    "tier": "urban",
+    "difficulty": 2,
+    "story": "A 700-acre planned neighborhood on the site of Robert Mueller Municipal Airport, which was Austin's airport until it closed in 1999. Redevelopment began in 2007.",
+    "extra": "The old air traffic control tower still stands and is a protected landmark. Streets in the neighborhood are named for aviation figures.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/841578266",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.70726, 30.29036],
+        [-97.7013, 30.28761],
+        [-97.69602, 30.29012],
+        [-97.69107, 30.28963],
+        [-97.68995, 30.29026],
+        [-97.68941, 30.29113],
+        [-97.68928, 30.29449],
+        [-97.68869, 30.29556],
+        [-97.68956, 30.29724],
+        [-97.69043, 30.29729],
+        [-97.69218, 30.29589],
+        [-97.69377, 30.29671],
+        [-97.69343, 30.29735],
+        [-97.69439, 30.29817],
+        [-97.69216, 30.30041],
+        [-97.6918, 30.30136],
+        [-97.69515, 30.30149],
+        [-97.69742, 30.30231],
+        [-97.69963, 30.30418],
+        [-97.70999, 30.30906],
+        [-97.71263, 30.30527],
+        [-97.71138, 30.3047],
+        [-97.70912, 30.30252],
+        [-97.70937, 30.30189],
+        [-97.70878, 30.30087],
+        [-97.70999, 30.29905],
+        [-97.70817, 30.29658],
+        [-97.70726, 30.29036]
+      ]
+    ]
+  },
+  {
+    "id": "the-domain",
+    "name": "The Domain",
+    "lat": 30.402699,
+    "lon": -97.723694,
+    "category": "district",
+    "tier": "urban",
+    "difficulty": 2,
+    "story": "A dense mix of offices, shops, and apartments in northwest Austin, opened in 2007 and often called Austin's second downtown.",
+    "extra": "It sits on land that was an IBM campus. The nickname is only half a joke: it now has more office space than many actual downtowns in Texas.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/The_Domain_(Austin%2C_Texas)",
+    "sourceRef": "way/109447871",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.72484, 30.40111],
+        [-97.72339, 30.40068],
+        [-97.72366, 30.39994],
+        [-97.72289, 30.39966],
+        [-97.72175, 30.40269],
+        [-97.72101, 30.40264],
+        [-97.72066, 30.40167],
+        [-97.71965, 30.4019],
+        [-97.71931, 30.40294],
+        [-97.72008, 30.40447],
+        [-97.72119, 30.40415],
+        [-97.72161, 30.40526],
+        [-97.72314, 30.40467],
+        [-97.72403, 30.40503],
+        [-97.72833, 30.40137],
+        [-97.72842, 30.39712],
+        [-97.72934, 30.39452],
+        [-97.72653, 30.39297],
+        [-97.72632, 30.39735],
+        [-97.72515, 30.40024],
+        [-97.72611, 30.40078],
+        [-97.72605, 30.40124],
+        [-97.7257, 30.40158],
+        [-97.72484, 30.40111]
+      ]
+    ]
+  },
+  {
     "id": "ann-w-richards-congress-avenue-bridge",
     "name": "Ann W. Richards Congress Avenue Bridge",
     "lat": 30.261393,
     "lon": -97.745292,
     "category": "landmark",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 2,
+    "story": "Carries Congress Avenue over Lady Bird Lake, renamed in 2006 for Ann Richards, the 45th governor of Texas and a longtime Austin resident. A concrete arch bridge with six lanes.",
+    "extra": "The 1980 renovation left expansion joints that turned out to be ideal bat roosts. About 1.5 million Mexican free-tailed bats now live underneath, the largest urban bat colony in North America, and the evening emergence draws crowds all summer.",
     "storySource": "wikipedia",
     "storyUrl": "https://en.wikipedia.org/wiki/Ann_W._Richards_Congress_Avenue_Bridge",
     "sourceRef": "way/708605258",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "man_made": "bridge",
-      "wikidata": "Q4766731",
-      "wikipedia": "en:Ann W. Richards Congress Avenue Bridge"
-    }
-  },
-  {
-    "id": "austin",
-    "name": "Austin",
-    "lat": 30.281678,
-    "lon": -97.73782,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Austin_%28building%29",
-    "sourceRef": "way/575579280",
-    "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "tourism": "artwork",
-      "wikidata": "Q22073172",
-      "wikipedia": "en:Austin (building)"
-    }
+    "status": "eligible"
   },
   {
     "id": "barbara-jordan-statue",
@@ -426,39 +553,14 @@
     "lon": -97.770838,
     "category": "landmark",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 1,
+    "story": "A three-acre swimming pool fed entirely by underground springs, sitting in the channel of Barton Creek inside Zilker Park. Main Barton Spring is the fourth-largest in Texas and pushes water out at a steady 68 to 74 degrees year-round.",
+    "extra": "That constant temperature means people swim it in January. It is also home to the Barton Springs salamander, which lives nowhere else on Earth.",
     "storySource": "wikipedia",
     "storyUrl": "https://en.wikipedia.org/wiki/Barton_Springs_Pool",
     "sourceRef": "way/27442711",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "leisure": "swimming_pool",
-      "tourism": "attraction",
-      "wikidata": "Q4865688",
-      "wikipedia": "en:Barton Springs Pool"
-    }
-  },
-  {
-    "id": "blanton-museum-of-art",
-    "name": "Blanton Museum of Art",
-    "lat": 30.280984,
-    "lon": -97.737417,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Blanton_Museum_of_Art",
-    "sourceRef": "relation/20972967",
-    "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "tourism": "museum",
-      "wikidata": "Q2906140",
-      "wikipedia": "en:Blanton Museum of Art"
-    }
+    "status": "eligible"
   },
   {
     "id": "clock-knot",
@@ -479,6 +581,22 @@
       "wikidata": "Q60742228",
       "wikipedia": "en:Clock Knot"
     }
+  },
+  {
+    "id": "deep-eddy-pool",
+    "name": "Deep Eddy Pool",
+    "lat": 30.276521,
+    "lon": -97.773204,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "The oldest swimming pool in Texas, spring-fed and concrete-lined, opened as a resort in 1915 on the north bank of the Colorado.",
+    "extra": "The original owner drew crowds with a Ferris wheel and a diving horse. The city bought it in 1935 and the WPA rebuilt the bathhouse you see today.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/206160759",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "french-legation-state-historic-site",
@@ -702,24 +820,36 @@
     }
   },
   {
+    "id": "mount-bonnell",
+    "name": "Mount Bonnell",
+    "lat": 30.320767,
+    "lon": -97.773347,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "At roughly 780 feet, the highest easily reachable point in Austin, overlooking Lake Austin from a limestone bluff. About a hundred stone steps get you to the top.",
+    "extra": "It has been a tourist destination since the 1850s, which makes it one of the oldest attractions in the city. The tradition says a couple who climbs it together will fall in love.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/356700647",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "pennybacker-bridge",
     "name": "Pennybacker Bridge",
     "lat": 30.349472,
     "lon": -97.797188,
     "category": "landmark",
     "tier": "urban",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 2,
+    "story": "The Percy V. Pennybacker Jr. Bridge, carrying Loop 360 across Lake Austin. A through-arch design in weathering steel, which is why it wears that rust color on purpose.",
+    "extra": "The arch was assembled on the bank and floated into place on barges. The cliff on the south side is one of the most photographed overlooks in the city.",
     "storySource": "wikipedia",
     "storyUrl": "https://en.wikipedia.org/wiki/Pennybacker_Bridge",
     "sourceRef": "way/708944434",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "man_made": "bridge",
-      "wikidata": "Q7164471",
-      "wikipedia": "en:Pennybacker Bridge"
-    }
+    "status": "eligible"
   },
   {
     "id": "pfluger-pedestrian-bridge",
@@ -740,6 +870,38 @@
       "wikidata": "Q21161747",
       "wikipedia": "en:James D. Pfluger Pedestrian and Bicycle Bridge"
     }
+  },
+  {
+    "id": "stevie-ray-vaughan-statue",
+    "name": "Stevie Ray Vaughan Statue",
+    "lat": 30.263114,
+    "lon": -97.75068,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "A bronze of the Austin blues guitarist on the Lady Bird Lake hike-and-bike trail at Auditorium Shores, installed in 1993, less than three years after he died in a helicopter crash.",
+    "extra": "Sculptor Ralph Helmick posed him with his hat and a long shadow cast behind. It was the first statue in Austin honoring a musician.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/281230952",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "texas-state-capitol",
+    "name": "Texas State Capitol",
+    "lat": 30.27469,
+    "lon": -97.740345,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 1,
+    "story": "Finished in 1888 and built from Texas pink granite hauled in from Marble Falls on a railroad laid specifically for the job. Elijah Myers designed it, and at 302 feet the dome stands taller than the US Capitol, a fact Texans mention roughly every chance they get.",
+    "extra": "The state paid for it in land, not money: the builders took three million acres of the Panhandle instead of cash, which became the XIT Ranch.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Texas_State_Capitol",
+    "sourceRef": "way/25758443",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "texas-state-history-museum",
@@ -780,6 +942,22 @@
       "wikidata": "Q4797628",
       "wikipedia": "en:Arthouse at the Jones Center"
     }
+  },
+  {
+    "id": "the-driskill",
+    "name": "The Driskill",
+    "lat": 30.2681144,
+    "lon": -97.741721,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "The oldest operating hotel in Austin, a Romanesque pile finished in 1886 at Sixth and Brazos. Cattleman Jesse Driskill built it, intending 'the finest hotel south of St. Louis'.",
+    "extra": "He lost it in a poker game within two years. Lyndon and Lady Bird Johnson had their first date in the dining room, and LBJ later watched election returns from a suite upstairs.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Driskill_Hotel",
+    "sourceRef": "hand",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "the-ritz",
@@ -842,6 +1020,22 @@
     }
   },
   {
+    "id": "ut-tower",
+    "name": "UT Tower",
+    "lat": 30.2862729,
+    "lon": -97.7393655,
+    "category": "landmark",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "The Main Building at the center of the UT campus, finished in 1937. Its 307-foot tower runs 27 floors and is visible from most of central Austin.",
+    "extra": "It gets lit burnt orange for wins, and fully orange with a lit-up number one for a national championship. Locals read the tower the way you would read a scoreboard.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Main_Building_(University_of_Texas_at_Austin)",
+    "sourceRef": "hand",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "vietnam-veterans-monument",
     "name": "Vietnam Veterans Monument",
     "lat": 30.275495,
@@ -868,18 +1062,14 @@
     "lon": -97.746749,
     "category": "landmark",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 3,
+    "story": "An eight-foot bronze of Willie Nelson at Second and Lavaca, outside ACL Live at the Moody Theater. Sculpted by Clete Shields for Capital Area Statues.",
+    "extra": "It was unveiled on April 20, 2011, at 4:20 in the afternoon. Nobody involved has ever claimed that was a coincidence.",
     "storySource": "wikipedia",
     "storyUrl": "https://en.wikipedia.org/wiki/Willie_Nelson_statue",
     "sourceRef": "node/8454950386",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "tourism": "artwork",
-      "wikidata": "Q105044810",
-      "wikipedia": "en:Willie Nelson statue"
-    }
+    "status": "eligible"
   },
   {
     "id": "allandale",
@@ -2050,6 +2240,36 @@
     "alsoIn": ["osm-place"]
   },
   {
+    "id": "auditorium-shores",
+    "name": "Auditorium Shores",
+    "lat": 30.262867,
+    "lon": -97.751857,
+    "category": "park",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "The park on the south bank of Lady Bird Lake, officially Vic Mathias Shores since 2017 though almost nobody calls it that. Best known for its skyline view and the off-leash dog area.",
+    "extra": "The Stevie Ray Vaughan statue stands here, and the lawn has been a concert ground since the 1970s.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "relation/8268247",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75689, 30.26455],
+        [-97.75139, 30.26223],
+        [-97.74942, 30.26015],
+        [-97.74838, 30.26229],
+        [-97.7527, 30.26399],
+        [-97.75433, 30.26423],
+        [-97.75474, 30.26386],
+        [-97.75484, 30.26423],
+        [-97.75682, 30.26503],
+        [-97.75689, 30.26455]
+      ]
+    ]
+  },
+  {
     "id": "auditorium-shores-at-town-lake-metropolitan-park",
     "name": "Auditorium Shores at Town Lake Metropolitan Park",
     "lat": 30.261774,
@@ -2132,22 +2352,39 @@
   {
     "id": "zilker-park",
     "name": "Zilker Park",
-    "lat": 30.267682,
-    "lon": -97.766609,
+    "lat": 30.266503,
+    "lon": -97.767369,
     "category": "park",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Zilker_Park",
-    "sourceRef": "way/946120954",
+    "difficulty": 1,
+    "story": "A 351-acre park just southwest of downtown, donated to the city by Andrew Zilker in 1917. It holds Barton Springs Pool, the Zilker Botanical Garden, and the Great Lawn.",
+    "extra": "It hosts Austin City Limits every October, and the Zilker Holiday Tree every December is strung from a 1960s moonlight tower.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "relation/13307353",
     "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "leisure": "park",
-      "wikidata": "Q8071899",
-      "wikipedia": "en:Zilker Park"
-    }
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.77993, 30.26764],
+        [-97.77896, 30.26622],
+        [-97.77965, 30.26588],
+        [-97.77777, 30.26209],
+        [-97.77438, 30.26314],
+        [-97.77314, 30.26316],
+        [-97.77345, 30.26263],
+        [-97.77167, 30.26189],
+        [-97.7708, 30.26098],
+        [-97.76795, 30.26208],
+        [-97.76512, 30.26472],
+        [-97.76552, 30.26505],
+        [-97.76165, 30.26722],
+        [-97.76379, 30.26839],
+        [-97.76836, 30.27003],
+        [-97.77092, 30.27184],
+        [-97.77993, 30.26764]
+      ]
+    ]
   },
   {
     "id": "bear-creek",
@@ -2583,6 +2820,87 @@
     "status": "shortlist"
   },
   {
+    "id": "circuit-of-the-americas",
+    "name": "Circuit of the Americas",
+    "lat": 30.136757,
+    "lon": -97.632297,
+    "category": "venue",
+    "tier": "suburb",
+    "difficulty": 2,
+    "story": "A 3.4-mile FIA Grade 1 racetrack southeast of Austin, opened in 2012 as the first purpose-built Formula One circuit in the United States. It hosts the US Grand Prix, MotoGP, and NASCAR.",
+    "extra": "Turn 1 climbs 133 feet at a gradient steeper than any corner in Formula One. The 251-foot observation tower is visible from the highway.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Circuit_of_the_Americas",
+    "sourceRef": "way/113586692",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.64891, 30.13306],
+        [-97.64616, 30.13746],
+        [-97.65012, 30.13927],
+        [-97.64765, 30.1432],
+        [-97.64655, 30.14337],
+        [-97.64252, 30.14954],
+        [-97.62766, 30.14235],
+        [-97.62714, 30.14316],
+        [-97.62602, 30.14262],
+        [-97.62401, 30.14638],
+        [-97.62321, 30.146],
+        [-97.62397, 30.14424],
+        [-97.61851, 30.14164],
+        [-97.61799, 30.14216],
+        [-97.61664, 30.14155],
+        [-97.6186, 30.13834],
+        [-97.61908, 30.13855],
+        [-97.61972, 30.13754],
+        [-97.61936, 30.13736],
+        [-97.62092, 30.13496],
+        [-97.6227, 30.13582],
+        [-97.62148, 30.13769],
+        [-97.6238, 30.13888],
+        [-97.62685, 30.13423],
+        [-97.62744, 30.13536],
+        [-97.62915, 30.13292],
+        [-97.62388, 30.1302],
+        [-97.62943, 30.13292],
+        [-97.6302, 30.13162],
+        [-97.62716, 30.13038],
+        [-97.62826, 30.13036],
+        [-97.62924, 30.12863],
+        [-97.6349, 30.13134],
+        [-97.63677, 30.12849],
+        [-97.63268, 30.12496],
+        [-97.63624, 30.12169],
+        [-97.63714, 30.12241],
+        [-97.63618, 30.12329],
+        [-97.63784, 30.12515],
+        [-97.63734, 30.12549],
+        [-97.63699, 30.12687],
+        [-97.63722, 30.12743],
+        [-97.63838, 30.12717],
+        [-97.63962, 30.12863],
+        [-97.64891, 30.13306]
+      ]
+    ]
+  },
+  {
+    "id": "darrell-k-royal-texas-memorial-stadium",
+    "name": "Darrell K Royal-Texas Memorial Stadium",
+    "lat": 30.283822,
+    "lon": -97.732614,
+    "category": "venue",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "Home to Longhorns football since 1924, seating 100,119. That makes it the seventh-largest stadium in the United States and ninth-largest in the world.",
+    "extra": "Named for Darrell K Royal, who coached the team to three national titles. The name has no period after the K, because the K does not stand for anything.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Darrell_K_Royal%E2%80%93Texas_Memorial_Stadium",
+    "sourceRef": "way/128637559",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "interstellar-bbq",
     "name": "Interstellar BBQ",
     "lat": 30.461458,
@@ -2603,6 +2921,22 @@
     }
   },
   {
+    "id": "moody-center",
+    "name": "Moody Center",
+    "lat": 30.280975,
+    "lon": -97.730652,
+    "category": "venue",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "A 15,000-seat arena on the UT campus, opened in 2022 to replace the Frank Erwin Center. Home court for Longhorns basketball and a regular stop for touring acts.",
+    "extra": "It was built on what used to be a parking lot, just south of Mike A. Myers Stadium.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Moody_Center",
+    "sourceRef": "way/953200132",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "oasis",
     "name": "Oasis",
     "lat": 30.405535,
@@ -2621,6 +2955,22 @@
       "wikidata": "Q7074427",
       "wikipedia": "en:Oasis Restaurant"
     }
+  },
+  {
+    "id": "q2-stadium",
+    "name": "Q2 Stadium",
+    "lat": 30.387777,
+    "lon": -97.719408,
+    "category": "venue",
+    "tier": "urban",
+    "difficulty": 2,
+    "story": "A soccer-specific stadium in North Burnet, home to Austin FC since the club started play in 2021. Capacity is about 20,500.",
+    "extra": "Its first-ever event was not an Austin FC match but a friendly between the US women's national team and Nigeria in June 2021.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Q2_Stadium",
+    "sourceRef": "relation/13704106",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "scholz-garten",

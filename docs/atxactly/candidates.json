@@ -328,24 +328,6 @@
     }
   },
   {
-    "id": "austin-central-library",
-    "name": "Austin Central Library",
-    "lat": 30.265968,
-    "lon": -97.751721,
-    "category": "civic",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/516271467",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "amenity": "library"
-    }
-  },
-  {
     "id": "austin-community-college-cypress-creek",
     "name": "Austin Community College - Cypress Creek",
     "lat": 30.479857,
@@ -7428,25 +7410,6 @@
     "status": "candidate",
     "osmTags": {
       "historic": "memorial"
-    }
-  },
-  {
-    "id": "elisabet-ney-museum",
-    "name": "Elisabet Ney Museum",
-    "lat": 30.306628,
-    "lon": -97.726285,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/368165766",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "museum",
-      "wikidata": "Q5361396"
     }
   },
   {
@@ -15676,25 +15639,6 @@
     }
   },
   {
-    "id": "stevie-ray-vaughan-statue",
-    "name": "Stevie Ray Vaughan Statue",
-    "lat": 30.263114,
-    "lon": -97.75068,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/281230952",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "artwork",
-      "wikidata": "Q17038687"
-    }
-  },
-  {
     "id": "stuart-female-seminary",
     "name": "Stuart Female Seminary",
     "lat": 30.26651,
@@ -16396,24 +16340,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "node/12453752274",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
-    }
-  },
-  {
-    "id": "texas-state-capitol",
-    "name": "Texas State Capitol",
-    "lat": 30.27269,
-    "lon": -97.74037,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/12453752273",
     "source": "osm-poi",
     "status": "candidate",
     "osmTags": {
@@ -17555,24 +17481,6 @@
     "status": "candidate",
     "osmTags": {
       "historic": "memorial"
-    }
-  },
-  {
-    "id": "ut-tower",
-    "name": "UT Tower",
-    "lat": 30.286273,
-    "lon": -97.739366,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/516187631",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "man_made": "tower"
     }
   },
   {
@@ -18860,21 +18768,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "node/9992908952",
-    "source": "osm-place",
-    "status": "candidate"
-  },
-  {
-    "id": "auditorium-shores",
-    "name": "Auditorium Shores",
-    "lat": 30.260241,
-    "lon": -97.750099,
-    "category": "neighborhood",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/6078086643",
     "source": "osm-place",
     "status": "candidate"
   },
@@ -21152,21 +21045,6 @@
     "status": "candidate"
   },
   {
-    "id": "mueller",
-    "name": "Mueller",
-    "lat": 30.296524,
-    "lon": -97.700203,
-    "category": "neighborhood",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/5642163740",
-    "source": "osm-place",
-    "status": "candidate"
-  },
-  {
     "id": "north-cat-mountain",
     "name": "North Cat Mountain",
     "lat": 30.367234,
@@ -22847,21 +22725,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "node/5019008237",
-    "source": "osm-place",
-    "status": "candidate"
-  },
-  {
-    "id": "the-domain",
-    "name": "The Domain",
-    "lat": 30.39698,
-    "lon": -97.726875,
-    "category": "neighborhood",
-    "tier": "urban",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/6078086621",
     "source": "osm-place",
     "status": "candidate"
   },
@@ -39222,26 +39085,6 @@
     }
   },
   {
-    "id": "deep-eddy-pool",
-    "name": "Deep Eddy Pool",
-    "lat": 30.276521,
-    "lon": -97.773204,
-    "category": "water",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/206160759",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "swimming_pool",
-      "natural": "spring",
-      "wikidata": "Q5250168"
-    }
-  },
-  {
     "id": "devine-lake",
     "name": "Devine Lake",
     "lat": 30.587823,
@@ -40101,25 +39944,6 @@
     "osmTags": {
       "natural": "peak",
       "wikidata": "Q31693793"
-    }
-  },
-  {
-    "id": "mount-bonnell",
-    "name": "Mount Bonnell",
-    "lat": 30.320767,
-    "lon": -97.773347,
-    "category": "water",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/356700647",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "natural": "peak",
-      "wikidata": "Q6919779"
     }
   },
   {

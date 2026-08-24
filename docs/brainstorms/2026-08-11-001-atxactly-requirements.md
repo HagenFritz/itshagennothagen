@@ -1,24 +1,24 @@
 ---
 date: 2026-08-11
 sequence: 001
-topic: austin-maptapp
+topic: atxactly
 ---
 
-# Austin MapTapp
+# ATXactly
 
 ## Problem Frame
 
-MapTap (maptap.gg, one "p") is a daily geography game: five prompts a day, each
-naming a world city, answered by tapping a spot on a rotatable 3D globe. Score
-per question runs 0-100 by distance, with escalating multipliers for a
-1000-point daily max. After all guesses are in, a "stories" panel gives
-Wikipedia-sourced background on each location, so a bad round still teaches
-something.
+ATXactly is a daily geography game for Austin: five prompts a day, each naming a
+place in the metro, answered by tapping the map. Score per question runs 0-100
+by distance, with escalating multipliers. After all guesses are in, the answers
+appear as labelled pins and each one opens a short story, so a bad round still
+teaches something.
 
-This project is "MapTapp" with two p's, to distinguish it from the original.
-
-Observed by playing MapTap #781 (Aug 11, 2026) end to end. Verified mechanics
-are recorded below rather than inferred from descriptions.
+The genre reference is MapTap (maptap.gg), which does this at world scale on a
+3D globe. Its mechanics were observed by playing puzzle #781 (Aug 11, 2026) end
+to end, and the findings below are recorded from that session rather than
+inferred from descriptions. ATXactly diverges where the metro scale demands it,
+most importantly in scoring areas by polygon rather than by centroid.
 
 Hagen wants the same loop scoped to Austin. He grew up in DFW and moved to
 Austin, and has never built a reliable mental map of either. A daily five-
@@ -31,8 +31,7 @@ OpenStreetMap raster tiles with no mapping library. This reuses that.
 
 ## Requirements
 
-- R1. Playable at `/labs/austin-maptapp`, with a card linking to it from the Lab
-  page.
+- R1. Playable at `/labs/atxactly`, with a card linking to it from the Lab page.
 - R2. A daily round is five location prompts drawn deterministically from the
   UTC date, so every player worldwide gets the same five on the same day.
 - R3. Each prompt shows a location name and its difficulty band with the
@@ -176,7 +175,7 @@ map anchors that the unlabeled basemap does not.
 
 ### The extractor
 
-`scripts/build_maptapp_locations.py`, stdlib-only Python 3. Three commands:
+`scripts/build_atxactly_locations.py`, stdlib-only Python 3. Three commands:
 
     discover [--source coa|osm-place|osm-poi]   fetch and merge
     triage   [--limit N] [--category C]         rank candidates by prominence
@@ -184,9 +183,9 @@ map anchors that the unlabeled basemap does not.
 
 Two output files, split by status:
 
-- `src/data/maptapp-locations.json` (66 KB, 152 entries) - `shortlist` and
+- `src/data/atxactly-locations.json` (66 KB, 152 entries) - `shortlist` and
   `eligible` only. This is what the site bundles.
-- `docs/maptapp/candidates.json` (915 KB, 2357 entries) - the raw harvest.
+- `docs/atxactly/candidates.json` (915 KB, 2357 entries) - the raw harvest.
   Working file, never imported by the site. Promoting an entry migrates it into
   the shipped pool automatically on the next run.
 
@@ -339,7 +338,7 @@ established by the Weed Whacker leaderboard.
 
 Tables:
 
-- `maptapp_scores` - date, player id, handle, total score, per-question
+- `atxactly_scores` - date, player id, handle, total score, per-question
   distances, submitted timestamp.
 - Reuses `api_requests` and `functions/api/_rate-limit.ts` unchanged.
 

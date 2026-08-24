@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build the Austin MapTapp location pool from public data sources.
+"""Build the Austin ATXactly location pool from public data sources.
 
-Stdlib only. See docs/brainstorms/2026-08-11-001-austin-maptapp-requirements.md
+Stdlib only. See docs/brainstorms/2026-08-11-001-austin-atxactly-requirements.md
 for the sources, the category taxonomy, and why each source is shaped this way.
 
-    python3 scripts/build_maptapp_locations.py discover
-    python3 scripts/build_maptapp_locations.py discover --source osm-poi
-    python3 scripts/build_maptapp_locations.py stats
+    python3 scripts/build_atxactly_locations.py discover
+    python3 scripts/build_atxactly_locations.py discover --source osm-poi
+    python3 scripts/build_atxactly_locations.py stats
 
 Hand-edited fields (story, difficulty, category, name, status, lat, lon) are
 never overwritten by a re-run. Discovery merges on `id`: new entries are added,
@@ -34,8 +34,8 @@ REPO = Path(__file__).resolve().parent.parent
 # POOL ships with the site and holds only reviewed locations, so the Astro
 # bundle never carries 2,300 unreviewed OSM rows. RAW is the working harvest,
 # kept out of src/ and used only by this script.
-POOL = REPO / "src" / "data" / "maptapp-locations.json"
-RAW = REPO / "docs" / "maptapp" / "candidates.json"
+POOL = REPO / "src" / "data" / "atxactly-locations.json"
+RAW = REPO / "docs" / "atxactly" / "candidates.json"
 
 UA = "itshagennothagen-dev/1.0 (+https://itshagennothagen.dev)"
 
@@ -54,7 +54,7 @@ URBAN = (30.15, -97.88, 30.45, -97.60)
 
 # Fields a human may edit. Discovery must not clobber these on re-run.
 PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
-             "story", "storySource", "storyUrl", "status", "notes")
+             "story", "storySource", "storyUrl", "status", "notes", "shape")
 
 CATEGORIES = ("neighborhood", "district", "park", "water",
               "landmark", "civic", "venue", "town")
@@ -192,6 +192,53 @@ def point_on_surface(polys):
     return bestpt[1], bestpt[0]
 
 
+def _perp_dist(p, a, b):
+    if a == b:
+        return math.dist(p, a)
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy)
+    t = max(0.0, min(1.0, t))
+    return math.dist(p, (a[0] + t * dx, a[1] + t * dy))
+
+
+def simplify(points, eps):
+    """Ramer-Douglas-Peucker. Iterative, because a 3,000-vertex ring blows
+    the recursion limit."""
+    if len(points) < 3:
+        return list(points)
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        lo, hi = stack.pop()
+        dmax, idx = 0.0, lo
+        for i in range(lo + 1, hi):
+            d = _perp_dist(points[i], points[lo], points[hi])
+            if d > dmax:
+                dmax, idx = d, i
+        if dmax > eps:
+            keep[idx] = True
+            stack.append((lo, idx))
+            stack.append((idx, hi))
+    return [p for p, k in zip(points, keep) if k]
+
+
+# ~25 m at this latitude. Boundaries are fuzzy social facts, not survey lines,
+# so this precision is far finer than the question deserves.
+SIMPLIFY_EPS = 0.00025
+
+
+def shape_of(polys):
+    """Simplified outer rings for area scoring, largest fragment first."""
+    out = []
+    for poly in sorted(polys, key=lambda p: -abs(ring_area(p[0]))):
+        ring = [(float(x), float(y)) for x, y in poly[0]]
+        s = simplify(ring, SIMPLIFY_EPS)
+        if len(s) >= 4:
+            out.append([[round(x, 5), round(y, 5)] for x, y in s])
+    return out
+
+
 # ---------- sources ----------
 
 def discover_coa():
@@ -230,6 +277,7 @@ def discover_coa():
             "source": "coa-npa",
             "status": "candidate",
             "fragments": len(polys),
+            "shape": shape_of(polys),
         })
     print(f"  {len(rows)} rows -> {len(out)} distinct areas")
     return out
@@ -277,7 +325,10 @@ POI_QUERIES = [
     ('nwr["tourism"~"^(attraction|museum|artwork|viewpoint)$"]["name"]', "landmark"),
     ('nwr["leisure"="park"]["name"]', "park"),
     ('nwr["leisure"~"^(nature_reserve|water_park)$"]["name"]', "park"),
-    ('nwr["natural"~"^(water|spring|peak)$"]["name"]', "water"),
+    ('nwr["natural"~"^(water|spring)$"]["name"]', "water"),
+    # peaks are landmarks, not water: filing them together put Mount Bonnell
+    # and Pilot Knob in the water category
+    ('nwr["natural"="peak"]["name"]', "landmark"),
     ('nwr["waterway"="waterfall"]["name"]', "water"),
     ('nwr["amenity"~"^(theatre|cinema|university|college|hospital|library|'
      'townhall|arts_centre)$"]["name"]', "civic"),
@@ -326,12 +377,22 @@ def discover_osm_pois():
                 continue
             if not in_box(lat, lon, (SOUTH, WEST, NORTH, EAST)):
                 continue
-            key = slugify(name)
+            # Chains share a name: OSM has five "Alamo Drafthouse Cinema" in
+            # this bbox. Deduping on the bare name kept one and silently
+            # dropped the rest, and a prompt reading just "Alamo Drafthouse
+            # Cinema" would be unanswerable anyway. Disambiguate with the
+            # branch tag, falling back to the addr locality/suburb.
+            # addr:city is too coarse to disambiguate ("(Austin)" on a name
+            # that is already unique adds noise), so only a branch or a
+            # suburb qualifies.
+            branch = tags.get("branch") or tags.get("addr:suburb")
+            display = f"{name} ({branch})" if branch else name
+            key = slugify(display)
             if key in seen:
                 continue
             seen[key] = {
                 "id": key,
-                "name": name,
+                "name": display,
                 "lat": round(lat, 6),
                 "lon": round(lon, 6),
                 "category": category,
@@ -346,7 +407,7 @@ def discover_osm_pois():
                 "osmTags": {k: v for k, v in tags.items()
                             if k in ("tourism", "leisure", "amenity", "natural",
                                      "historic", "man_made", "shop", "aeroway",
-                                     "wikidata", "wikipedia")},
+                                     "wikidata", "wikipedia", "branch")},
             }
             n += 1
         print(f"  +{n}")
@@ -398,7 +459,7 @@ def merge(existing, discovered):
         if others:
             cur["alsoIn"] = sorted(others)
         # Backfill only fields still unset by a human.
-        for k in ("category", "tier", "storyUrl", "storySource"):
+        for k in ("category", "tier", "storyUrl", "storySource", "shape"):
             if cur.get(k) in (None, "") and new.get(k) not in (None, ""):
                 cur[k] = new[k]
         if cur != before:
@@ -518,6 +579,53 @@ def cmd_triage(args):
           f"and are likely prunable")
 
 
+def cmd_promote(args):
+    """Move named locations into the shortlist by hand.
+
+    The prominence scorer cannot rank the raw file usefully: without a
+    Wikipedia tag almost everything ties at 15, so Mount Bonnell and Barton
+    Creek Greenbelt sit level with Alamo Pocket Park. Human judgement is the
+    only signal available, and this is how it gets applied.
+
+    Names are matched case-insensitively against `name`, then `id`. Reports
+    anything it could not find rather than failing silently.
+    """
+    entries = load_existing()
+    by_name = {}
+    for e in entries:
+        by_name.setdefault(e["name"].lower(), e)
+        by_name.setdefault(e["id"].lower(), e)
+
+    wanted = list(args.names)
+    if args.from_file:
+        wanted += [ln.strip() for ln in Path(args.from_file).read_text().splitlines()
+                   if ln.strip() and not ln.startswith("#")]
+
+    hit, miss, already = [], [], []
+    for name in wanted:
+        e = by_name.get(name.lower())
+        if e is None:
+            miss.append(name)
+        elif e.get("status") in ("shortlist", "eligible"):
+            already.append(e["name"])
+        else:
+            e["status"] = "shortlist"
+            hit.append(e["name"])
+
+    for n in hit:
+        print(f"  promoted  {n}")
+    for n in already:
+        print(f"  already   {n}")
+    for n in miss:
+        print(f"  NOT FOUND {n}", file=sys.stderr)
+    print(f"\n{len(hit)} promoted, {len(already)} already listed, {len(miss)} not found")
+    if args.dry_run:
+        print("dry run, nothing written")
+        return
+    if hit:
+        write(entries)
+
+
 def cmd_shortlist(args):
     """Mark high-prominence candidates as `shortlist` for human review.
 
@@ -596,6 +704,12 @@ def main():
     sl.add_argument("--floor", type=int, default=30)
     sl.add_argument("--dry-run", action="store_true")
     sl.set_defaults(func=cmd_shortlist)
+    pm = sub.add_parser("promote",
+                        help="hand-promote named locations into the shortlist")
+    pm.add_argument("names", nargs="*", help="location names or ids")
+    pm.add_argument("--from-file", help="newline-delimited names, # comments ok")
+    pm.add_argument("--dry-run", action="store_true")
+    pm.set_defaults(func=cmd_promote)
     s = sub.add_parser("stats", help="summarize the current pool")
     s.set_defaults(func=cmd_stats)
     args = p.parse_args()
