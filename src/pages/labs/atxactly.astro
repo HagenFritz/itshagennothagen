@@ -1,0 +1,1067 @@
+---
+import Base from '../../layouts/Base.astro'
+import locationData from '../../data/atxactly-locations.json'
+
+type Loc = {
+  id: string
+  name: string
+  lat: number
+  lon: number
+  category: string
+  tier: string
+  difficulty: number | null
+  story: string | null
+  extra: string | null
+  storyUrl: string | null
+  status: string
+  shape?: number[][][]
+}
+
+const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
+---
+
+<Base title="ATXactly · Hagen Fritz">
+  <div id="mt" data-locations={JSON.stringify(eligible)}>
+    <header class="mt-head">
+      <div class="mt-score"><span>SCORE</span><b id="mt-total">0</b></div>
+      <div class="mt-mid">
+        <div id="mt-band" class="mt-band">
+          <span id="mt-band-txt">Round 1 of 5 · Easy</span>
+          <span id="mt-mult" class="mt-mult m1">1x</span>
+        </div>
+        <div id="mt-name" class="mt-name">Loading…</div>
+        <div id="mt-sub" class="mt-sub">Tap as close as you can</div>
+      </div>
+      <button id="mt-again" class="mt-btn" hidden>Play again</button>
+      <button id="mt-share" class="mt-btn" hidden>Copy score</button>
+      <a href="/" class="mt-home" aria-label="Back to itshagennothagen">Home</a>
+    </header>
+
+    <div class="mt-stage">
+      <canvas id="mt-tiles"></canvas>
+      <canvas id="mt-over"></canvas>
+      <div id="mt-toast" class="mt-toast">
+        <b id="mt-toast-d"></b>
+        <span id="mt-toast-p"></span>
+      </div>
+      <div id="mt-hint" class="mt-hint" hidden>Tap a pin to read its story</div>
+    </div>
+
+    <dialog id="mt-dialog" class="mt-dialog">
+      <button id="mt-close" class="mt-close" aria-label="Close">×</button>
+      <div class="mt-dialog-meta" id="mt-d-meta"></div>
+      <h2 id="mt-d-name"></h2>
+      <p id="mt-d-story"></p>
+      <p id="mt-d-extra"></p>
+      <a id="mt-d-link" target="_blank" rel="noopener" hidden>Wikipedia</a>
+    </dialog>
+  </div>
+</Base>
+
+<style is:global>
+  #mt {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0b0f1a;
+    z-index: 50;
+    color: #e6e8ee;
+  }
+  .mt-head {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #0e1424;
+    border-bottom: 1px solid #1e2740;
+    flex: 0 0 auto;
+  }
+  .mt-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #c2410c;
+    border-radius: 8px;
+    padding: 4px 16px;
+    min-width: 104px;
+  }
+  .mt-score span {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: #c2410c;
+  }
+  .mt-score b {
+    font-size: 40px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    transition: transform 0.15s;
+  }
+  .mt-score b.bump {
+    transform: scale(1.18);
+    color: #f59e5b;
+  }
+  .mt-mid {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+  .mt-band {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8b93a7;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .mt-mult {
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    transition:
+      color 0.3s,
+      transform 0.3s;
+  }
+  .mt-mult.m1 {
+    color: #8b93a7;
+  }
+  .mt-mult.m2 {
+    color: #38bdf8;
+  }
+  .mt-mult.m3 {
+    color: #f59e5b;
+  }
+  .mt-mult.pulse {
+    transform: scale(1.25);
+  }
+  .pts-m1 {
+    color: #8b93a7;
+  }
+  .pts-m2 {
+    color: #38bdf8;
+  }
+  .pts-m3 {
+    color: #f59e5b;
+  }
+  .mt-home {
+    align-self: center;
+    font-size: 12px;
+    color: #8b93a7;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    opacity: 0.7;
+  }
+  .mt-home:hover {
+    opacity: 1;
+    background: #1e2740;
+  }
+  .mt-name {
+    font-size: 22px;
+    font-weight: 650;
+    line-height: 1.15;
+    animation: mt-slide 0.35s ease-out;
+  }
+  .mt-sub {
+    font-size: 13px;
+    color: #8b93a7;
+  }
+  @keyframes mt-slide {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .mt-btn {
+    background: #c2410c;
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+  }
+  .mt-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  #mt-tiles,
+  #mt-over {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #mt-tiles {
+    filter: brightness(2.6) contrast(1.45) saturate(0.7);
+  }
+  #mt-over {
+    touch-action: none;
+    cursor: crosshair;
+  }
+  #mt-over.pins {
+    cursor: pointer;
+  }
+  .mt-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translate(-50%, 30px);
+    opacity: 0;
+    background: #0e1424f0;
+    border: 1px solid #2a3556;
+    border-radius: 14px;
+    padding: 14px 26px;
+    text-align: center;
+    pointer-events: none;
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+      opacity 0.25s;
+    box-shadow: 0 10px 40px #0008;
+  }
+  .mt-toast.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  .mt-toast b {
+    display: block;
+    font-size: 28px;
+    line-height: 1.1;
+  }
+  .mt-toast span {
+    display: block;
+    margin-top: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #f59e5b;
+  }
+  .mt-hint {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0e1424e8;
+    border: 1px solid #2a3556;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #8b93a7;
+    pointer-events: none;
+  }
+  .mt-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    background: #0e1424;
+    color: #e6e8ee;
+    border: 1px solid #2a3556;
+    border-radius: 14px;
+    padding: 22px 26px 20px;
+    max-width: min(60ch, 92vw);
+    box-shadow: 0 20px 60px #000a;
+  }
+  .mt-dialog::backdrop {
+    background: #0b0f1aaa;
+    backdrop-filter: blur(2px);
+  }
+  .mt-dialog[open] {
+    animation: mt-pop 0.22s ease-out;
+  }
+  @keyframes mt-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+  .mt-dialog h2 {
+    margin: 2px 0 10px;
+    font-size: 20px;
+  }
+  .mt-dialog p {
+    margin: 0 0 10px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .mt-dialog-meta {
+    font-size: 12px;
+    color: #8b93a7;
+    letter-spacing: 0.04em;
+  }
+  .mt-dialog-meta b {
+    font-weight: 700;
+  }
+  .mt-dialog a {
+    font-size: 13px;
+    color: #c2410c;
+  }
+  .mt-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: 0;
+    color: #8b93a7;
+    font-size: 24px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  type Loc = {
+    id: string
+    name: string
+    lat: number
+    lon: number
+    difficulty: number
+    story: string
+    extra: string | null
+    storyUrl: string | null
+    shape?: number[][][]
+  }
+
+  const root = document.getElementById('mt') as HTMLElement
+  const ALL: Loc[] = JSON.parse(root.dataset.locations!)
+
+  // One round per UTC day, remembered on the device. This is an honour lock,
+  // not a security boundary: clearing site data or a private window resets it.
+  // Acceptable here because there is no leaderboard to farm, so a replay only
+  // fools the player.
+  const PLAYED_KEY = 'atxactly.lastPlayed'
+  function readStore(key: string): string | null {
+    try {
+      return localStorage.getItem(key)
+    } catch {
+      return null
+    }
+  }
+  function writeStore(key: string, val: string) {
+    try {
+      localStorage.setItem(key, val)
+    } catch {
+      /* private window or blocked storage: the lock just does not persist */
+    }
+  }
+
+  const tilesC = document.getElementById('mt-tiles') as HTMLCanvasElement
+  const overC = document.getElementById('mt-over') as HTMLCanvasElement
+  const tctx = tilesC.getContext('2d')!
+  const octx = overC.getContext('2d')!
+  const TILE = 256
+  const MULTIPLIERS = [1, 1, 2, 2, 3]
+  const MAX_TOTAL = 100 * MULTIPLIERS.reduce((a, b) => a + b, 0)
+  const BOX = { s: 30.05, w: -98.05, n: 30.62, e: -97.35 }
+
+  const lonToX = (lon: number, z: number) => ((lon + 180) / 360) * TILE * 2 ** z
+  const latToY = (lat: number, z: number) => {
+    const s = Math.sin((lat * Math.PI) / 180)
+    return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * TILE * 2 ** z
+  }
+  const xToLon = (x: number, z: number) => (x / (TILE * 2 ** z)) * 360 - 180
+  const yToLat = (y: number, z: number) => {
+    const n = Math.PI - 2 * Math.PI * (y / (TILE * 2 ** z))
+    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+  }
+
+  function haversine(aLat: number, aLon: number, bLat: number, bLon: number) {
+    const R = 6371008.8
+    const rad = Math.PI / 180
+    const dLat = (bLat - aLat) * rad
+    const dLon = (bLon - aLon) * rad
+    const h =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLon / 2) ** 2
+    return 2 * R * Math.asin(Math.sqrt(h))
+  }
+  function pointInRing(lon: number, lat: number, ring: number[][]) {
+    let inside = false
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [x1, y1] = ring[i]
+      const [x2, y2] = ring[j]
+      if (y1 > lat !== y2 > lat) {
+        const xint = ((x2 - x1) * (lat - y1)) / (y2 - y1) + x1
+        if (lon < xint) inside = !inside
+      }
+    }
+    return inside
+  }
+  function distToSegment(lat: number, lon: number, a: number[], b: number[]) {
+    const kx = 111320 * Math.cos((lat * Math.PI) / 180)
+    const ky = 110574
+    const px = lon * kx,
+      py = lat * ky
+    const ax = a[0] * kx,
+      ay = a[1] * ky
+    const bx = b[0] * kx,
+      by = b[1] * ky
+    const dx = bx - ax,
+      dy = by - ay
+    if (dx === 0 && dy === 0) return Math.hypot(px - ax, py - ay)
+    let t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)
+    t = Math.max(0, Math.min(1, t))
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+  }
+  // Areas score flat 100 anywhere inside; outside measures to the edge.
+  function effectiveDistance(lat: number, lon: number, loc: Loc) {
+    if (!loc.shape) return haversine(lat, lon, loc.lat, loc.lon)
+    for (const ring of loc.shape) if (pointInRing(lon, lat, ring)) return 0
+    let best = Infinity
+    for (const ring of loc.shape)
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++)
+        best = Math.min(best, distToSegment(lat, lon, ring[i], ring[j]))
+    return best
+  }
+  const FLOOR = 150,
+    MAXD = 40000
+  function scoreOf(m: number) {
+    if (m <= FLOOR) return 100
+    if (m >= MAXD) return 0
+    const v =
+      100 * (1 - Math.log10(1 + m / FLOOR) / Math.log10(1 + MAXD / FLOOR))
+    return Math.round(v * 10) / 10
+  }
+
+  function mulberry(seed: number) {
+    return () => {
+      seed |= 0
+      seed = (seed + 0x6d2b79f5) | 0
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+  }
+  const today = new Date()
+  const puzzleNo = Math.floor(
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()) /
+      86400000,
+  )
+
+  // Rounds 1-2 easy, 3-4 medium, 5 hard. A starved band borrows from its
+  // neighbour so the game still deals five while the pool is small.
+  function buildRound(seed: number): Loc[] {
+    const rnd = mulberry(seed)
+    const pools = {
+      easy: ALL.filter((l) => l.difficulty <= 2),
+      med: ALL.filter((l) => l.difficulty === 3),
+      hard: ALL.filter((l) => l.difficulty >= 4),
+    }
+    const used = new Set<string>()
+    const take = (...order: (keyof typeof pools)[]) => {
+      for (const k of order) {
+        const avail = pools[k].filter((l) => !used.has(l.id))
+        if (avail.length) {
+          const pick = avail[Math.floor(rnd() * avail.length)]
+          used.add(pick.id)
+          return pick
+        }
+      }
+      return null
+    }
+    return [
+      take('easy', 'med', 'hard'),
+      take('easy', 'med', 'hard'),
+      take('med', 'easy', 'hard'),
+      take('med', 'hard', 'easy'),
+      take('hard', 'med', 'easy'),
+    ].filter(Boolean) as Loc[]
+  }
+
+  let ROUND = buildRound(puzzleNo)
+  let idx = 0
+  let total = 0
+  let results: {
+    loc: Loc
+    guess: { lat: number; lon: number }
+    dist: number
+    base: number
+    pts: number
+  }[] = []
+  let reveal: {
+    guess: { lat: number; lon: number }
+    loc: Loc
+    t0: number
+  } | null = null
+  let locked = false
+  let finished = false
+  let pinHover = -1
+
+  let center = { lat: 30.2672, lon: -97.7431 }
+  let zoom = 11
+
+  // Two layers from the same basemap. During play only the unlabelled tiles
+  // render, so the map cannot be read for the answer. At the results screen
+  // there is nothing left to protect and the point is to learn the city, so
+  // the transparent label layer goes on top.
+  //
+  // dark_only_labels is used rather than the combined dark_all because
+  // dark_all 502s at z15 and above, which is exactly where the results camera
+  // sits once it fits five pins.
+  const TILE_URL = {
+    base: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_nolabels/${z}/${x}/${y}.png`,
+    labels: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/dark_only_labels/${z}/${x}/${y}.png`,
+  }
+  type Layer = keyof typeof TILE_URL
+
+  const tiles = new Map<string, HTMLImageElement>()
+  function getTile(tx: number, ty: number, z: number, layer: Layer) {
+    const key = `${layer}/${z}/${tx}/${ty}`
+    const hit = tiles.get(key)
+    if (hit) return hit
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => drawTiles()
+    img.onerror = () => img.setAttribute('data-failed', 'true')
+    const sub = 'abcd'[(tx + ty) % 4]!
+    img.src = TILE_URL[layer](sub, z, tx, ty)
+    tiles.set(key, img)
+    return img
+  }
+
+  function viewSize() {
+    const r = overC.getBoundingClientRect()
+    return { w: r.width, h: r.height }
+  }
+  function fit() {
+    const { w, h } = viewSize()
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    for (const [c, ctx] of [
+      [tilesC, tctx],
+      [overC, octx],
+    ] as const) {
+      c.width = Math.round(w * dpr)
+      c.height = Math.round(h * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    clampCamera()
+    drawTiles()
+    drawOverlay()
+  }
+  function minZoom() {
+    const { w, h } = viewSize()
+    for (let t = 8; t <= 18; t += 0.05) {
+      const pw = Math.abs(lonToX(BOX.e, t) - lonToX(BOX.w, t))
+      const ph = Math.abs(latToY(BOX.s, t) - latToY(BOX.n, t))
+      if (pw >= w && ph >= h) return t
+    }
+    return 10
+  }
+  function clampCamera() {
+    zoom = Math.max(minZoom(), Math.min(17, zoom))
+    center.lat = Math.max(BOX.s, Math.min(BOX.n, center.lat))
+    center.lon = Math.max(BOX.w, Math.min(BOX.e, center.lon))
+  }
+  function project(lat: number, lon: number) {
+    const { w, h } = viewSize()
+    return {
+      x: lonToX(lon, zoom) - (lonToX(center.lon, zoom) - w / 2),
+      y: latToY(lat, zoom) - (latToY(center.lat, zoom) - h / 2),
+    }
+  }
+  function unproject(px: number, py: number) {
+    const { w, h } = viewSize()
+    return {
+      lon: xToLon(lonToX(center.lon, zoom) - w / 2 + px, zoom),
+      lat: yToLat(latToY(center.lat, zoom) - h / 2 + py, zoom),
+    }
+  }
+
+  function drawTiles() {
+    const { w, h } = viewSize()
+    tctx.fillStyle = '#0b0f1a'
+    tctx.fillRect(0, 0, w, h)
+    const z = Math.round(zoom)
+    const scale = 2 ** (zoom - z)
+    const ox = lonToX(center.lon, z) - w / (2 * scale)
+    const oy = latToY(center.lat, z) - h / (2 * scale)
+    const span = 2 ** z
+    for (
+      let tx = Math.floor(ox / TILE);
+      tx <= Math.floor((ox + w / scale) / TILE);
+      tx++
+    ) {
+      for (
+        let ty = Math.floor(oy / TILE);
+        ty <= Math.floor((oy + h / scale) / TILE);
+        ty++
+      ) {
+        if (ty < 0 || ty >= span) continue
+        const wrapped = ((tx % span) + span) % span
+        const layers: Layer[] = finished ? ['base', 'labels'] : ['base']
+        for (const layer of layers) {
+          const img = getTile(wrapped, ty, z, layer)
+          if (img.complete && !img.hasAttribute('data-failed')) {
+            tctx.drawImage(
+              img,
+              (tx * TILE - ox) * scale,
+              (ty * TILE - oy) * scale,
+              TILE * scale,
+              TILE * scale,
+            )
+          }
+        }
+      }
+    }
+  }
+
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3)
+  const clamp01 = (t: number) => Math.max(0, Math.min(1, t))
+  // Overshooting drop for the answer pin.
+  const bounce = (t: number) => {
+    const c = 1.7
+    return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2)
+  }
+
+  function pin(x: number, y: number, color: string, r = 8, scale = 1) {
+    if (scale <= 0) return
+    octx.save()
+    octx.translate(x, y)
+    octx.scale(scale, scale)
+    octx.beginPath()
+    octx.arc(0, 0, r + 5, 0, Math.PI * 2)
+    octx.fillStyle = color + '33'
+    octx.fill()
+    octx.beginPath()
+    octx.arc(0, 0, r, 0, Math.PI * 2)
+    octx.fillStyle = color
+    octx.fill()
+    octx.strokeStyle = '#0b0f1a'
+    octx.lineWidth = 2.5
+    octx.stroke()
+    octx.restore()
+  }
+
+  function shapePath(loc: Loc) {
+    octx.beginPath()
+    for (const ring of loc.shape!) {
+      ring.forEach(([lon, lat], i) => {
+        const p = project(lat, lon)
+        i ? octx.lineTo(p.x, p.y) : octx.moveTo(p.x, p.y)
+      })
+      octx.closePath()
+    }
+  }
+
+  // Pins near each other would otherwise stack their labels on top of one
+  // another (Willie Nelson and Stevie Ray Vaughan are ~200 m apart).
+  // Each label claims a box, and a colliding one steps up until it is clear.
+  type Box = { x1: number; y1: number; x2: number; y2: number }
+  let claimed: Box[] = []
+  const overlaps = (a: Box, b: Box) =>
+    a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1
+
+  function label(x: number, y: number, text: string, hot: boolean) {
+    octx.font = `600 13px ui-sans-serif, system-ui, sans-serif`
+    const tw = octx.measureText(text).width
+    const px = 9,
+      h = 24
+    const bx = x - tw / 2 - px
+    let by = y - 34
+    for (let i = 0; i < 8; i++) {
+      const box = { x1: bx, y1: by, x2: bx + tw + px * 2, y2: by + h }
+      if (!claimed.some((c) => overlaps(box, c))) break
+      by -= h + 4
+    }
+    claimed.push({ x1: bx, y1: by, x2: bx + tw + px * 2, y2: by + h })
+    octx.fillStyle = hot ? '#c2410c' : '#0e1424ee'
+    octx.strokeStyle = hot ? '#f59e5b' : '#2a3556'
+    octx.lineWidth = 1
+    octx.beginPath()
+    octx.roundRect(bx, by, tw + px * 2, h, 7)
+    octx.fill()
+    octx.stroke()
+    octx.fillStyle = '#e6e8ee'
+    octx.textBaseline = 'middle'
+    octx.textAlign = 'center'
+    octx.fillText(text, x, by + h / 2)
+  }
+
+  function drawOverlay() {
+    const { w, h } = viewSize()
+    octx.clearRect(0, 0, w, h)
+
+    if (finished) {
+      claimed = []
+      results.forEach((r, i) => {
+        const p = project(r.loc.lat, r.loc.lon)
+        if (r.loc.shape) {
+          shapePath(r.loc)
+          octx.fillStyle = 'rgba(194,65,12,0.22)'
+          octx.fill()
+          octx.strokeStyle = '#c2410c'
+          octx.lineWidth = 1.5
+          octx.stroke()
+        }
+        pin(
+          p.x,
+          p.y,
+          i === pinHover ? '#f59e5b' : '#c2410c',
+          9,
+          i === pinHover ? 1.15 : 1,
+        )
+        label(p.x, p.y, r.loc.name, i === pinHover)
+      })
+      return
+    }
+
+    if (!reveal) return
+    const t = (performance.now() - reveal.t0) / 1000
+    const { guess, loc } = reveal
+    const a = project(guess.lat, guess.lon)
+    const b = project(loc.lat, loc.lon)
+
+    // 0.00-0.25s guess pops in
+    const gs = t < 0.25 ? bounce(clamp01(t / 0.25)) : 1
+    // 0.25-0.80s line draws out, polygon fades in
+    const lp = ease(clamp01((t - 0.25) / 0.55))
+    // 0.65-1.05s answer pin drops
+    const ap = clamp01((t - 0.65) / 0.4)
+
+    if (loc.shape && lp > 0) {
+      shapePath(loc)
+      octx.fillStyle = `rgba(194,65,12,${0.28 * lp})`
+      octx.fill()
+      octx.strokeStyle = `rgba(194,65,12,${lp})`
+      octx.lineWidth = 2
+      octx.stroke()
+    }
+    if (lp > 0) {
+      octx.strokeStyle = '#8b93a7'
+      octx.lineWidth = 2
+      octx.setLineDash([6, 6])
+      octx.beginPath()
+      octx.moveTo(a.x, a.y)
+      octx.lineTo(a.x + (b.x - a.x) * lp, a.y + (b.y - a.y) * lp)
+      octx.stroke()
+      octx.setLineDash([])
+    }
+    pin(a.x, a.y, '#e6e8ee', 8, gs)
+    if (ap > 0) {
+      const drop = (1 - bounce(ap)) * -48
+      pin(b.x, b.y + drop, '#c2410c', 9, 1)
+    }
+    if (t < 1.3) requestAnimationFrame(drawOverlay)
+  }
+
+  const elTotal = document.getElementById('mt-total')!
+  const elBandTxt = document.getElementById('mt-band-txt')!
+  const elMult = document.getElementById('mt-mult')!
+  const elShare = document.getElementById('mt-share') as HTMLButtonElement
+  const elName = document.getElementById('mt-name')!
+  const elSub = document.getElementById('mt-sub')!
+  const elToast = document.getElementById('mt-toast')!
+  const elToastD = document.getElementById('mt-toast-d')!
+  const elToastP = document.getElementById('mt-toast-p')!
+  const elAgain = document.getElementById('mt-again') as HTMLButtonElement
+  const elHint = document.getElementById('mt-hint')!
+  const dlg = document.getElementById('mt-dialog') as HTMLDialogElement
+
+  const bandName = (d: number) =>
+    d <= 2 ? 'Easy' : d === 3 ? 'Medium' : 'Hard'
+  const fmtDist = (d: number) =>
+    d === 0
+      ? 'Inside!'
+      : d < 1000
+        ? `${Math.round(d)} m off`
+        : `${(d / 1000).toFixed(1)} km off`
+
+  function setMult(m: number) {
+    elMult.textContent = `${m}x`
+    elMult.className = `mt-mult m${m}`
+    elMult.classList.add('pulse')
+    setTimeout(() => elMult.classList.remove('pulse'), 320)
+  }
+
+  function renderPrompt() {
+    const loc = ROUND[idx]
+    elBandTxt.textContent = `Round ${idx + 1} of ${ROUND.length} · ${bandName(loc.difficulty)}`
+    setMult(MULTIPLIERS[idx])
+    elName.textContent = loc.name
+    elName.style.animation = 'none'
+    void elName.offsetWidth
+    elName.style.animation = ''
+    elSub.textContent = 'Tap as close as you can'
+  }
+
+  let shown = 0
+  function animateTotal(to: number) {
+    const from = shown
+    const t0 = performance.now()
+    elTotal.classList.add('bump')
+    const step = () => {
+      const t = clamp01((performance.now() - t0) / 650)
+      shown = from + (to - from) * ease(t)
+      elTotal.textContent = String(Math.round(shown))
+      if (t < 1) requestAnimationFrame(step)
+      else elTotal.classList.remove('bump')
+    }
+    step()
+  }
+
+  function commit(lat: number, lon: number) {
+    if (locked || finished) return
+    locked = true
+    const loc = ROUND[idx]
+    const d = effectiveDistance(lat, lon, loc)
+    const base = scoreOf(d)
+    const pts = base * MULTIPLIERS[idx]
+    total += pts
+    results.push({ loc, guess: { lat, lon }, dist: d, base, pts })
+    reveal = { guess: { lat, lon }, loc, t0: performance.now() }
+    elSub.textContent = '…'
+    drawOverlay()
+
+    setTimeout(() => {
+      elToastD.textContent = fmtDist(d)
+      elToastP.textContent = `+${Math.round(pts)} pts`
+      elToast.classList.add('show')
+      animateTotal(total)
+    }, 900)
+
+    setTimeout(() => {
+      elToast.classList.remove('show')
+      reveal = null
+      locked = false
+      idx++
+      if (idx >= ROUND.length) finish()
+      else {
+        renderPrompt()
+        drawOverlay()
+      }
+    }, 3400)
+  }
+
+  function finish() {
+    finished = true
+    overC.classList.add('pins')
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elName.textContent = `${Math.round(total)} / ${MAX_TOTAL}`
+    elSub.textContent = 'Round complete'
+    elAgain.hidden = false
+    elShare.hidden = false
+    elHint.hidden = false
+    writeStore(PLAYED_KEY, String(puzzleNo))
+    fitToResults()
+    drawTiles()
+    drawOverlay()
+  }
+
+  function fitToResults() {
+    const lats = results.map((r) => r.loc.lat)
+    const lons = results.map((r) => r.loc.lon)
+    const s = Math.min(...lats),
+      n = Math.max(...lats)
+    const w_ = Math.min(...lons),
+      e = Math.max(...lons)
+    center = { lat: (s + n) / 2, lon: (w_ + e) / 2 }
+    const { w, h } = viewSize()
+    for (let z = 16; z >= 9; z -= 0.1) {
+      const pw = Math.abs(lonToX(e, z) - lonToX(w_, z)) + 220
+      const ph = Math.abs(latToY(s, z) - latToY(n, z)) + 160
+      if (pw <= w && ph <= h) {
+        zoom = z
+        break
+      }
+    }
+    clampCamera()
+  }
+
+  function openStory(r: (typeof results)[number], i: number) {
+    const m = MULTIPLIERS[i]
+    document.getElementById('mt-d-meta')!.innerHTML =
+      `Round ${i + 1} · ${bandName(r.loc.difficulty)} · <b class="pts-m${m}">${m}x</b> · ${fmtDist(r.dist)} · <b class="pts-m${m}">${Math.round(r.pts)} pts</b>`
+    document.getElementById('mt-d-name')!.textContent = r.loc.name
+    document.getElementById('mt-d-story')!.textContent = r.loc.story
+    const ex = document.getElementById('mt-d-extra')!
+    ex.textContent = r.loc.extra ?? ''
+    ex.hidden = !r.loc.extra
+    const link = document.getElementById('mt-d-link') as HTMLAnchorElement
+    link.hidden = !r.loc.storyUrl
+    if (r.loc.storyUrl) link.href = r.loc.storyUrl
+    dlg.showModal()
+  }
+  document
+    .getElementById('mt-close')!
+    .addEventListener('click', () => dlg.close())
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close()
+  })
+
+  function hitPin(px: number, py: number) {
+    let best = -1,
+      bd = 26
+    results.forEach((r, i) => {
+      const p = project(r.loc.lat, r.loc.lon)
+      const d = Math.hypot(p.x - px, p.y - py)
+      if (d < bd) {
+        bd = d
+        best = i
+      }
+    })
+    return best
+  }
+
+  function reset(seed: number) {
+    ROUND = buildRound(seed)
+    idx = 0
+    total = 0
+    shown = 0
+    results = []
+    reveal = null
+    locked = false
+    finished = false
+    pinHover = -1
+    overC.classList.remove('pins')
+    elMult.hidden = false
+    elAgain.hidden = true
+    elAgain.textContent = 'Play again'
+    elShare.hidden = true
+    elHint.hidden = true
+    elTotal.textContent = '0'
+    center = { lat: 30.2672, lon: -97.7431 }
+    zoom = 11
+    clampCamera()
+    renderPrompt()
+    drawTiles()
+    drawOverlay()
+  }
+  // Squares read as a spoiler-free summary: orange near-perfect, amber close,
+  // grey rough, dark for a miss.
+  function shareGrid() {
+    return results
+      .map((r) =>
+        r.base >= 90
+          ? '\u{1F7E7}'
+          : r.base >= 70
+            ? '\u{1F7E8}'
+            : r.base >= 40
+              ? '\u2B1C'
+              : '\u2B1B',
+      )
+      .join('')
+  }
+
+  elShare.addEventListener('click', async () => {
+    const text = `ATXactly #${puzzleNo} \u2014 ${Math.round(total)}/${MAX_TOTAL}\n${shareGrid()}`
+    try {
+      await navigator.clipboard.writeText(text)
+      elToastD.textContent = 'Copied'
+      elToastP.textContent = 'paste it anywhere'
+    } catch {
+      elToastD.textContent = 'Could not copy'
+      elToastP.textContent = 'clipboard blocked'
+    }
+    elToast.classList.add('show')
+    setTimeout(() => elToast.classList.remove('show'), 1600)
+  })
+
+  elAgain.addEventListener('click', () =>
+    reset(Math.floor(Math.random() * 1e9)),
+  )
+
+  // ---- interaction ----
+  let dragging = false,
+    moved = false,
+    last = { x: 0, y: 0 }
+  const local = (e: PointerEvent) => {
+    const r = overC.getBoundingClientRect()
+    return { x: e.clientX - r.left, y: e.clientY - r.top }
+  }
+  overC.addEventListener('pointerdown', (e) => {
+    dragging = true
+    moved = false
+    last = { x: e.clientX, y: e.clientY }
+    overC.setPointerCapture(e.pointerId)
+  })
+  overC.addEventListener('pointermove', (e) => {
+    if (finished && !dragging) {
+      const { x, y } = local(e)
+      const h = hitPin(x, y)
+      if (h !== pinHover) {
+        pinHover = h
+        drawOverlay()
+      }
+    }
+    if (!dragging) return
+    const dx = e.clientX - last.x,
+      dy = e.clientY - last.y
+    if (Math.abs(dx) + Math.abs(dy) > 4) moved = true
+    last = { x: e.clientX, y: e.clientY }
+    center = {
+      lon: xToLon(lonToX(center.lon, zoom) - dx, zoom),
+      lat: yToLat(latToY(center.lat, zoom) - dy, zoom),
+    }
+    clampCamera()
+    drawTiles()
+    drawOverlay()
+  })
+  overC.addEventListener('pointerup', (e) => {
+    dragging = false
+    if (moved) return
+    const { x, y } = local(e)
+    if (finished) {
+      const h = hitPin(x, y)
+      if (h >= 0) openStory(results[h], h)
+      return
+    }
+    const { lat, lon } = unproject(x, y)
+    commit(lat, lon)
+  })
+  // Zoom toward the cursor, scaled by the wheel delta so trackpads do not
+  // fly to max zoom on a single gesture.
+  overC.addEventListener(
+    'wheel',
+    (e) => {
+      e.preventDefault()
+      const { x, y } = local(e as unknown as PointerEvent)
+      const before = unproject(x, y)
+      zoom -= e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0022)
+      clampCamera()
+      const after = unproject(x, y)
+      center = {
+        lon: center.lon + (before.lon - after.lon),
+        lat: center.lat + (before.lat - after.lat),
+      }
+      clampCamera()
+      drawTiles()
+      drawOverlay()
+    },
+    { passive: false },
+  )
+
+  // Already played today: show the locked state rather than dealing a round
+  // the score would not count for.
+  function showAlreadyPlayed() {
+    // `locked` is what actually stops a tap from scoring; without it the map
+    // still commits guesses behind the message.
+    locked = true
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elName.textContent = 'Already played today'
+    elSub.textContent = 'A new puzzle unlocks at midnight UTC'
+    elAgain.hidden = false
+    elAgain.textContent = 'Practice round'
+  }
+
+  window.addEventListener('resize', fit)
+  fit()
+  if (readStore(PLAYED_KEY) === String(puzzleNo)) showAlreadyPlayed()
+  else renderPrompt()
+</script>
