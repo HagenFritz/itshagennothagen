@@ -50,8 +50,9 @@ OpenStreetMap raster tiles with no mapping library. This reuses that.
   because at metro scale it makes downtown blocks invisible and suburb-scale
   errors dominant.
 - R5. The five daily questions escalate in difficulty with multipliers **1x, 1x,
-  2x, 3x, 3x**, for a 1000-point daily max. Bands map to stored difficulty: Easy
-  = 1-2, Medium = 3, Hard = 4-5.
+  2x, 2x, 3x**, for a 900-point daily max. Difficulty is stored as 1 easy, 2
+  medium, 3 hard, and maps one to one onto the bands. Slots 1-2 draw easy, 3-4
+  medium, 5 hard.
 
   Derived from playing MapTap #781, not from documentation. Observed bands: Q1
   St Louis (Easy 1x), Q2 Fukuoka (Easy 1x), Q3 Riga (Medium 2x), Q4 N'Djamena
@@ -254,7 +255,7 @@ hundreds of pocket parks.
     lat, lon     answer coordinate
     category     see taxonomy below
     tier         central | urban | suburb | exurb
-    difficulty   1-5, hand-tagged
+    difficulty   1 easy, 2 medium, 3 hard
     story        post-round background text
     storySource  wikipedia | hand | null
     sourceRef    originating dataset id or OSM element id
