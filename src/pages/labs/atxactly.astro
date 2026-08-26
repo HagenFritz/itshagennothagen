@@ -29,7 +29,10 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
           <span id="mt-band-txt">Round 1 of 5 · Easy</span>
           <span id="mt-mult" class="mt-mult m1">1x</span>
         </div>
-        <div id="mt-name" class="mt-name">Loading…</div>
+        <div class="mt-nameline">
+          <span id="mt-cat" class="mt-cat"></span>
+          <span id="mt-name" class="mt-name">Loading…</span>
+        </div>
         <div id="mt-sub" class="mt-sub">Tap as close as you can</div>
       </div>
       <button id="mt-again" class="mt-btn" hidden>Play again</button>
@@ -162,6 +165,49 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     opacity: 1;
     background: #1e2740;
   }
+  .mt-nameline {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+  .mt-cat {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .mt-cat .ico {
+    font-size: 13px;
+    line-height: 1;
+  }
+  .mt-cat.c-neighborhood {
+    color: #5ea9e8;
+  }
+  .mt-cat.c-park {
+    color: #6bbf59;
+  }
+  .mt-cat.c-landmark {
+    color: #f59e5b;
+  }
+  .mt-cat.c-civic {
+    color: #c084fc;
+  }
+  .mt-cat.c-venue {
+    color: #e8546b;
+  }
+  .mt-cat.c-town {
+    color: #e8b04b;
+  }
   .mt-name {
     font-size: 22px;
     font-weight: 650;
@@ -208,7 +254,13 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     display: block;
   }
   #mt-tiles {
-    filter: brightness(2.6) contrast(1.45) saturate(0.7);
+    /* Esri's Canvas base is mid-grey; darken it toward the site palette while
+       keeping the road network legible. The labelled OSM basemap used at the
+       results screen is lighter still, so it gets dimmed further below. */
+    filter: brightness(0.78) contrast(1.35) saturate(0.35);
+  }
+  #mt-tiles.labelled {
+    filter: brightness(0.62) contrast(1.08) saturate(0.68);
   }
   #mt-over {
     touch-action: none;
@@ -328,6 +380,7 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     name: string
     lat: number
     lon: number
+    category: string
     difficulty: number
     story: string
     extra: string | null
@@ -365,7 +418,10 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
   const TILE = 256
   const MULTIPLIERS = [1, 1, 2, 2, 3]
   const MAX_TOTAL = 100 * MULTIPLIERS.reduce((a, b) => a + b, 0)
-  const BOX = { s: 30.05, w: -98.05, n: 30.62, e: -97.35 }
+  // Wide enough to contain every eligible polygon, not just the centres.
+  // Kyle, Bastrop and Dripping Springs extend past the original box, which
+  // made them unwinnable: the camera clamped before the player could reach them.
+  const BOX = { s: 29.93, w: -98.15, n: 30.77, e: -97.29 }
 
   const lonToX = (lon: number, z: number) => ((lon + 180) / 360) * TILE * 2 ** z
   const latToY = (lat: number, z: number) => {
@@ -426,8 +482,48 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
         best = Math.min(best, distToSegment(lat, lon, ring[i], ring[j]))
     return best
   }
-  const FLOOR = 150,
-    MAXD = 40000
+  // FLOOR: a guess this close counts as exact. The board opens at zoom 11
+  // where one pixel is 66 m, so anything tighter rewards zooming rather than
+  // knowing. MAXD: about the diameter of Austin proper, so being in the city
+  // still scores and the wrong end of the metro does not.
+  const FLOOR = 100,
+    MAXD = 25000
+  // Inside an area the score eases from 100 at the centre to INSIDE_EDGE at
+  // the boundary, scaled to that polygon's own radius. Flat-100 made a tap on
+  // the far edge of Georgetown (176 km²) worth as much as one on the
+  // courthouse; a fixed metre falloff punished small parks for being small.
+  // Anywhere inside still beats outside: worst interior is 75, and 1 km beyond
+  // any boundary scores 57.
+  const INSIDE_EDGE = 75
+  function reachOf(loc: Loc) {
+    let best = 0
+    for (const ring of loc.shape!)
+      for (const [lon, lat] of ring) {
+        const d = haversine(loc.lat, loc.lon, lat, lon)
+        if (d > best) best = d
+      }
+    return best
+  }
+  function scoreInside(lat: number, lon: number, loc: Loc) {
+    const reach = reachOf(loc)
+    if (reach <= 0) return 100
+    const frac = Math.min(1, haversine(lat, lon, loc.lat, loc.lon) / reach)
+    return Math.round((100 - (100 - INSIDE_EDGE) * frac) * 10) / 10
+  }
+  // Distance on the point curve that already scores exactly INSIDE_EDGE.
+  // Adding it to an outside-a-polygon distance keeps the curve continuous
+  // across the boundary: without it, stepping 1 m outside a shape jumped the
+  // score from 75 back to 100, rewarding a deliberate miss.
+  const EDGE_OFFSET =
+    FLOOR * (10 ** ((1 - INSIDE_EDGE / 100) * Math.log10(1 + MAXD / FLOOR)) - 1)
+
+  function scoreLocation(lat: number, lon: number, loc: Loc) {
+    const d = effectiveDistance(lat, lon, loc)
+    if (!loc.shape) return { base: scoreOf(d), dist: d }
+    if (d === 0) return { base: scoreInside(lat, lon, loc), dist: 0 }
+    return { base: scoreOf(d + EDGE_OFFSET), dist: d }
+  }
+
   function scoreOf(m: number) {
     if (m <= FLOOR) return 100
     if (m >= MAXD) return 0
@@ -456,9 +552,9 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
   function buildRound(seed: number): Loc[] {
     const rnd = mulberry(seed)
     const pools = {
-      easy: ALL.filter((l) => l.difficulty <= 2),
-      med: ALL.filter((l) => l.difficulty === 3),
-      hard: ALL.filter((l) => l.difficulty >= 4),
+      easy: ALL.filter((l) => l.difficulty === 1),
+      med: ALL.filter((l) => l.difficulty === 2),
+      hard: ALL.filter((l) => l.difficulty === 3),
     }
     const used = new Set<string>()
     const take = (...order: (keyof typeof pools)[]) => {
@@ -511,11 +607,18 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
   // dark_only_labels is used rather than the combined dark_all because
   // dark_all 502s at z15 and above, which is exactly where the results camera
   // sits once it fits five pins.
+  // Two basemaps. During play, Esri's Canvas Dark Gray Base: full street
+  // geometry with no text, so the map cannot be read for the answer. At the
+  // results screen, standard OSM, which carries street names and place labels
+  // so the round teaches something.
+  //
+  // CARTO's dark_nolabels served this role until it began stamping
+  // "API KEY REQUIRED" across keyless tiles.
   const TILE_URL = {
-    base: (sub: string, z: number, x: number, y: number) =>
-      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_nolabels/${z}/${x}/${y}.png`,
-    labels: (sub: string, z: number, x: number, y: number) =>
-      `https://${sub}.basemaps.cartocdn.com/dark_only_labels/${z}/${x}/${y}.png`,
+    base: (_sub: string, z: number, x: number, y: number) =>
+      `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`,
+    labels: (_sub: string, z: number, x: number, y: number) =>
+      `https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
   }
   type Layer = keyof typeof TILE_URL
 
@@ -603,7 +706,9 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
       ) {
         if (ty < 0 || ty >= span) continue
         const wrapped = ((tx % span) + span) % span
-        const layers: Layer[] = finished ? ['base', 'labels'] : ['base']
+        // OSM standard is a full basemap, not a transparent overlay, so the
+        // results screen swaps to it rather than stacking on top.
+        const layers: Layer[] = finished ? ['labels'] : ['base']
         for (const layer of layers) {
           const img = getTile(wrapped, ty, z, layer)
           if (img.complete && !img.hasAttribute('data-failed')) {
@@ -700,21 +805,16 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
       claimed = []
       results.forEach((r, i) => {
         const p = project(r.loc.lat, r.loc.lon)
+        const col = catOf(r.loc.category).color
         if (r.loc.shape) {
           shapePath(r.loc)
-          octx.fillStyle = 'rgba(194,65,12,0.22)'
+          octx.fillStyle = col + '38'
           octx.fill()
-          octx.strokeStyle = '#c2410c'
+          octx.strokeStyle = col
           octx.lineWidth = 1.5
           octx.stroke()
         }
-        pin(
-          p.x,
-          p.y,
-          i === pinHover ? '#f59e5b' : '#c2410c',
-          9,
-          i === pinHover ? 1.15 : 1,
-        )
+        pin(p.x, p.y, col, 9, i === pinHover ? 1.15 : 1)
         label(p.x, p.y, r.loc.name, i === pinHover)
       })
       return
@@ -733,13 +833,16 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     // 0.65-1.05s answer pin drops
     const ap = clamp01((t - 0.65) / 0.4)
 
+    const revealCol = catOf(loc.category).color
     if (loc.shape && lp > 0) {
       shapePath(loc)
-      octx.fillStyle = `rgba(194,65,12,${0.28 * lp})`
+      octx.globalAlpha = lp
+      octx.fillStyle = revealCol + '48'
       octx.fill()
-      octx.strokeStyle = `rgba(194,65,12,${lp})`
+      octx.strokeStyle = revealCol
       octx.lineWidth = 2
       octx.stroke()
+      octx.globalAlpha = 1
     }
     if (lp > 0) {
       octx.strokeStyle = '#8b93a7'
@@ -754,12 +857,29 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     pin(a.x, a.y, '#e6e8ee', 8, gs)
     if (ap > 0) {
       const drop = (1 - bounce(ap)) * -48
-      pin(b.x, b.y + drop, '#c2410c', 9, 1)
+      pin(b.x, b.y + drop, revealCol, 9, 1)
     }
     if (t < 1.3) requestAnimationFrame(drawOverlay)
   }
 
   const elTotal = document.getElementById('mt-total')!
+  // Category drives the badge and the answer-pin colour, so a player can tell
+  // a neighbourhood boundary from a single-point landmark before guessing.
+  const CATEGORY: Record<
+    string,
+    { label: string; icon: string; color: string }
+  > = {
+    neighborhood: { label: 'Neighborhood', icon: '\u25A6', color: '#5ea9e8' },
+    park: { label: 'Park', icon: '\u2663', color: '#6bbf59' },
+    landmark: { label: 'Landmark', icon: '\u2691', color: '#f59e5b' },
+    civic: { label: 'Civic', icon: '\u25C8', color: '#c084fc' },
+    venue: { label: 'Venue', icon: '\u266A', color: '#e8546b' },
+    town: { label: 'Town', icon: '\u2302', color: '#e8b04b' },
+  }
+  const catOf = (c: string) =>
+    CATEGORY[c] ?? { label: c, icon: '\u25CF', color: '#c2410c' }
+
+  const elCat = document.getElementById('mt-cat')!
   const elBandTxt = document.getElementById('mt-band-txt')!
   const elMult = document.getElementById('mt-mult')!
   const elShare = document.getElementById('mt-share') as HTMLButtonElement
@@ -773,7 +893,7 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
   const dlg = document.getElementById('mt-dialog') as HTMLDialogElement
 
   const bandName = (d: number) =>
-    d <= 2 ? 'Easy' : d === 3 ? 'Medium' : 'Hard'
+    d === 1 ? 'Easy' : d === 2 ? 'Medium' : 'Hard'
   const fmtDist = (d: number) =>
     d === 0
       ? 'Inside!'
@@ -791,6 +911,10 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
   function renderPrompt() {
     const loc = ROUND[idx]
     elBandTxt.textContent = `Round ${idx + 1} of ${ROUND.length} · ${bandName(loc.difficulty)}`
+    const cat = catOf(loc.category)
+    elCat.className = `mt-cat c-${loc.category}`
+    elCat.innerHTML = `<span class="ico">${cat.icon}</span>${cat.label}`
+    elCat.hidden = false
     setMult(MULTIPLIERS[idx])
     elName.textContent = loc.name
     elName.style.animation = 'none'
@@ -818,8 +942,7 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     if (locked || finished) return
     locked = true
     const loc = ROUND[idx]
-    const d = effectiveDistance(lat, lon, loc)
-    const base = scoreOf(d)
+    const { base, dist: d } = scoreLocation(lat, lon, loc)
     const pts = base * MULTIPLIERS[idx]
     total += pts
     results.push({ loc, guess: { lat, lon }, dist: d, base, pts })
@@ -849,9 +972,11 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
 
   function finish() {
     finished = true
+    tilesC.classList.add('labelled')
     overC.classList.add('pins')
     elBandTxt.textContent = `Puzzle #${puzzleNo}`
     elMult.hidden = true
+    elCat.hidden = true
     elName.textContent = `${Math.round(total)} / ${MAX_TOTAL}`
     elSub.textContent = 'Round complete'
     elAgain.hidden = false
@@ -929,7 +1054,9 @@ const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
     finished = false
     pinHover = -1
     overC.classList.remove('pins')
+    tilesC.classList.remove('labelled')
     elMult.hidden = false
+    elCat.hidden = false
     elAgain.hidden = true
     elAgain.textContent = 'Play again'
     elShare.hidden = true

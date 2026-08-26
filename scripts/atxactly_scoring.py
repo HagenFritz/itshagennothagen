@@ -8,12 +8,15 @@ docs/brainstorms/2026-08-11-001-austin-atxactly-requirements.md.
 
 import math
 
-# Distance at which the curve bottoms out. Roughly the diagonal of the content
-# box, so a guess on the wrong edge of the metro scores zero.
-MAX_M = 40_000.0
-# Below this, a guess is treated as exact. Prevents pixel-level precision from
-# deciding a round.
-FLOOR_M = 150.0
+# Distance at which the curve bottoms out, about the diameter of Austin proper.
+# Anywhere in the city still scores something; the wrong end of the metro does
+# not. The content box is 92 km corner to corner and the two furthest eligible
+# locations are 83 km apart, so both correctly score zero.
+MAX_M = 25_000.0
+# Below this, a guess is treated as exact. Sized off the map, not taste: the
+# board opens at zoom 11 where one pixel is 66 m, so a tighter floor would be
+# reachable only by zooming repeatedly rather than by knowing the answer.
+FLOOR_M = 100.0
 
 
 def haversine(a_lat, a_lon, b_lat, b_lon):
@@ -71,6 +74,35 @@ def distance_to_shape(lat, lon, shape):
     return best
 
 
+# Inside an area, the score eases from 100 at the centre to INSIDE_EDGE at the
+# boundary, scaled to that polygon's own radius. Flat-100-anywhere-inside made
+# a tap on the far edge of Georgetown (176 km2) worth the same as one on the
+# courthouse; a fixed metre falloff instead punished small parks for being
+# small. Anywhere inside still beats being outside: the worst interior score
+# is 75, and a guess 1 km beyond any boundary scores 57.
+INSIDE_EDGE = 75.0
+
+
+def _reach(location):
+    """Distance from the stored point to the furthest vertex."""
+    best = 0.0
+    for ring in location["shape"]:
+        for lon, lat in ring:
+            d = haversine(location["lat"], location["lon"], lat, lon)
+            if d > best:
+                best = d
+    return best
+
+
+def score_inside(guess_lat, guess_lon, location):
+    reach = _reach(location)
+    if reach <= 0:
+        return 100.0
+    d = haversine(guess_lat, guess_lon, location["lat"], location["lon"])
+    frac = min(1.0, d / reach)
+    return round(100.0 - (100.0 - INSIDE_EDGE) * frac, 1)
+
+
 def effective_distance(guess_lat, guess_lon, location):
     """Distance used for scoring.
 
@@ -95,9 +127,33 @@ def score_distance(metres):
     return round(100.0 * max(0.0, 1.0 - num / den), 1)
 
 
+# Distance on the point curve that already scores exactly INSIDE_EDGE. Adding
+# it to an outside-a-polygon distance makes the curve continuous across the
+# boundary: without it, stepping 1 m outside a shape jumped the score from 75
+# back to 100, so a player gained points by deliberately missing.
+_EDGE_OFFSET_M = FLOOR_M * (
+    10 ** ((1 - INSIDE_EDGE / 100) * math.log10(1 + MAX_M / FLOOR_M)) - 1
+)
+
+
+def score_outside_shape(metres):
+    """Score for a guess `metres` beyond an area's boundary."""
+    return score_distance(metres + _EDGE_OFFSET_M)
+
+
+def score_location(guess_lat, guess_lon, location):
+    """Base score, 0-100, for one guess against one location."""
+    d = effective_distance(guess_lat, guess_lon, location)
+    if not location.get("shape"):
+        return score_distance(d)
+    if d == 0.0:
+        return score_inside(guess_lat, guess_lon, location)
+    return score_outside_shape(d)
+
+
 def score_guess(guess_lat, guess_lon, location, multiplier=1):
     d = effective_distance(guess_lat, guess_lon, location)
-    base = score_distance(d)
+    base = score_location(guess_lat, guess_lon, location)
     return {
         "distance_m": round(d),
         "base": base,
