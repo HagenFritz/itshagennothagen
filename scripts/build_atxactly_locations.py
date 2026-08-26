@@ -56,8 +56,10 @@ URBAN = (30.15, -97.88, 30.45, -97.60)
 PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
              "story", "storySource", "storyUrl", "status", "notes", "shape")
 
-CATEGORIES = ("neighborhood", "district", "park", "water",
-              "landmark", "civic", "venue", "town")
+# district and water were dropped after curation: the only real districts in
+# OSM are shopping centres (a venue), and water bodies are either too large to
+# be a fair answer or linear.
+CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town")
 
 
 def fetch_json(url, data=None, tries=4):
@@ -228,12 +230,58 @@ def simplify(points, eps):
 SIMPLIFY_EPS = 0.00025
 
 
+def stitch_rings(ways):
+    """Join unclosed outer ways end to end into closed rings.
+
+    OSM multipolygon relations store a boundary as fragments, not as closed
+    loops. Treating each fragment as its own polygon silently shrank the UT
+    campus from 404 acres to 68 and produced nonsense areas elsewhere.
+    """
+    segs = [list(w) for w in ways if len(w) > 1]
+    rings = []
+    while segs:
+        cur = segs.pop(0)
+        changed = True
+        while changed and cur[0] != cur[-1]:
+            changed = False
+            for i, seg in enumerate(segs):
+                if seg[0] == cur[-1]:
+                    cur = cur + seg[1:]
+                elif seg[-1] == cur[-1]:
+                    cur = cur + seg[::-1][1:]
+                elif seg[-1] == cur[0]:
+                    cur = seg[:-1] + cur
+                elif seg[0] == cur[0]:
+                    cur = seg[::-1][:-1] + cur
+                else:
+                    continue
+                segs.pop(i)
+                changed = True
+                break
+        if cur[0] != cur[-1]:
+            cur = cur + [cur[0]]
+        if len(cur) >= 4:
+            rings.append(cur)
+    return rings
+
+
 def shape_of(polys):
-    """Simplified outer rings for area scoring, largest fragment first."""
+    """Simplified outer rings for area scoring, largest fragment first.
+
+    A fixed tolerance flattens small areas into slivers: Rollingwood collapsed
+    far enough that its own representative point fell 1.8 m outside the result.
+    Back the tolerance off until the simplified ring still contains that point.
+    """
     out = []
     for poly in sorted(polys, key=lambda p: -abs(ring_area(p[0]))):
         ring = [(float(x), float(y)) for x, y in poly[0]]
-        s = simplify(ring, SIMPLIFY_EPS)
+        lat, lon = point_on_surface([[ring]])
+        eps = SIMPLIFY_EPS
+        for _ in range(6):
+            s = simplify(ring, eps)
+            if len(s) >= 4 and point_in_poly((lon, lat), [s]):
+                break
+            eps /= 3
         if len(s) >= 4:
             out.append([[round(x, 5), round(y, 5)] for x, y in s])
     return out
