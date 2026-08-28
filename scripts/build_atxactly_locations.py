@@ -59,7 +59,7 @@ PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
 # district and water were dropped after curation: the only real districts in
 # OSM are shopping centres (a venue), and water bodies are either too large to
 # be a fair answer or linear.
-CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town")
+CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town", "food")
 
 
 def fetch_json(url, data=None, tries=4):
