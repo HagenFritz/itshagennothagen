@@ -80,7 +80,7 @@
     "lon": -97.751655,
     "category": "civic",
     "tier": "central",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "The six-storey central branch at Cesar Chavez and Shoal Creek, opened in 2017. Built to LEED Platinum with a rooftop garden and a reading porch over the creek.",
     "extra": "Named one of Time's World's Greatest Places the year it opened. Locals mostly use it as a place to sit rather than to borrow books.",
     "storySource": "hand",
@@ -272,7 +272,7 @@
     "lon": -97.737536,
     "category": "civic",
     "tier": "central",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "One of the largest university art museums in the country, on the UT campus, holding more than 22,000 works.",
     "extra": "Ellsworth Kelly's 'Austin', a stone building with coloured glass he designed as a work of art in itself, stands on the grounds. It was his final work.",
     "storySource": "wikipedia",
@@ -1214,6 +1214,742 @@
     "status": "eligible"
   },
   {
+    "id": "antones-nightclub",
+    "tier": "central",
+    "name": "Antone's Nightclub",
+    "lat": 30.266093,
+    "lon": -97.740401,
+    "category": "food",
+    "difficulty": 2,
+    "story": "Austin's home of the blues, founded by Clifford Antone in 1975 and now on East Fifth Street after several moves.",
+    "extra": "Antone booked Muddy Waters, Buddy Guy and Albert King, and a teenage Stevie Ray Vaughan played the house band here before anyone outside Austin knew his name.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/929865592",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74041, 30.26624],
+        [-97.74027, 30.2662],
+        [-97.74039, 30.26587],
+        [-97.74053, 30.26591],
+        [-97.74041, 30.26624]
+      ]
+    ]
+  },
+  {
+    "id": "barley-swine",
+    "tier": "urban",
+    "name": "Barley Swine",
+    "lat": 30.34134,
+    "lon": -97.738314,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A tasting-menu restaurant in North Austin from the same team as Odd Duck.",
+    "extra": "It started in 2010 in a 48-seat room on South Lamar with no reservations and a line down the block, then moved north for space.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3190873012",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "cactus-cafe",
+    "tier": "central",
+    "name": "Cactus Cafe",
+    "lat": 30.286131,
+    "lon": -97.741327,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A 200-seat listening room inside the UT student union, running since 1979.",
+    "extra": "Lyle Lovett, Nanci Griffith and Robert Earl Keen all built early followings here. The room enforces silence during songs, which is rare enough in Austin to be its whole reputation.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3181780254",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "chilis-north-lamar",
+    "tier": "central",
+    "name": "Chili's (North Lamar)",
+    "lat": 30.313285,
+    "lon": -97.73836,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A Chili's on North Lamar near 45th Street, an ordinary outpost of a chain that is unusually woven into Austin life.",
+    "extra": "Chili's began in Dallas in 1975, and this location has outlasted most of the independent restaurants that opened around it.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/381824711",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.73837, 30.31321],
+        [-97.73856, 30.31329],
+        [-97.7385, 30.31343],
+        [-97.73828, 30.31345],
+        [-97.73822, 30.31329],
+        [-97.73837, 30.31321]
+      ]
+    ]
+  },
+  {
+    "id": "ciscos",
+    "tier": "central",
+    "name": "Cisco's",
+    "lat": 30.262991,
+    "lon": -97.726728,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A Mexican bakery and diner on East Sixth Street, open since 1950.",
+    "extra": "Rudy Cisneros ran it as an unofficial political clubhouse; Lyndon Johnson and generations of Texas legislators held court in the back room over migas.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/7094687008",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "county-line-on-the-lake",
+    "tier": "urban",
+    "name": "County Line on the Lake",
+    "lat": 30.357065,
+    "lon": -97.785581,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A barbecue restaurant on Bull Creek at Lake Austin, in a building that was a 1920s roadhouse and speakeasy.",
+    "extra": "Diners can arrive by boat, and the deck over the water is the reason most people come.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/31565419",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.78592, 30.35698],
+        [-97.78526, 30.35698],
+        [-97.78566, 30.35727],
+        [-97.78592, 30.35698]
+      ]
+    ]
+  },
+  {
+    "id": "curras-grill",
+    "tier": "central",
+    "name": "Curra's Grill",
+    "lat": 30.237152,
+    "lon": -97.74941,
+    "category": "food",
+    "difficulty": 3,
+    "story": "An interior Mexican restaurant on Oltorf in South Austin, open since 1994.",
+    "extra": "Its avocado margarita is widely credited as the first in Austin, and now appears on menus across the city.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/919331370",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "dirty-martins-place",
+    "tier": "central",
+    "name": "Dirty Martin's Place",
+    "lat": 30.294003,
+    "lon": -97.742352,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A hamburger stand on Guadalupe near campus, open since 1926 and still cooking on a griddle in the same building.",
+    "extra": "It was called Dirty's because the original floor was dirt. A highway widening project has threatened the building for years.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/382131874",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74226, 30.29404],
+        [-97.74227, 30.29395],
+        [-97.74244, 30.29395],
+        [-97.74243, 30.29404],
+        [-97.74226, 30.29404]
+      ]
+    ]
+  },
+  {
+    "id": "el-chile-cafe-y-cantina",
+    "tier": "central",
+    "name": "El Chile Cafe y Cantina",
+    "lat": 30.283558,
+    "lon": -97.722584,
+    "category": "food",
+    "difficulty": 3,
+    "story": "An interior Mexican restaurant on Manor Road, part of the strip that made that street a dining destination in the 2000s.",
+    "extra": "Manor Road was a quiet residential street until a handful of restaurants like this one opened along it in the early 2000s and turned it into one of Austin's denser dining strips.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/358443644",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.72265, 30.28363],
+        [-97.72253, 30.28365],
+        [-97.72249, 30.28345],
+        [-97.72261, 30.28344],
+        [-97.72265, 30.28363]
+      ]
+    ]
+  },
+  {
+    "id": "elysium",
+    "tier": "central",
+    "name": "Elysium",
+    "lat": 30.267678,
+    "lon": -97.736591,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A Red River nightclub known for its goth and industrial nights, open since 2001.",
+    "extra": "It has hosted the city's goth scene for more than two decades, with a sunken dance floor and themed nights that have outlasted most of the Red River strip around it.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3849779422",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "fonda-san-miguel",
+    "tier": "central",
+    "name": "Fonda San Miguel",
+    "lat": 30.325506,
+    "lon": -97.743374,
+    "category": "food",
+    "difficulty": 2,
+    "story": "An interior Mexican restaurant in North Loop, open since 1975 in a hacienda-style building full of Mexican art.",
+    "extra": "It was among the first restaurants in the United States to serve regional Mexican cooking rather than Tex-Mex, and its Sunday brunch buffet has run for decades.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/530781810",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "franklin-barbecue",
+    "tier": "central",
+    "name": "Franklin Barbecue",
+    "lat": 30.270201,
+    "lon": -97.731268,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A barbecue joint on East 11th Street that opened as a trailer in 2009 and moved into this building in 2011.",
+    "extra": "Aaron Franklin won a James Beard award in 2015, the first for a barbecue cook. The line used to start before dawn and regularly ran out of brisket by early afternoon.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/382368408",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.73113, 30.27028],
+        [-97.73126, 30.27001],
+        [-97.73141, 30.27007],
+        [-97.73129, 30.27031],
+        [-97.73113, 30.27028]
+      ]
+    ]
+  },
+  {
+    "id": "green-mesquite-bbq",
+    "tier": "central",
+    "name": "Green Mesquite BBQ",
+    "lat": 30.261498,
+    "lon": -97.759225,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A barbecue restaurant on Barton Springs Road, open since 1988.",
+    "extra": "It sits on the strip near Zilker that has fed Austin City Limits crowds for decades.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/333373558",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75934, 30.26148],
+        [-97.75908, 30.26153],
+        [-97.75915, 30.2614],
+        [-97.75934, 30.26148]
+      ]
+    ]
+  },
+  {
+    "id": "gueros-taco-bar",
+    "tier": "central",
+    "name": "Guero's Taco Bar",
+    "lat": 30.249163,
+    "lon": -97.750282,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A Tex-Mex restaurant on South Congress in a building that was a feed and seed store from the 1920s.",
+    "extra": "Bill Clinton ate here in 1996 and the booth is still pointed out. The backyard stage hosts free shows most weekends.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/312337842",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75048, 30.24927],
+        [-97.75052, 30.24915],
+        [-97.7501, 30.24903],
+        [-97.75005, 30.24915],
+        [-97.75048, 30.24927]
+      ]
+    ]
+  },
+  {
+    "id": "historic-scoot-inn",
+    "tier": "central",
+    "name": "Historic Scoot Inn",
+    "lat": 30.262122,
+    "lon": -97.729394,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A beer garden and music venue in East Austin, in a building that has served drinks since 1871.",
+    "extra": "It is one of the oldest continuously operating bars in Texas, having run as a saloon for railroad workers long before East Austin was part of the city.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/5770943039",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "home-slice-pizza",
+    "tier": "central",
+    "name": "Home Slice Pizza",
+    "lat": 30.24923,
+    "lon": -97.74958,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A New York style pizzeria on South Congress, open since 2005.",
+    "extra": "It runs an annual pizza-tossing competition and its team has sent members to the world championships in Italy.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/2676032286",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "hotel-vegas",
+    "tier": "central",
+    "name": "Hotel Vegas",
+    "lat": 30.263425,
+    "lon": -97.727245,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A music venue on East Sixth Street with two stages and a patio between them.",
+    "extra": "It anchors the East Sixth strip that replaced Red River as the centre of Austin's small-club scene through the 2010s.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/7094678325",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "huts-hamburgers",
+    "tier": "urban",
+    "name": "Hut's Hamburgers",
+    "lat": 30.202282,
+    "lon": -97.665343,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A burger restaurant on West Sixth Street, tracing to a stand opened in 1939.",
+    "extra": "It closed in 2021 after 82 years, then reopened under new ownership, which makes it both one of the oldest restaurants in Austin and one of the newest.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/10793553549",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "juan-in-a-million",
+    "tier": "central",
+    "name": "Juan in a Million",
+    "lat": 30.255345,
+    "lon": -97.718966,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A Mexican diner on East Cesar Chavez, open since 1980 and known for breakfast tacos.",
+    "extra": "The Don Juan taco is large enough that finishing one is a minor local achievement. Anthony Bourdain filmed here.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/379194809",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.71897, 30.25542],
+        [-97.71873, 30.25534],
+        [-97.71878, 30.25522],
+        [-97.71919, 30.25529],
+        [-97.71897, 30.25542]
+      ]
+    ]
+  },
+  {
+    "id": "kerbey-lane-cafe-original",
+    "tier": "central",
+    "name": "Kerbey Lane Cafe (original)",
+    "lat": 30.30802,
+    "lon": -97.75048,
+    "category": "food",
+    "difficulty": 2,
+    "story": "The first Kerbey Lane, opened in 1980 in a converted house on Kerbey Lane in Rosedale.",
+    "extra": "The pancakes and queso built a local chain now at half a dozen locations, but this bungalow is the one the name comes from.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/530930090",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "magnolia-cafe",
+    "tier": "central",
+    "name": "Magnolia Cafe",
+    "lat": 30.244479,
+    "lon": -97.75198,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A 24-hour diner on South Congress, open since 1979 and known for gingerbread pancakes and queso.",
+    "extra": "Its slogan, sorry we're open, ran on a neon sign for decades. The original Lake Austin Boulevard location closed in 2020, leaving this one.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3190821383",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "matts-el-rancho",
+    "tier": "central",
+    "name": "Matt's El Rancho",
+    "lat": 30.245162,
+    "lon": -97.779281,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A Tex-Mex restaurant on South Lamar, opened by Matt Martinez in 1952 and still run by the family.",
+    "extra": "The Bob Armstrong dip, queso with guacamole and taco meat, was invented here for a land commissioner who asked for something off-menu. It is now on Tex-Mex menus statewide.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/384019125",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.77932, 30.24532],
+        [-97.779, 30.24516],
+        [-97.77918, 30.24495],
+        [-97.77936, 30.24493],
+        [-97.77943, 30.24501],
+        [-97.77932, 30.2451],
+        [-97.77953, 30.24522],
+        [-97.77932, 30.24532]
+      ]
+    ]
+  },
+  {
+    "id": "mohawk",
+    "tier": "central",
+    "name": "Mohawk",
+    "lat": 30.270058,
+    "lon": -97.736088,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A two-storey Red River venue with an outdoor stage, opened in 2006.",
+    "extra": "The outdoor stage backs onto a limestone cliff, and the balconies looking down on it make it one of the best-sounding small rooms in the city.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3190821388",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "odd-duck",
+    "tier": "central",
+    "name": "Odd Duck",
+    "lat": 30.25466,
+    "lon": -97.76202,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A South Lamar restaurant built around Texas farm ingredients, opened as a brick-and-mortar in 2013.",
+    "extra": "It began in 2009 as a food trailer parked on the same lot, one of the first trailers in Austin taken seriously as a restaurant.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/1024600258",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.76214, 30.25465],
+        [-97.76206, 30.25478],
+        [-97.76184, 30.25468],
+        [-97.76192, 30.25455],
+        [-97.76214, 30.25465]
+      ]
+    ]
+  },
+  {
+    "id": "oilcan-harrys",
+    "tier": "central",
+    "name": "Oilcan Harry's",
+    "lat": 30.266483,
+    "lon": -97.745365,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A Fourth Street bar opened in 1990, the anchor of Austin's Warehouse District gay scene.",
+    "extra": "It is the oldest queer bar in Austin, opened by Larry Davis and still gay-owned, running drag, karaoke and bingo nights more than thirty years on.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/231123159",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.7454, 30.26661],
+        [-97.74524, 30.26656],
+        [-97.74538, 30.26637],
+        [-97.74548, 30.2664],
+        [-97.7454, 30.26661]
+      ]
+    ]
+  },
+  {
+    "id": "red-ash",
+    "tier": "central",
+    "name": "Red Ash",
+    "lat": 30.265703,
+    "lon": -97.744694,
+    "category": "food",
+    "difficulty": 2,
+    "story": "An Italian restaurant on Colorado Street downtown, cooking over a wood-fired grill.",
+    "extra": "The pasta is made in-house daily and the grill burns oak, which is where the name comes from.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/1020753278",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74475, 30.26577],
+        [-97.7448, 30.26565],
+        [-97.7446, 30.2656],
+        [-97.74456, 30.26572],
+        [-97.74475, 30.26577]
+      ]
+    ]
+  },
+  {
+    "id": "sandys-hamburgers",
+    "tier": "central",
+    "name": "Sandy's Hamburgers",
+    "lat": 30.258409,
+    "lon": -97.751017,
+    "category": "food",
+    "difficulty": 3,
+    "story": "A walk-up burger and frozen custard stand on Barton Springs Road, open since 1946.",
+    "extra": "It is one of the last drive-in style stands left in central Austin, and the lot it sits on has been the subject of development fights for years.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/299395705",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75105, 30.25846],
+        [-97.75108, 30.2584],
+        [-97.75097, 30.25836],
+        [-97.75094, 30.25842],
+        [-97.75105, 30.25846]
+      ]
+    ]
+  },
+  {
+    "id": "suerte",
+    "tier": "central",
+    "name": "Suerte",
+    "lat": 30.262318,
+    "lon": -97.723244,
+    "category": "food",
+    "difficulty": 2,
+    "story": "An East Austin restaurant on East Sixth focused on Oaxacan cooking and house-made masa.",
+    "extra": "It nixtamalizes its own corn in-house, which almost no Austin restaurant did before it opened in 2018.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/379194499",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.72313, 30.26239],
+        [-97.72327, 30.26209],
+        [-97.72338, 30.26212],
+        [-97.72327, 30.26244],
+        [-97.72313, 30.26239]
+      ]
+    ]
+  },
+  {
+    "id": "terry-blacks-bbq",
+    "tier": "central",
+    "name": "Terry Black's BBQ",
+    "lat": 30.259665,
+    "lon": -97.754808,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A barbecue hall on Barton Springs Road run by the fourth generation of the Black family of Lockhart.",
+    "extra": "The family has been smoking meat in Texas since 1932. A cousin runs a rival Black's in Lockhart, and the split has been the subject of more than one long magazine feature.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/5311539330",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "the-continental-club",
+    "tier": "central",
+    "name": "The Continental Club",
+    "lat": 30.250516,
+    "lon": -97.749068,
+    "category": "food",
+    "difficulty": 2,
+    "story": "A South Congress music room open since 1955, one of the oldest continuously operating venues in Austin.",
+    "extra": "It started as a private supper club, became a burlesque house, and has run as a music venue since the 1970s. The neon sign out front is a South Congress landmark.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/929871360",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74913, 30.25057],
+        [-97.74916, 30.25049],
+        [-97.74894, 30.25043],
+        [-97.74891, 30.25051],
+        [-97.74913, 30.25057]
+      ]
+    ]
+  },
+  {
+    "id": "the-salt-lick-bbq",
+    "tier": "suburb",
+    "name": "The Salt Lick BBQ",
+    "lat": 30.131675,
+    "lon": -98.013286,
+    "category": "food",
+    "difficulty": 1,
+    "story": "A barbecue restaurant in Driftwood, southwest of Austin, cooking over an open pit in the middle of the dining room since 1967.",
+    "extra": "It is in a dry precinct, so it has never sold alcohol and diners bring their own. The original pit is still the one in use.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/97167198",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-98.01349, 30.13189],
+        [-98.01316, 30.13139],
+        [-98.01298, 30.1317],
+        [-98.01349, 30.13189]
+      ]
+    ]
+  },
+  {
+    "id": "torchys-tacos-south-congress",
+    "tier": "central",
+    "name": "Torchy's Tacos (South Congress)",
+    "lat": 30.245472,
+    "lon": -97.751545,
+    "category": "food",
+    "difficulty": 1,
+    "story": "The South Congress Torchy's, the first permanent location of a taco chain that started as a trailer in 2006.",
+    "extra": "It grew from one trailer to more than a hundred locations across several states. The Trailer Park taco, fried chicken with green chile queso, is the one that built it.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/383378741",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75163, 30.24536],
+        [-97.75156, 30.24556],
+        [-97.75139, 30.24555],
+        [-97.75148, 30.24532],
+        [-97.75163, 30.24536]
+      ]
+    ]
+  },
+  {
+    "id": "uchi",
+    "name": "Uchi",
+    "lat": 30.257547,
+    "lon": -97.759769,
+    "category": "food",
+    "tier": "central",
+    "difficulty": 1,
+    "story": "A Japanese restaurant on South Lamar in a converted 1930s bungalow, opened by Tyson Cole in 2003.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Uchi",
+    "sourceRef": "way/383355208",
+    "source": "osm-poi",
+    "status": "eligible",
+    "osmTags": {
+      "amenity": "restaurant",
+      "wikidata": "Q7876695",
+      "wikipedia": "en:Uchi"
+    },
+    "extra": "Cole won a James Beard award in 2011, and Uchi is widely credited with changing what Austin expected from a restaurant. Its alumni run kitchens across the city.",
+    "shape": [
+      [
+        [-97.75974, 30.25764],
+        [-97.75963, 30.25738],
+        [-97.7599, 30.25752],
+        [-97.75974, 30.25764]
+      ]
+    ]
+  },
+  {
+    "id": "uchiko",
+    "tier": "central",
+    "name": "Uchiko",
+    "lat": 30.31077,
+    "lon": -97.739886,
+    "category": "food",
+    "difficulty": 2,
+    "story": "The North Lamar sibling to Uchi, opened in 2010.",
+    "extra": "Its name means child of Uchi. Chef Paul Qui won Top Chef while running the kitchen here.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3181780247",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "airmens-cave",
+    "tier": "urban",
+    "name": "Airmen's Cave",
+    "lat": 30.241656,
+    "lon": -97.791675,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A cave entrance in the Barton Creek Greenbelt, leading to a passage more than two miles long.",
+    "extra": "At about 11,300 feet it is one of the longest caves in Texas, and almost all of it is tight crawlway. It once fed Barton Springs before the water table dropped.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/11411383297",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "ann-w-richards-congress-avenue-bridge",
     "name": "Ann W. Richards Congress Avenue Bridge",
     "lat": 30.261393,
@@ -1230,24 +1966,50 @@
     "status": "eligible"
   },
   {
+    "id": "austin-by-ellsworth-kelly",
+    "tier": "central",
+    "name": "Austin by Ellsworth Kelly",
+    "lat": 30.281669,
+    "lon": -97.737829,
+    "category": "landmark",
+    "difficulty": 2,
+    "story": "A stone building with coloured glass windows on the Blanton Museum grounds, designed by Ellsworth Kelly as a work of art rather than a gallery.",
+    "extra": "It was his final work, designed in 1986 and not built until 2018, after his death. Kelly never saw it completed.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Austin_(building)",
+    "sourceRef": "way/575579280",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.73792, 30.28174],
+        [-97.73787, 30.28158],
+        [-97.73772, 30.28166],
+        [-97.73777, 30.28178],
+        [-97.73792, 30.28174]
+      ]
+    ]
+  },
+  {
     "id": "barbara-jordan-statue",
     "name": "Barbara Jordan Statue",
     "lat": 30.287476,
     "lon": -97.740646,
     "category": "landmark",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
+    "difficulty": 3,
+    "story": "A bronze of Barbara Jordan on the UT campus, installed in 2009 near the student union.",
     "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Statue_of_Barbara_Jordan_%28University_of_Texas_at_Austin%29",
+    "storyUrl": "https://en.wikipedia.org/wiki/Statue_of_Barbara_Jordan_(University_of_Texas_at_Austin)",
     "sourceRef": "node/2161699435",
     "source": "osm-poi",
-    "status": "shortlist",
+    "status": "eligible",
     "osmTags": {
       "tourism": "artwork",
       "wikidata": "Q56616540",
       "wikipedia": "en:Statue of Barbara Jordan (University of Texas at Austin)"
-    }
+    },
+    "extra": "Jordan was the first Black woman elected to Congress from the South, and she taught at UT's LBJ School for seventeen years after leaving Washington."
   },
   {
     "id": "barton-springs-pool",
@@ -1302,6 +2064,22 @@
     "status": "eligible"
   },
   {
+    "id": "eliza-spring",
+    "tier": "central",
+    "name": "Eliza Spring",
+    "lat": 30.264291,
+    "lon": -97.770115,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A small spring-fed pool just downstream of Barton Springs, one of the four springs in the Barton Springs complex.",
+    "extra": "It holds one of the largest populations of the Barton Springs salamander, a species that lives nowhere else on Earth.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/4799398766",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
     "id": "french-legation-state-historic-site",
     "name": "French Legation State Historic Site",
     "lat": 30.267012,
@@ -1323,6 +2101,47 @@
     }
   },
   {
+    "id": "goddess-of-liberty",
+    "tier": "central",
+    "name": "Goddess of Liberty",
+    "lat": 30.274674,
+    "lon": -97.740343,
+    "category": "landmark",
+    "difficulty": 2,
+    "story": "The original zinc statue that stood atop the Capitol dome from 1888 until 1985, now displayed at ground level on the Capitol grounds.",
+    "extra": "She is nearly sixteen feet tall and was sculpted with exaggerated features so she would read correctly from 300 feet below. A replica took her place on the dome.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/6879997373",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "henry-g-madison-cabin",
+    "tier": "central",
+    "name": "Henry G. Madison Cabin",
+    "lat": 30.272135,
+    "lon": -97.714069,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A log cabin built around 1863 by Henry Green Madison, now standing in Rosewood Park.",
+    "extra": "Madison was Austin's first African American city council member. He built a larger house around the cabin in the 1880s, hiding it until a demolition crew found it in the 1960s. It was moved to Rosewood Park in 1973 and restored again in 2026.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/289816154",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.71411, 30.27217],
+        [-97.71401, 30.27217],
+        [-97.71401, 30.27208],
+        [-97.71411, 30.27208],
+        [-97.71411, 30.27217]
+      ]
+    ]
+  },
+  {
     "id": "james-c-hogg",
     "name": "James C. Hogg",
     "lat": 30.28607,
@@ -1341,6 +2160,31 @@
       "wikidata": "Q39073118",
       "wikipedia": "en:Statue of Jim Hogg"
     }
+  },
+  {
+    "id": "kenney-lomax-house",
+    "tier": "central",
+    "name": "Kenney-Lomax House",
+    "lat": 30.285037,
+    "lon": -97.744737,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A 19th-century house east of downtown, associated with folklorist John Lomax.",
+    "extra": "Lomax and his son Alan recorded thousands of American folk songs for the Library of Congress, including the first recordings of Lead Belly.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/1210341347",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74479, 30.28509],
+        [-97.74478, 30.28495],
+        [-97.74465, 30.28494],
+        [-97.74464, 30.28508],
+        [-97.74479, 30.28509]
+      ]
+    ]
   },
   {
     "id": "khfi-fm-georgetown",
@@ -1425,22 +2269,97 @@
   {
     "id": "lamar-boulevard-bridge",
     "name": "Lamar Boulevard Bridge",
-    "lat": 30.265858,
-    "lon": -97.756567,
+    "lat": 30.278079,
+    "lon": -97.750881,
     "category": "landmark",
     "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Lamar_Boulevard_Bridge",
-    "sourceRef": "way/679083604",
+    "difficulty": 3,
+    "story": "The Lamar Boulevard bridge over Lady Bird Lake, opened in 1942 and widened since.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/1306048499",
     "source": "osm-poi",
-    "status": "shortlist",
+    "status": "eligible",
     "osmTags": {
       "man_made": "bridge",
       "wikidata": "Q14710932",
       "wikipedia": "en:Lamar Boulevard Bridge"
-    }
+    },
+    "extra": "The pedestrian bridge alongside it carries the hike-and-bike trail and gives the clearest downtown skyline view of any crossing.",
+    "shape": [
+      [
+        [-97.75091, 30.27781],
+        [-97.751, 30.27797],
+        [-97.75084, 30.27852],
+        [-97.75075, 30.27827],
+        [-97.75091, 30.27781]
+      ]
+    ]
+  },
+  {
+    "id": "martin-luther-king-jr-statue",
+    "tier": "central",
+    "name": "Martin Luther King Jr. Statue",
+    "lat": 30.285445,
+    "lon": -97.736114,
+    "category": "landmark",
+    "difficulty": 2,
+    "story": "A bronze of Dr. King on the UT campus at the East Mall, installed in 1999.",
+    "extra": "It was the first statue of King on a major Southern university campus, and student campaigns had pushed for it for more than a decade.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Statue_of_Martin_Luther_King_Jr._(Austin,_Texas)",
+    "sourceRef": "node/11002194355",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "mather-kirkland-house",
+    "tier": "central",
+    "name": "Mather-Kirkland House",
+    "lat": 30.252219,
+    "lon": -97.744489,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A 19th-century house in East Austin, one of the few of its era surviving on that side of I-35.",
+    "extra": "It is one of the Austin houses individually listed on the National Register, a designation only a handful of 19th-century residences here have earned.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/382550043",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.7445, 30.2523],
+        [-97.74442, 30.25213],
+        [-97.74457, 30.25217],
+        [-97.7445, 30.2523]
+      ]
+    ]
+  },
+  {
+    "id": "michael-paggi-house",
+    "tier": "central",
+    "name": "Michael Paggi House",
+    "lat": 30.263561,
+    "lon": -97.756836,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "An 1870s house near downtown built for Michael Paggi, an Italian immigrant carriage maker.",
+    "extra": "Paggi brought the first ice-making machine to Austin, and his carriage works stood on the site where the Paggi House restaurant later operated.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/331965528",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75688, 30.26363],
+        [-97.75671, 30.26355],
+        [-97.75677, 30.26346],
+        [-97.75694, 30.26353],
+        [-97.75688, 30.26363]
+      ]
+    ]
   },
   {
     "id": "monochrome-for-austin",
@@ -1481,6 +2400,198 @@
       "wikidata": "Q6906133",
       "wikipedia": "en:Montopolis Bridge"
     }
+  },
+  {
+    "id": "moonlight-tower-canterbury-st-lynn-st",
+    "tier": "central",
+    "name": "Moonlight Tower (Canterbury St & Lynn St)",
+    "lat": 30.254888,
+    "lon": -97.724077,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913874366",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-e-11th-st-lydia-st",
+    "tier": "central",
+    "name": "Moonlight Tower (E 11th St & Lydia St)",
+    "lat": 30.268617,
+    "lon": -97.7279,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913809415",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-e-13th-st-coleto-st",
+    "tier": "central",
+    "name": "Moonlight Tower (E 13th St & Coleto St)",
+    "lat": 30.275309,
+    "lon": -97.717151,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913803861",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-e-41st-st-speedway",
+    "tier": "central",
+    "name": "Moonlight Tower (E 41st St & Speedway)",
+    "lat": 30.304167,
+    "lon": -97.731383,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/1241074265",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-east-side-dr-leland-st",
+    "tier": "central",
+    "name": "Moonlight Tower (East Side Dr & Leland St)",
+    "lat": 30.241377,
+    "lon": -97.74739,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913701663",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-guadalupe-st-w-9th-st",
+    "tier": "central",
+    "name": "Moonlight Tower (Guadalupe St & W 9th St)",
+    "lat": 30.271875,
+    "lon": -97.745283,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/356852049",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-martin-luther-king-chicon-st",
+    "tier": "central",
+    "name": "Moonlight Tower (Martin Luther King & Chicon St)",
+    "lat": 30.27973,
+    "lon": -97.721115,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913801013",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-pennsylvania-ave-leona-st",
+    "tier": "central",
+    "name": "Moonlight Tower (Pennsylvania Ave & Leona St)",
+    "lat": 30.271522,
+    "lon": -97.721392,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913814550",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-w-12th-st-blanco-st",
+    "tier": "central",
+    "name": "Moonlight Tower (W 12th St & Blanco St)",
+    "lat": 30.277741,
+    "lon": -97.754161,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913733224",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-w-12th-st-rio-grande-st",
+    "tier": "central",
+    "name": "Moonlight Tower (W 12th St & Rio Grande St)",
+    "lat": 30.275912,
+    "lon": -97.747432,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913732649",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-w-monroe-st-s-1st-st",
+    "tier": "central",
+    "name": "Moonlight Tower (W Monroe St & S 1st St)",
+    "lat": 30.249432,
+    "lon": -97.755272,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913700806",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "moonlight-tower-zilker-park",
+    "tier": "central",
+    "name": "Moonlight Tower (Zilker Park)",
+    "lat": 30.266387,
+    "lon": -97.771192,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "One of Austin's moonlight towers, cast-iron lamp towers 165 feet tall that have lit the city since 1895. Austin bought 31 secondhand from Detroit in 1894; seventeen survive.",
+    "extra": "They are the only moonlight towers left standing anywhere in the world. Each threw enough light to read a watch by within a 1,500-foot circle, and all seventeen are on the National Register of Historic Places.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/3913801151",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "mount-bonnell",
@@ -1544,6 +2655,63 @@
     }
   },
   {
+    "id": "pilot-knob",
+    "tier": "suburb",
+    "name": "Pilot Knob",
+    "lat": 30.761575,
+    "lon": -97.898906,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A low hill southeast of Austin near McKinney Falls, the eroded core of an extinct volcano.",
+    "extra": "It erupted underwater about 80 million years ago, when this part of Texas was ocean floor. It is the most prominent of several volcanic remnants around Austin.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/356743143",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "seiders-springs",
+    "tier": "central",
+    "name": "Seiders Springs",
+    "lat": 30.305549,
+    "lon": -97.747531,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "Springs along Shoal Creek north of 34th Street, feeding the creek year-round.",
+    "extra": "Edward Seiders ran a bathhouse and picnic resort here in the 1870s. Stone steps from it are still visible on the creek bank.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/429402033",
+    "source": "osm-poi",
+    "status": "eligible"
+  },
+  {
+    "id": "sheeks-robertson-house",
+    "tier": "central",
+    "name": "Sheeks-Robertson House",
+    "lat": 30.275438,
+    "lon": -97.763098,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "An 1897 house at Sixth Street and West Lynn in Old West Austin.",
+    "extra": "It was added to the National Register of Historic Places in 1976, one of a cluster of surviving Victorian houses on the near west side.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/382601934",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.76321, 30.27536],
+        [-97.76316, 30.27555],
+        [-97.76297, 30.27552],
+        [-97.76305, 30.27535],
+        [-97.76321, 30.27536]
+      ]
+    ]
+  },
+  {
     "id": "stevie-ray-vaughan-statue",
     "name": "Stevie Ray Vaughan Statue",
     "lat": 30.263114,
@@ -1558,6 +2726,56 @@
     "sourceRef": "node/281230952",
     "source": "osm-poi",
     "status": "eligible"
+  },
+  {
+    "id": "swedish-log-cabin",
+    "tier": "central",
+    "name": "Swedish Log Cabin",
+    "lat": 30.269215,
+    "lon": -97.772368,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "An 1840s log cabin moved to Zilker Park, built by one of the Swedish families who settled east of Austin.",
+    "extra": "Swedish immigrants founded the Govalle area in the 1850s, and the name comes from the Swedish for good pasture.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/690319224",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.77238, 30.26923],
+        [-97.77239, 30.2692],
+        [-97.77234, 30.2692],
+        [-97.77234, 30.26922],
+        [-97.77238, 30.26923]
+      ]
+    ]
+  },
+  {
+    "id": "texas-peace-officers-memorial",
+    "tier": "central",
+    "name": "Texas Peace Officers Memorial",
+    "lat": 30.275249,
+    "lon": -97.739048,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A memorial on the Capitol grounds honouring Texas law enforcement officers killed in the line of duty, dedicated in 1999.",
+    "extra": "Designed by Linda Johnson and erected in 1999, it is a granite obelisk with the names of officers killed since 1823, when Stephen F. Austin commissioned the first Texas peace officers.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Texas_Peace_Officers'_Memorial",
+    "sourceRef": "way/1406446799",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.73909, 30.27527],
+        [-97.73902, 30.27528],
+        [-97.739, 30.27523],
+        [-97.73907, 30.27521],
+        [-97.73909, 30.27527]
+      ]
+    ]
   },
   {
     "id": "texas-state-capitol",
@@ -1632,6 +2850,31 @@
     }
   },
   {
+    "id": "third-street-railroad-trestle",
+    "tier": "central",
+    "name": "Third Street Railroad Trestle",
+    "lat": 30.267111,
+    "lon": -97.750429,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A steel railroad trestle over Shoal Creek downtown, part of the line that has run through Austin since the 1870s.",
+    "extra": "It carries the line that made Austin a rail town in 1871, when the Houston and Texas Central finally reached the city and ended its isolation.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/965791275",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.75063, 30.26719],
+        [-97.75065, 30.26715],
+        [-97.75022, 30.26703],
+        [-97.75021, 30.26707],
+        [-97.75063, 30.26719]
+      ]
+    ]
+  },
+  {
     "id": "ut-tower",
     "name": "UT Tower",
     "lat": 30.2862729,
@@ -1666,6 +2909,47 @@
       "wikidata": "Q17054391",
       "wikipedia": "en:Texas Capitol Vietnam Veterans Monument"
     }
+  },
+  {
+    "id": "wahrenberger-house",
+    "tier": "central",
+    "name": "Wahrenberger House",
+    "lat": 30.276877,
+    "lon": -97.741847,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "An 1868 Classical Revival house two blocks north of the Capitol on West 14th Street.",
+    "extra": "Built by Friedrich Huster and deeded in 1882 to Caroline Wahrenberger, whose name it carries. It is on the National Register and a Recorded Texas Historic Landmark.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/1350764221",
+    "source": "osm-poi",
+    "status": "eligible",
+    "shape": [
+      [
+        [-97.74186, 30.277],
+        [-97.74199, 30.27667],
+        [-97.74186, 30.27663],
+        [-97.74175, 30.27691],
+        [-97.74186, 30.277]
+      ]
+    ]
+  },
+  {
+    "id": "whirlpool-cave",
+    "tier": "urban",
+    "name": "Whirlpool Cave",
+    "lat": 30.215734,
+    "lon": -97.846552,
+    "category": "landmark",
+    "difficulty": 3,
+    "story": "A cave in southwest Austin, one of the karst features formed in the Edwards limestone that underlies the aquifer.",
+    "extra": "It has the largest single room of any cave in Travis County, and at about 1,440 feet of passage it is a standard training trip for Austin caving groups.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/7383242173",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "willie-nelson-statue",
@@ -6221,7 +7505,7 @@
       ]
     ],
     "category": "park",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "437 acres along the Colorado River in southeast Austin, one of the largest parks in the city, with disc golf, trails, and a secret beach on the river.",
     "extra": "Named for a longtime city parks employee. The 'secret beach' is a sand bar on the river that stopped being secret about a decade ago.",
     "storySource": "hand",
@@ -6311,7 +7595,7 @@
       ]
     ],
     "category": "park",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "A narrow corridor following Shoal Creek from Lady Bird Lake north past 38th Street, linking Pease Park to downtown.",
     "extra": "The 1981 Memorial Day flood sent water fifteen feet up these banks and killed thirteen people, which is why so much of the floodplain is parkland now.",
     "storySource": "hand",
@@ -6647,7 +7931,7 @@
       ]
     ],
     "category": "town",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "About 10,000 people 30 miles southeast on the Colorado River, one of the oldest towns in Texas, settled in 1832.",
     "extra": "The Lost Pines here are an isolated stand of loblolly pine, separated from the East Texas pine belt by a hundred miles. The 2011 wildfire burned most of it; it is regrowing.",
     "storySource": "hand",
@@ -6876,7 +8160,7 @@
     "lon": -97.861032,
     "category": "town",
     "tier": "suburb",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "About 15,000 people on I-35 south of Austin in Hays County.",
     "storySource": "hand",
     "storyUrl": "https://en.wikipedia.org/wiki/Buda%2C_Texas",
@@ -7524,7 +8808,7 @@
       ]
     ],
     "category": "town",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "About 6,000 people 25 miles west in Hays County, in the Hill Country.",
     "extra": "It calls itself the Wedding Capital of Texas, and it was the first International Dark Sky Community in Texas.",
     "storySource": "hand",
@@ -7540,7 +8824,7 @@
     "lon": -97.386511,
     "category": "town",
     "tier": "suburb",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "About 10,000 people 25 miles east on US 290, in both Bastrop and Travis counties.",
     "storySource": "hand",
     "storyUrl": "https://en.wikipedia.org/wiki/Elgin%2C_Texas",
@@ -8123,7 +9407,7 @@
       ]
     ],
     "category": "town",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "The Williamson County seat, about 67,000 people 30 miles north. Its Victorian courthouse square is one of the best preserved in Texas.",
     "extra": "Sun City, the retirement community on its west side, is why Georgetown has repeatedly ranked among the fastest-growing cities in the country.",
     "storySource": "hand",
@@ -8634,7 +9918,7 @@
       ]
     ],
     "category": "town",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "About 28,000 people on I-35 between Austin and San Marcos, in Hays County.",
     "extra": "Named for Fergus Kyle, and the hometown of novelist Katherine Anne Porter, whose childhood house is a museum.",
     "storySource": "hand",
@@ -10197,38 +11481,13 @@
     ]
   },
   {
-    "id": "antones-nightclub",
-    "tier": "central",
-    "name": "Antone's Nightclub",
-    "lat": 30.266093,
-    "lon": -97.740401,
-    "category": "venue",
-    "difficulty": 2,
-    "story": "Austin's home of the blues, founded by Clifford Antone in 1975 and now on East Fifth Street after several moves.",
-    "extra": "Antone booked Muddy Waters, Buddy Guy and Albert King, and a teenage Stevie Ray Vaughan played the house band here before anyone outside Austin knew his name.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "way/929865592",
-    "source": "osm-poi",
-    "status": "eligible",
-    "shape": [
-      [
-        [-97.74041, 30.26624],
-        [-97.74027, 30.2662],
-        [-97.74039, 30.26587],
-        [-97.74053, 30.26591],
-        [-97.74041, 30.26624]
-      ]
-    ]
-  },
-  {
     "id": "barton-creek-square-mall",
     "tier": "urban",
     "name": "Barton Creek Square Mall",
     "lat": 30.257535,
     "lon": -97.807248,
     "category": "venue",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "A hillside shopping mall off Loop 360 in southwest Austin, opened in 1981.",
     "extra": "It was built into the slope, so the parking decks step down the hillside and the main level sits above the treeline with a view back toward downtown.",
     "storySource": "hand",
@@ -10284,22 +11543,6 @@
         [-97.73908, 30.28074]
       ]
     ]
-  },
-  {
-    "id": "cactus-cafe",
-    "tier": "central",
-    "name": "Cactus Cafe",
-    "lat": 30.286131,
-    "lon": -97.741327,
-    "category": "venue",
-    "difficulty": 3,
-    "story": "A 200-seat listening room inside the UT student union, running since 1979.",
-    "extra": "Lyle Lovett, Nanci Griffith and Robert Earl Keen all built early followings here. The room enforces silence during songs, which is rare enough in Austin to be its whole reputation.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "node/3181780254",
-    "source": "osm-poi",
-    "status": "eligible"
   },
   {
     "id": "circuit-of-the-americas",
@@ -10415,7 +11658,7 @@
     "lat": 30.527643,
     "lon": -97.63105,
     "category": "venue",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "The 11,000-seat ballpark in Round Rock, home to the Round Rock Express since 2000.",
     "extra": "Nolan Ryan brought the team to town and his family ran it for years. The Express are the Triple-A affiliate of the Texas Rangers.",
     "storySource": "hand",
@@ -10436,22 +11679,6 @@
         [-97.63072, 30.52852]
       ]
     ]
-  },
-  {
-    "id": "elysium",
-    "tier": "central",
-    "name": "Elysium",
-    "lat": 30.267678,
-    "lon": -97.736591,
-    "category": "venue",
-    "difficulty": 3,
-    "story": "A Red River nightclub known for its goth and industrial nights, open since 2001.",
-    "extra": "It has hosted the city's goth scene for more than two decades, with a sunken dance floor and themed nights that have outlasted most of the Red River strip around it.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "node/3849779422",
-    "source": "osm-poi",
-    "status": "eligible"
   },
   {
     "id": "emos",
@@ -10629,45 +11856,13 @@
     ]
   },
   {
-    "id": "historic-scoot-inn",
-    "tier": "central",
-    "name": "Historic Scoot Inn",
-    "lat": 30.262122,
-    "lon": -97.729394,
-    "category": "venue",
-    "difficulty": 3,
-    "story": "A beer garden and music venue in East Austin, in a building that has served drinks since 1871.",
-    "extra": "It is one of the oldest continuously operating bars in Texas, having run as a saloon for railroad workers long before East Austin was part of the city.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "node/5770943039",
-    "source": "osm-poi",
-    "status": "eligible"
-  },
-  {
-    "id": "hotel-vegas",
-    "tier": "central",
-    "name": "Hotel Vegas",
-    "lat": 30.263425,
-    "lon": -97.727245,
-    "category": "venue",
-    "difficulty": 3,
-    "story": "A music venue on East Sixth Street with two stages and a patio between them.",
-    "extra": "It anchors the East Sixth strip that replaced Red River as the centre of Austin's small-club scene through the 2010s.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "node/7094678325",
-    "source": "osm-poi",
-    "status": "eligible"
-  },
-  {
     "id": "ikea-round-rock",
     "tier": "suburb",
     "name": "IKEA Round Rock",
     "lat": 30.55748,
     "lon": -97.690308,
     "category": "venue",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "The Central Texas IKEA on I-35 in Round Rock, opened in 2006, about 250,000 square feet.",
     "extra": "It was the first IKEA in Texas outside the Dallas area, and for years Austinites drove to Round Rock rather than Houston or Frisco for flat-pack furniture.",
     "storySource": "hand",
@@ -10729,6 +11924,39 @@
       "wikidata": "Q131325116",
       "wikipedia": "en:InterStellar BBQ"
     }
+  },
+  {
+    "id": "krieg-field",
+    "name": "Krieg Field",
+    "lat": 30.246874,
+    "lon": -97.7123,
+    "shape": [
+      [
+        [-97.71342, 30.24945],
+        [-97.71075, 30.24982],
+        [-97.70972, 30.24932],
+        [-97.70965, 30.24855],
+        [-97.71026, 30.24758],
+        [-97.70978, 30.24698],
+        [-97.71012, 30.24604],
+        [-97.71109, 30.24479],
+        [-97.71278, 30.24472],
+        [-97.71529, 30.2439],
+        [-97.716, 30.24417],
+        [-97.71381, 30.24755],
+        [-97.71342, 30.24945]
+      ]
+    ],
+    "category": "venue",
+    "tier": "central",
+    "difficulty": 3,
+    "story": "A 56-acre softball complex on Pleasant Valley beside the Colorado River, with seven lit fields. It is the centre of adult league softball in Austin.",
+    "extra": "It sits on the floodplain, so the fields go under water when the river rises, and league play has been rained out for whole seasons.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/935620953",
+    "source": "osm-poi",
+    "status": "eligible"
   },
   {
     "id": "lakeline-mall",
@@ -10793,22 +12021,6 @@
         [-97.73102, 30.28209]
       ]
     ]
-  },
-  {
-    "id": "mohawk",
-    "tier": "central",
-    "name": "Mohawk",
-    "lat": 30.270058,
-    "lon": -97.736088,
-    "category": "venue",
-    "difficulty": 2,
-    "story": "A two-storey Red River venue with an outdoor stage, opened in 2006.",
-    "extra": "The outdoor stage backs onto a limestone cliff, and the balconies looking down on it make it one of the best-sounding small rooms in the city.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "node/3190821388",
-    "source": "osm-poi",
-    "status": "eligible"
   },
   {
     "id": "moody-amphitheater",
@@ -10908,31 +12120,6 @@
     }
   },
   {
-    "id": "oilcan-harrys",
-    "tier": "central",
-    "name": "Oilcan Harry's",
-    "lat": 30.266483,
-    "lon": -97.745365,
-    "category": "venue",
-    "difficulty": 3,
-    "story": "A Fourth Street bar opened in 1990, the anchor of Austin's Warehouse District gay scene.",
-    "extra": "It is the oldest queer bar in Austin, opened by Larry Davis and still gay-owned, running drag, karaoke and bingo nights more than thirty years on.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "way/231123159",
-    "source": "osm-poi",
-    "status": "eligible",
-    "shape": [
-      [
-        [-97.7454, 30.26661],
-        [-97.74524, 30.26656],
-        [-97.74538, 30.26637],
-        [-97.74548, 30.2664],
-        [-97.7454, 30.26661]
-      ]
-    ]
-  },
-  {
     "id": "palmer-events-center",
     "tier": "central",
     "name": "Palmer Events Center",
@@ -11022,7 +12209,7 @@
     "lat": 30.566748,
     "lon": -97.689569,
     "category": "venue",
-    "difficulty": 2,
+    "difficulty": 1,
     "story": "An outlet mall on I-35 in Round Rock with about 125 stores, opened in 2006.",
     "extra": "It draws shoppers from as far as Mexico on holiday weekends, and the traffic it generates is a standing item at Round Rock council meetings.",
     "storySource": "hand",
@@ -11135,31 +12322,6 @@
     }
   },
   {
-    "id": "the-continental-club",
-    "tier": "central",
-    "name": "The Continental Club",
-    "lat": 30.250516,
-    "lon": -97.749068,
-    "category": "venue",
-    "difficulty": 2,
-    "story": "A South Congress music room open since 1955, one of the oldest continuously operating venues in Austin.",
-    "extra": "It started as a private supper club, became a burlesque house, and has run as a music venue since the 1970s. The neon sign out front is a South Congress landmark.",
-    "storySource": "hand",
-    "storyUrl": null,
-    "sourceRef": "way/929871360",
-    "source": "osm-poi",
-    "status": "eligible",
-    "shape": [
-      [
-        [-97.74913, 30.25057],
-        [-97.74916, 30.25049],
-        [-97.74894, 30.25043],
-        [-97.74891, 30.25051],
-        [-97.74913, 30.25057]
-      ]
-    ]
-  },
-  {
     "id": "the-domain",
     "name": "The Domain",
     "lat": 30.402699,
@@ -11219,26 +12381,6 @@
     "source": "osm-poi",
     "status": "candidate",
     "notes": "Left 617 Congress in 2026; OSM point is the old address, now becoming a bar. Re-add at 5555 N Lamar if wanted."
-  },
-  {
-    "id": "uchi",
-    "name": "Uchi",
-    "lat": 30.257513,
-    "lon": -97.75975,
-    "category": "venue",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": "wikipedia",
-    "storyUrl": "https://en.wikipedia.org/wiki/Uchi",
-    "sourceRef": "way/383355208",
-    "source": "osm-poi",
-    "status": "shortlist",
-    "osmTags": {
-      "amenity": "restaurant",
-      "wikidata": "Q7876695",
-      "wikipedia": "en:Uchi"
-    }
   },
   {
     "id": "vulcan-gas-company",
