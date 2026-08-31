@@ -94,17 +94,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
       <button id="mt-close" class="mt-close" aria-label="Close">×</button>
       <div class="mt-dialog-meta" id="mt-d-meta"></div>
       <h2 id="mt-d-name"></h2>
-      <div class="mt-dialog-body">
-        <figure id="mt-d-photo" class="mt-dialog-photo" hidden>
-          <img id="mt-d-img" alt="" loading="lazy" />
-          <figcaption id="mt-d-credit"></figcaption>
-        </figure>
-        <div class="mt-dialog-prose">
-          <p id="mt-d-story"></p>
-          <p id="mt-d-extra"></p>
-          <a id="mt-d-link" target="_blank" rel="noopener" hidden>Wikipedia</a>
-        </div>
-      </div>
+      <figure id="mt-d-photo" class="mt-dialog-photo" hidden>
+        <img id="mt-d-img" alt="" loading="lazy" />
+        <figcaption id="mt-d-credit"></figcaption>
+      </figure>
+      <p id="mt-d-story"></p>
+      <p id="mt-d-extra"></p>
+      <a id="mt-d-link" target="_blank" rel="noopener" hidden>Wikipedia</a>
     </dialog>
   </div>
 </Base>
@@ -568,9 +564,6 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     max-width: min(60ch, 92vw);
     box-shadow: 0 20px 60px #000a;
   }
-  .mt-dialog.has-photo {
-    max-width: min(76ch, 94vw);
-  }
   .mt-dialog::backdrop {
     background: #0b0f1aaa;
     backdrop-filter: blur(2px);
@@ -605,34 +598,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     font-size: 13px;
     color: #c2410c;
   }
-  /* Photo left, prose right on anything wider than a phone in portrait. The
-     image column stretches to whatever the prose needs, so portrait shots crop
-     to the card's own height instead of a fixed box. */
-  .mt-dialog-body {
-    display: grid;
-    gap: 16px;
-  }
-  .mt-dialog.has-photo .mt-dialog-body {
-    grid-template-columns: minmax(0, 5fr) minmax(28ch, 6fr);
-    align-items: stretch;
-  }
-  @media (max-width: 640px) {
-    .mt-dialog.has-photo .mt-dialog-body {
-      grid-template-columns: 1fr;
-    }
-  }
   .mt-dialog-photo {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+    margin: 0 0 12px;
   }
   .mt-dialog-photo img {
     display: block;
     width: 100%;
-    flex: 1;
-    min-height: 160px;
-    max-height: 320px;
+    max-height: 220px;
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid #2a3556;
@@ -642,9 +614,6 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     margin-top: 4px;
     font-size: 11px;
     color: #8b93a7;
-  }
-  .mt-dialog-prose > :last-child {
-    margin-bottom: 0;
   }
   .mt-close {
     position: absolute;
@@ -1352,7 +1321,6 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     const fig = document.getElementById('mt-d-photo')!
     const img = document.getElementById('mt-d-img') as HTMLImageElement
     fig.hidden = !r.loc.photo
-    dlg.classList.toggle('has-photo', !!r.loc.photo)
     // Clear src first so a slow network never shows the previous round's photo.
     img.removeAttribute('src')
     if (r.loc.photo) {
