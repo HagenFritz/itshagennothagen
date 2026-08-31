@@ -296,8 +296,11 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
        blown out by this, but the fallback only applies without a key. */
     filter: brightness(2.6) contrast(1.45) saturate(0.7);
   }
+  /* dark_all is as dark as dark_nolabels, so the results map needs nearly the
+     same lift. The old 1.35 was tuned for the bright OSM fallback and left
+     streets and labels almost invisible once the CARTO key was in place. */
   #mt-tiles.labelled {
-    filter: brightness(1.35) contrast(1.15) saturate(0.8);
+    filter: brightness(2.8) contrast(1.45) saturate(0.9);
   }
   #mt-over {
     touch-action: none;
