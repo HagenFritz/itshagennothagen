@@ -42,6 +42,7 @@ UA = "itshagennothagen-kraken/1.0"
 
 TRADES_PAGE = 50
 RETRY_MAX = 5
+_last_nonce = 0
 
 # Kraken prefixes most asset codes: XXBT, ZUSD. A few newer listings are bare.
 QUOTES = ("ZUSD", "USD", "ZEUR", "EUR", "USDT", "USDC", "XXBT", "XBT", "ETH")
@@ -127,8 +128,11 @@ def call(path, data=None, *, key=None, secret=None):
         payload = dict(data or {})
         headers = {"User-Agent": UA}
         if private:
-            # Nonce must strictly increase per key; microseconds gives headroom.
-            payload["nonce"] = int(time.time() * 1_000_000)
+            # Nonce must strictly increase per key. Wall-clock microseconds
+            # repeat under back-to-back calls, so bump past the last one used.
+            global _last_nonce
+            _last_nonce = max(int(time.time() * 1_000_000), _last_nonce + 1)
+            payload["nonce"] = _last_nonce
             headers["API-Key"] = key
             headers["API-Sign"] = sign(path, payload, secret)
 
@@ -180,7 +184,7 @@ def label(asset):
     return DISPLAY.get(asset, asset)
 
 
-def split_pair(pair, known_assets):
+def split_pair(pair):
     """Split a Kraken pair code into (base, quote).
 
     Pair codes concatenate the two asset codes with no separator and no fixed
@@ -188,9 +192,7 @@ def split_pair(pair, known_assets):
     """
     for quote in QUOTES:
         if pair.endswith(quote) and len(pair) > len(quote):
-            base = pair[: -len(quote)]
-            if base in known_assets or True:
-                return base, quote
+            return pair[: -len(quote)], quote
     return pair, ""
 
 
@@ -206,7 +208,9 @@ def fetch_trades(key, secret):
     """Every fill, oldest first. Paginates 50 at a time."""
     trades = []
     offset = 0
-    while True:
+    # Local ceiling so a server-side `count` that never reconciles cannot
+    # loop forever; 200 pages is 10,000 fills.
+    for _ in range(200):
         result = call(
             "/0/private/TradesHistory",
             {"trades": "false", "ofs": offset},
@@ -221,6 +225,9 @@ def fetch_trades(key, secret):
         if offset >= int(result.get("count", 0)):
             break
         time.sleep(0.5)  # private endpoints are tightly rate limited
+    else:
+        # Partial history would silently produce a wrong cost basis.
+        die("trade history did not terminate after 200 pages")
     trades.sort(key=lambda t: float(t["time"]))
     return trades
 
@@ -316,7 +323,7 @@ def cmd_positions(args):
     by_asset = defaultdict(list)
     skipped_pairs = set()
     for t in trades:
-        base, quote = split_pair(t["pair"], set(balances))
+        base, quote = split_pair(t["pair"])
         if quote not in ("ZUSD", "USD"):
             skipped_pairs.add(t["pair"])
             continue
@@ -335,8 +342,7 @@ def cmd_positions(args):
     held = {a: v for a, v in balances.items() if label(a) not in ("USD", "EUR", "GBP", "CAD", "JPY")}
     wanted = {}
     for asset in held:
-        canonical = asset if asset.startswith(("X", "Z")) else asset
-        wanted[asset] = f"{canonical}ZUSD" if asset.startswith("X") else f"{asset}USD"
+        wanted[asset] = f"{asset}ZUSD" if asset.startswith("X") else f"{asset}USD"
 
     prices_raw = fetch_prices(set(wanted.values()))
 

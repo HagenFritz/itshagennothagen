@@ -26,6 +26,7 @@ import argparse
 import base64
 import http.server
 import json
+import os
 import secrets
 import sys
 import threading
@@ -51,8 +52,8 @@ AUTH_URL = "https://accounts.spotify.com/authorize"
 REDIRECT_URI = "http://127.0.0.1:8888/callback"
 CALLBACK_PORT = 8888
 
-# library-modify is only used by `apply --unlike`, which is opt-in. The rest is
-# read plus playlist writes.
+# library-modify is only used when a plan row carries "unlike": true, which is
+# set by hand. The rest is read plus playlist writes.
 SCOPES = (
     "user-library-read user-library-modify "
     "playlist-read-private playlist-modify-private playlist-modify-public"
@@ -93,7 +94,11 @@ def write_dev_var(key, value):
             break
     if not replaced:
         lines.append(f"{key}={value}")
-    DEV_VARS.write_text("\n".join(lines) + "\n")
+    # Atomic replace: a kill mid-write must not truncate the credentials file.
+    tmp = DEV_VARS.with_suffix(".tmp")
+    tmp.write_text("\n".join(lines) + "\n")
+    tmp.chmod(0o600)
+    os.replace(tmp, DEV_VARS)
 
 
 def die(msg):
@@ -122,7 +127,15 @@ def http_json(url, *, method="GET", headers=None, data=None, form=None):
 
 def api(token, path, *, method="GET", data=None, params=None):
     """Call the Spotify API, retrying on 429 and 5xx with the Retry-After hint."""
-    url = path if path.startswith("http") else f"{API}{path}"
+    if path.startswith("http"):
+        # Pagination follows response-supplied `next` URLs through this
+        # argument, and the Bearer token goes on every request; without the
+        # pin, a hostile cursor walks the token off to another host.
+        if not path.startswith(API + "/"):
+            die(f"refusing to follow off-origin cursor: {path}")
+        url = path
+    else:
+        url = f"{API}{path}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
     headers = {"Authorization": f"Bearer {token}"}
@@ -131,7 +144,13 @@ def api(token, path, *, method="GET", data=None, params=None):
             return http_json(url, method=method, headers=headers, data=data)
         except urllib.error.HTTPError as e:
             if e.code == 429:
-                wait = int(e.headers.get("Retry-After", "2")) + 1
+                # Retry-After may be an HTTP-date, and a hostile value could
+                # park the run for years; clamp to something a human would sit
+                # through.
+                try:
+                    wait = min(int(e.headers.get("Retry-After", "2")), 60) + 1
+                except ValueError:
+                    wait = 3
                 print(f"  rate limited, waiting {wait}s", file=sys.stderr)
                 time.sleep(wait)
                 continue
@@ -439,7 +458,9 @@ def cmd_apply(args):
     undo_path = UNDO_DIR / f"undo-{stamp}.json"
 
     def save_undo():
-        undo_path.write_text(json.dumps(undo, indent=2, ensure_ascii=False) + "\n")
+        tmp = undo_path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(undo, indent=2, ensure_ascii=False) + "\n")
+        os.replace(tmp, undo_path)
 
     try:
         for pid, rows in by_playlist.items():

@@ -60,3 +60,6 @@ docs/music/undo-*.json
 
 # Handoff docs (ephemeral session artifacts)
 docs/handoff/
+
+# Review docs (local working artifacts)
+docs/reviews/

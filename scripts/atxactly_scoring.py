@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Reference implementation of ATXactly guess scoring.
 
-Ported to TypeScript for the Pages Function; kept here so the rules can be
-exercised and tested without standing up the API. See
-docs/brainstorms/2026-08-11-001-austin-atxactly-requirements.md.
+Mirrors the TypeScript in src/pages/labs/atxactly.astro so the rules can be
+exercised and tested without a browser; change both together. See
+docs/brainstorms/2026-08-11-001-atxactly-requirements.md.
 """
 
 import math
@@ -79,7 +79,7 @@ def distance_to_shape(lat, lon, shape):
 # a tap on the far edge of Georgetown (176 km2) worth the same as one on the
 # courthouse; a fixed metre falloff instead punished small parks for being
 # small. Anywhere inside still beats being outside: the worst interior score
-# is 75, and a guess 1 km beyond any boundary scores 57.
+# is 75, and a guess 1 km beyond any boundary scores 52.
 INSIDE_EDGE = 75.0
 
 
@@ -163,4 +163,4 @@ def score_guess(guess_lat, guess_lon, location, multiplier=1):
     }
 
 
-MULTIPLIERS = (1, 1, 2, 3, 3)   # 1000-point daily max
+MULTIPLIERS = (1, 1, 2, 2, 3)   # 900-point daily max

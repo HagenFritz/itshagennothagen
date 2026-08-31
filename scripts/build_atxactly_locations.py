@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the Austin ATXactly location pool from public data sources.
 
-Stdlib only. See docs/brainstorms/2026-08-11-001-austin-atxactly-requirements.md
+Stdlib only. See docs/brainstorms/2026-08-11-001-atxactly-requirements.md
 for the sources, the category taxonomy, and why each source is shaped this way.
 
     python3 scripts/build_atxactly_locations.py discover
@@ -17,6 +17,7 @@ promoted to `eligible` automatically.
 import argparse
 import json
 import math
+import os
 import re
 import subprocess
 import sys
@@ -54,13 +55,19 @@ URBAN = (30.15, -97.88, 30.45, -97.60)
 
 # Fields a human may edit. Discovery must not clobber these on re-run.
 PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
-             "story", "storySource", "storyUrl", "status", "notes", "shape",
-             "photo")
+             "story", "extra", "storySource", "storyUrl", "status", "notes",
+             "shape", "photo")
 
-# district and water were dropped after curation: the only real districts in
-# OSM are shopping centres (a venue), and water bodies are either too large to
-# be a fair answer or linear.
-CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town", "food")
+# district was dropped after curation: the only real districts in OSM are
+# shopping centres (a venue). water is still harvested but nothing has been
+# promoted from it yet.
+CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town",
+              "food", "water")
+
+# The game's camera box (BOX in atxactly.astro). Wider than the harvest box
+# because a few towns were included deliberately; anything shipped outside it
+# is unreachable and therefore unwinnable.
+GAME_BOX = (29.93, -98.15, 30.77, -97.29)
 
 
 def fetch_json(url, data=None, tries=4):
@@ -231,41 +238,6 @@ def simplify(points, eps):
 SIMPLIFY_EPS = 0.00025
 
 
-def stitch_rings(ways):
-    """Join unclosed outer ways end to end into closed rings.
-
-    OSM multipolygon relations store a boundary as fragments, not as closed
-    loops. Treating each fragment as its own polygon silently shrank the UT
-    campus from 404 acres to 68 and produced nonsense areas elsewhere.
-    """
-    segs = [list(w) for w in ways if len(w) > 1]
-    rings = []
-    while segs:
-        cur = segs.pop(0)
-        changed = True
-        while changed and cur[0] != cur[-1]:
-            changed = False
-            for i, seg in enumerate(segs):
-                if seg[0] == cur[-1]:
-                    cur = cur + seg[1:]
-                elif seg[-1] == cur[-1]:
-                    cur = cur + seg[::-1][1:]
-                elif seg[-1] == cur[0]:
-                    cur = seg[:-1] + cur
-                elif seg[0] == cur[0]:
-                    cur = seg[::-1][:-1] + cur
-                else:
-                    continue
-                segs.pop(i)
-                changed = True
-                break
-        if cur[0] != cur[-1]:
-            cur = cur + [cur[0]]
-        if len(cur) >= 4:
-            rings.append(cur)
-    return rings
-
-
 def shape_of(polys):
     """Simplified outer rings for area scoring, largest fragment first.
 
@@ -351,6 +323,8 @@ def discover_osm_places():
         if not name:
             continue
         lat, lon = el["lat"], el["lon"]
+        if not in_box(lat, lon, (SOUTH, WEST, NORTH, EAST)):
+            continue
         out.append({
             "id": slugify(name),
             "name": name,
@@ -467,15 +441,27 @@ def discover_osm_pois():
 
 # ---------- merge ----------
 
+STATUS_RANK = {"eligible": 2, "shortlist": 1}
+
+
 def load_existing():
     """Both files as one list. Every command works on the union and write()
     re-splits by status, so an entry promoted to shortlist/eligible migrates
-    from the raw harvest into the shipped pool automatically."""
-    entries = []
+    from the raw harvest into the shipped pool automatically.
+
+    An id present in both files keeps the higher-status copy: promotion edits
+    the pool file but leaves the stale candidate row behind in the raw harvest,
+    and letting that stale row win would silently revert the curation."""
+    by_id = {}
     for path in (POOL, RAW):
-        if path.exists():
-            entries.extend(json.loads(path.read_text()))
-    return entries
+        if not path.exists():
+            continue
+        for e in json.loads(path.read_text()):
+            cur = by_id.get(e["id"])
+            if cur is None or (STATUS_RANK.get(e.get("status"), 0)
+                               > STATUS_RANK.get(cur.get("status"), 0)):
+                by_id[e["id"]] = e
+    return list(by_id.values())
 
 
 def merge(existing, discovered):
@@ -516,13 +502,62 @@ def merge(existing, discovered):
     return list(by_id.values()), added, updated
 
 
+def validate(entries):
+    """Refuse to write a pool that would break the game.
+
+    The client assumes these invariants at parse time (a bare NaN alone makes
+    JSON.parse throw and the page render nothing), so a violation aborts before
+    any file is touched."""
+    errors = []
+    seen = set()
+    south, west, north, east = GAME_BOX
+    for e in entries:
+        eid = e.get("id")
+        if not eid or not str(e.get("name") or "").strip():
+            errors.append(f"{eid or '<no id>'}: missing id or name")
+            continue
+        if eid in seen:
+            errors.append(f"{eid}: duplicate id")
+        seen.add(eid)
+        lat, lon = e.get("lat"), e.get("lon")
+        if not (isinstance(lat, (int, float)) and isinstance(lon, (int, float))
+                and math.isfinite(lat) and math.isfinite(lon)):
+            errors.append(f"{eid}: non-finite coordinates")
+            continue
+        if e.get("status") != "eligible":
+            continue
+        if e.get("category") not in CATEGORIES:
+            errors.append(f"{eid}: unknown category {e.get('category')!r}")
+        if not (south <= lat <= north and west <= lon <= east):
+            errors.append(f"{eid}: outside the game camera box")
+        if not str(e.get("story") or "").strip() \
+                or not str(e.get("extra") or "").strip():
+            errors.append(f"{eid}: eligible without story/extra")
+        shape = e.get("shape")
+        if shape:
+            if sum(len(r) for r in shape) > 2000:
+                errors.append(f"{eid}: shape has too many vertices")
+            if not any(point_in_poly((lon, lat), [ring]) for ring in shape):
+                errors.append(f"{eid}: shape does not contain its own point")
+        photo = e.get("photo")
+        if photo and not (photo.get("url") and photo.get("attribution")):
+            errors.append(f"{eid}: photo missing url or attribution")
+    if errors:
+        for msg in errors[:20]:
+            print(f"  INVALID {msg}", file=sys.stderr)
+        sys.exit(f"validation failed: {len(errors)} problem(s), nothing written")
+
+
 def write(entries):
+    validate(entries)
     entries.sort(key=lambda e: (e["category"], e["id"]))
     pool = [e for e in entries if e.get("status") in ("shortlist", "eligible")]
     raw = [e for e in entries if e.get("status") not in ("shortlist", "eligible")]
     for path, rows in ((POOL, pool), (RAW, raw)):
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
+        os.replace(tmp, path)
         print(f"wrote {path.relative_to(REPO)} ({len(rows)} entries)")
     # CI runs `prettier --check`. Python's json.dumps always expands short
     # arrays that prettier keeps inline, so without this the two tools rewrite
@@ -777,6 +812,12 @@ def cmd_photos(args):
         fname = file_of.get(qid) if qid else None
         if not fname:
             continue
+        # quote() leaves "/" unencoded, so a hostile filename could redirect
+        # the path elsewhere on Commons.
+        if "/" in fname or ".." in fname:
+            print(f"  SKIP suspicious filename for {e['name']}: {fname!r}",
+                  file=sys.stderr)
+            continue
         e["photo"] = {
             "url": ("https://commons.wikimedia.org/wiki/Special:FilePath/"
                     f"{urllib.parse.quote(fname)}?width=640"),
@@ -790,6 +831,13 @@ def cmd_photos(args):
         return
     if n:
         write(entries)
+
+
+def cmd_validate(args):
+    entries = load_existing()
+    validate(entries)
+    elig = sum(1 for e in entries if e.get("status") == "eligible")
+    print(f"OK: {len(entries)} entries, {elig} eligible, all invariants hold")
 
 
 def cmd_stats(args):
@@ -809,20 +857,17 @@ def cmd_stats(args):
     print(f"\neligible:        {len(elig):4d}")
     print(f"has story:       {len(withstory):4d}")
     print(f"wikipedia link:  {len(wikitagged):4d}  (story fetchable)")
+    # Difficulty 1/2/3 maps straight onto the game's easy/medium/hard pools
+    # (buildRound deals 2 easy, 2 medium, 1 hard per day). The multiplier is
+    # per round position, not per difficulty, so it has no place here.
     bands = Counter()
     for e in elig:
         d = e.get("difficulty")
-        if d in (1, 2):
-            bands["easy 1x"] += 1
-        elif d == 3:
-            bands["medium 2x"] += 1
-        elif d in (4, 5):
-            bands["hard 3x"] += 1
-        else:
-            bands["untagged"] += 1
+        label = {1: "easy", 2: "medium", 3: "hard"}.get(d, "untagged")
+        bands[label] += 1
     if elig:
-        print("\neligible by band (need 12+ each for a 60-day window):")
-        for k in ("easy 1x", "medium 2x", "hard 3x", "untagged"):
+        print("\neligible by band (dealt 2/2/1 per day):")
+        for k in ("easy", "medium", "hard", "untagged"):
             print(f"  {k:16s} {bands[k]:4d}")
 
 
@@ -856,6 +901,9 @@ def main():
     ph.set_defaults(func=cmd_photos)
     s = sub.add_parser("stats", help="summarize the current pool")
     s.set_defaults(func=cmd_stats)
+    v = sub.add_parser("validate",
+                       help="check the data invariants the game relies on")
+    v.set_defaults(func=cmd_validate)
     args = p.parse_args()
     args.func(args)
 

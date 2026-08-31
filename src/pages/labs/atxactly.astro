@@ -36,7 +36,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     <header class="mt-head">
       <div class="mt-score"><span>SCORE</span><b id="mt-total">0</b></div>
       <div class="mt-mid">
-        <div id="mt-band" class="mt-band">
+        <div class="mt-band">
           <span id="mt-band-txt">Round 1 of 5 · Easy</span>
           <span id="mt-mult" class="mt-mult m1">1x</span>
         </div>
@@ -241,6 +241,9 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   }
   .mt-cat.c-food {
     color: #f2778a;
+  }
+  .mt-cat.c-water {
+    color: #4cc3d9;
   }
   .mt-name {
     font-size: 22px;
@@ -604,6 +607,9 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   .mt-dialog-photo img {
     display: block;
     width: 100%;
+    /* reserve the box before the image arrives, so the story text below
+       does not reflow on load */
+    aspect-ratio: 16 / 9;
     max-height: 220px;
     object-fit: cover;
     border-radius: 8px;
@@ -747,7 +753,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   // the far edge of Georgetown (176 km²) worth as much as one on the
   // courthouse; a fixed metre falloff punished small parks for being small.
   // Anywhere inside still beats outside: worst interior is 75, and 1 km beyond
-  // any boundary scores 57.
+  // any boundary scores 52.
   const INSIDE_EDGE = 75
   function reachOf(loc: Loc) {
     let best = 0
@@ -801,34 +807,59 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
       86400000,
   )
 
-  // Rounds 1-2 easy, 3-4 medium, 5 hard. A starved band borrows from its
-  // neighbour so the game still deals five while the pool is small.
-  function buildRound(seed: number): Loc[] {
+  function shuffled(pool: Loc[], seed: number) {
     const rnd = mulberry(seed)
-    const pools = {
-      easy: ALL.filter((l) => l.difficulty === 1),
-      med: ALL.filter((l) => l.difficulty === 2),
-      hard: ALL.filter((l) => l.difficulty === 3),
+    const deck = [...pool]
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1))
+      const t = deck[i]
+      deck[i] = deck[j]
+      deck[j] = t
     }
-    const used = new Set<string>()
-    const take = (...order: (keyof typeof pools)[]) => {
-      for (const k of order) {
-        const avail = pools[k].filter((l) => !used.has(l.id))
-        if (avail.length) {
-          const pick = avail[Math.floor(rnd() * avail.length)]
-          used.add(pick.id)
-          return pick
-        }
-      }
-      return null
+    return deck
+  }
+
+  // Each band is a deck dealt front to back, `count` locations a day, so a
+  // location cannot come back until the whole band has played through: 42
+  // days for easy, 59 medium, 134 hard at the current pool.
+  //
+  // The deck is reshuffled every cycle, but a location stays in the half it
+  // was already in and is only shuffled within that half. That is what keeps
+  // the cycle boundary honest: a location dealt late in one cycle stays late
+  // in the next, so it cannot land right after itself across the seam. A
+  // plain reshuffle put repeats one day apart, and reshuffling once and never
+  // again fixed the order forever.
+  function deckFor(pool: Loc[], cycle: number, band: number) {
+    let deck = shuffled(pool, band)
+    for (let c = 1; c <= cycle; c++) {
+      const h = Math.ceil(deck.length / 2)
+      const s = (Math.imul(c, 0x9e3779b9) + band) | 0
+      deck = [
+        ...shuffled(deck.slice(0, h), s),
+        ...shuffled(deck.slice(h), s ^ 0x5bf03635),
+      ]
     }
+    return deck
+  }
+
+  function drawFrom(pool: Loc[], day: number, count: number, band: number) {
+    if (pool.length <= count) return pool.slice(0, count)
+    const days = Math.floor(pool.length / count)
+    const deck = deckFor(pool, Math.floor(day / days), band)
+    const slot = (day % days) * count
+    const out: Loc[] = []
+    for (let i = 0; i < count; i++) out.push(deck[(slot + i) % deck.length])
+    return out
+  }
+
+  // Rounds 1-2 easy, 3-4 medium, 5 hard.
+  function buildRound(day: number): Loc[] {
+    const band = (d: number) => ALL.filter((l) => l.difficulty === d)
     return [
-      take('easy', 'med', 'hard'),
-      take('easy', 'med', 'hard'),
-      take('med', 'easy', 'hard'),
-      take('med', 'hard', 'easy'),
-      take('hard', 'med', 'easy'),
-    ].filter(Boolean) as Loc[]
+      ...drawFrom(band(1), day, 2, 1),
+      ...drawFrom(band(2), day, 2, 2),
+      ...drawFrom(band(3), day, 1, 3),
+    ]
   }
 
   let ROUND = buildRound(puzzleNo)
@@ -849,6 +880,10 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     loc: Loc
     t0: number
   } | null = null
+  let revealRaf = 0
+  // The initial ROUND is built straight from puzzleNo; reset() re-derives
+  // this for practice rounds so they never touch the daily lock.
+  let isDaily = true
   let locked = false
   let finished = false
   // header is showing no live round (already played, or the run is over)
@@ -858,54 +893,74 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   let center = { lat: 30.2672, lon: -97.7431 }
   let zoom = 11
 
-  // Two layers from the same basemap. During play only the unlabelled tiles
-  // render, so the map cannot be read for the answer. At the results screen
-  // there is nothing left to protect and the point is to learn the city, so
-  // the transparent label layer goes on top.
-  //
-  // dark_only_labels is used rather than the combined dark_all because
-  // dark_all 502s at z15 and above, which is exactly where the results camera
-  // sits once it fits five pins.
-  // Two basemaps. During play, Esri's Canvas Dark Gray Base: full street
-  // geometry with no text, so the map cannot be read for the answer. At the
-  // results screen, standard OSM, which carries street names and place labels
-  // so the round teaches something.
-  //
-  // CARTO's dark_nolabels served this role until it began stamping
-  // "API KEY REQUIRED" across keyless tiles.
+  // Two basemaps. During play, no text of any kind, so the map cannot be read
+  // for the answer; at the results screen, full labels, because the point is
+  // to learn the city. With a key both come from CARTO (dark_nolabels and
+  // dark_all). Without one, play falls back to Esri's Canvas Dark Gray Base
+  // (which prints park and street names from about z15) and results to OSM
+  // (a bright basemap under a dark UI); keyed sessions also fall back at
+  // runtime when CARTO itself errors, so an outage degrades instead of
+  // blanking the map. The key parameter is ?key=, not ?api_key= — the wrong
+  // name returns HTTP 200 with a watermarked tile, which nothing can detect.
   const CARTO_KEY = root.dataset.cartoKey || ''
   // On a retina display a 256 px tile is upscaled 2x before anything else
   // happens, which is most of the blur. CARTO serves 512 px @2x tiles.
   const RETINA = (window.devicePixelRatio || 1) > 1.3 ? '@2x' : ''
-  const TILE_URL = {
-    // Play: no text of any kind, so the map cannot be read for the answer.
-    // Esri's Canvas layers looked label-free at low zoom but print park and
-    // street names from about z15, which is exactly where players guess.
+  const FALLBACK_URL = {
     base: (sub: string, z: number, x: number, y: number) =>
-      CARTO_KEY
-        ? `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_nolabels/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`
-        : `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`,
-    // Results: full labels, because the point is to learn the city. With a key
-    // CARTO's dark_all matches the play palette; without one it falls back to
-    // OSM, which is a bright basemap under a dark UI.
+      `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`,
     labels: (sub: string, z: number, x: number, y: number) =>
-      CARTO_KEY
-        ? `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_all/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`
-        : `https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
+      `https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
   }
-  type Layer = keyof typeof TILE_URL
+  const CARTO_URL = {
+    base: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_nolabels/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`,
+    labels: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_all/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`,
+  }
+  const TILE_URL = CARTO_KEY ? CARTO_URL : FALLBACK_URL
+  type Layer = keyof typeof FALLBACK_URL
 
   const tiles = new Map<string, HTMLImageElement>()
+  // Failure count per tile: two retries against the primary source, then one
+  // attempt against the fallback when a key is configured. Without this a
+  // single transient error left a permanently blank square.
+  const tileTries = new Map<string, number>()
+  const TILE_MAX_TRIES = CARTO_KEY ? 3 : 2
   function getTile(tx: number, ty: number, z: number, layer: Layer) {
     const key = `${layer}/${z}/${tx}/${ty}`
     const hit = tiles.get(key)
     if (hit) return hit
+    // A long session at high zoom can touch thousands of tiles; drop the
+    // oldest half so decoded bitmaps stay bounded (the browser HTTP cache
+    // makes a refetch cheap).
+    if (tiles.size > 600) {
+      let drop = 300
+      for (const k of tiles.keys()) {
+        if (drop-- <= 0) break
+        tiles.delete(k)
+      }
+    }
+    if (tileTries.size > 2000) tileTries.clear()
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => drawTiles()
-    img.onerror = () => img.setAttribute('data-failed', 'true')
+    img.onerror = () => {
+      const tries = (tileTries.get(key) ?? 0) + 1
+      tileTries.set(key, tries)
+      if (tries < TILE_MAX_TRIES) {
+        setTimeout(() => {
+          tiles.delete(key)
+          drawTiles()
+        }, 800 * tries)
+      } else {
+        img.setAttribute('data-failed', 'true')
+      }
+    }
     const sub = 'abcd'[(tx + ty) % 4]!
-    img.src = TILE_URL[layer](sub, z, tx, ty)
+    const source =
+      CARTO_KEY && (tileTries.get(key) ?? 0) >= 2 ? FALLBACK_URL : TILE_URL
+    img.src = source[layer](sub, z, tx, ty)
     tiles.set(key, img)
     return img
   }
@@ -1145,7 +1200,16 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
       const drop = (1 - bounce(ap)) * -48
       pin(b.x, b.y + drop, revealCol, 9, 1)
     }
-    if (t < 1.3) requestAnimationFrame(drawOverlay)
+    // One animation chain, ever. drawOverlay is also called directly from pan,
+    // zoom, and resize; without the cancel each of those calls during the
+    // reveal window spawned its own self-sustaining rAF loop (measured 11,741
+    // frames where ~78 belong).
+    if (revealRaf) cancelAnimationFrame(revealRaf)
+    if (t < 1.3)
+      revealRaf = requestAnimationFrame(() => {
+        revealRaf = 0
+        drawOverlay()
+      })
   }
 
   const elTotal = document.getElementById('mt-total')!
@@ -1161,9 +1225,24 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     civic: { label: 'Civic', icon: '\u25C8', color: '#c084fc' },
     venue: { label: 'Venue', icon: '\u266A', color: '#e8546b' },
     town: { label: 'Town', icon: '\u2302', color: '#e8b04b' },
+    food: { label: 'Food & Drink', icon: '\u2615\uFE0E', color: '#f2778a' },
+    water: { label: 'Water', icon: '\u2248', color: '#4cc3d9' },
   }
+  // The fallback must never win for shipped data: the extractor validates
+  // category against its own list, and this map must cover that list.
   const catOf = (c: string) =>
     CATEGORY[c] ?? { label: c, icon: '\u25CF', color: '#c2410c' }
+
+  function setCatBadge(category: string) {
+    const cat = catOf(category)
+    elCat.className = `mt-cat c-${category}`
+    elCat.textContent = ''
+    const ico = document.createElement('span')
+    ico.className = 'ico'
+    ico.textContent = cat.icon
+    elCat.append(ico, cat.label)
+    elCat.hidden = false
+  }
 
   const elCat = document.getElementById('mt-cat')!
   const elBandTxt = document.getElementById('mt-band-txt')!
@@ -1207,10 +1286,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     idle = false
     const loc = ROUND[idx]
     elBandTxt.textContent = `Round ${idx + 1} of ${ROUND.length} · ${bandName(loc.difficulty)}`
-    const cat = catOf(loc.category)
-    elCat.className = `mt-cat c-${loc.category}`
-    elCat.innerHTML = `<span class="ico">${cat.icon}</span>${cat.label}`
-    elCat.hidden = false
+    setCatBadge(loc.category)
     setMult(MULTIPLIERS[idx])
     elName.textContent = loc.name
     elName.style.animation = 'none'
@@ -1287,7 +1363,9 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     elAgain.hidden = false
     elShare.hidden = false
     elHint.hidden = false
-    writeStore(PLAYED_KEY, String(puzzleNo))
+    // Only the daily round consumes the daily lock. Finishing a practice
+    // round must not lock a player out of a puzzle they never played.
+    if (isDaily) writeStore(PLAYED_KEY, String(puzzleNo))
     fitToResults()
     drawTiles()
     drawOverlay()
@@ -1324,6 +1402,11 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     // Clear src first so a slow network never shows the previous round's photo.
     img.removeAttribute('src')
     if (r.loc.photo) {
+      // A dead URL otherwise leaves a broken-image box under a caption still
+      // crediting a photographer for an image nobody can see.
+      img.onerror = () => {
+        fig.hidden = true
+      }
       img.src = r.loc.photo.url
       img.alt = r.loc.name
       document.getElementById('mt-d-credit')!.textContent =
@@ -1334,8 +1417,20 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     ex.textContent = r.loc.extra ?? ''
     ex.hidden = !r.loc.extra
     const link = document.getElementById('mt-d-link') as HTMLAnchorElement
-    link.hidden = !r.loc.storyUrl
-    if (r.loc.storyUrl) link.href = r.loc.storyUrl
+    // The pipeline writes Wikipedia URLs, but the data upstream (Wikidata) is
+    // publicly editable and rel=noopener does not stop javascript: hrefs.
+    link.hidden = true
+    if (r.loc.storyUrl) {
+      try {
+        const u = new URL(r.loc.storyUrl)
+        if (u.protocol === 'https:') {
+          link.href = u.href
+          link.hidden = false
+        }
+      } catch {
+        /* malformed URL: leave the link hidden */
+      }
+    }
     dlg.showModal()
   }
   document
@@ -1360,6 +1455,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   }
 
   function reset(seed: number) {
+    isDaily = seed === puzzleNo
     ROUND = buildRound(seed)
     idx = 0
     total = 0
@@ -1458,6 +1554,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     clampCamera()
     drawTiles()
     drawOverlay()
+  })
+  // A browser-interrupted gesture (system edge swipe, context menu) fires
+  // pointercancel, not pointerup; without this the map kept panning with no
+  // finger down and swallowed the next tap.
+  overC.addEventListener('pointercancel', () => {
+    dragging = false
+    moved = false
   })
   overC.addEventListener('pointerup', (e) => {
     dragging = false
@@ -1666,15 +1769,12 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   let restoreHeader: (() => void) | null = null
   function sampleHeader() {
     if (!idle && !finished) return
-    const cat = catOf('landmark')
     const prevCat = elCat.innerHTML
     const prevCatCls = elCat.className
     const prevCatHidden = elCat.hidden
     const prevName = elName.textContent
     const prevMultHidden = elMult.hidden
-    elCat.className = 'mt-cat c-landmark'
-    elCat.innerHTML = `<span class="ico">${cat.icon}</span>${cat.label}`
-    elCat.hidden = false
+    setCatBadge('landmark')
     elName.textContent = 'UT Tower'
     elMult.hidden = false
     restoreHeader = () => {
@@ -1687,6 +1787,9 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   }
 
   function openGuide() {
+    // Re-entry (Space on the still-focused ? button) would make sampleHeader
+    // capture the sample as the "previous" header and restore the wrong one.
+    if (!guide.hidden) return
     sampleHeader()
     const W = window.innerWidth
     const H = window.innerHeight
