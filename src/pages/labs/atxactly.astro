@@ -1,0 +1,1993 @@
+---
+import Base from '../../layouts/Base.astro'
+import locationData from '../../data/atxactly-locations.json'
+
+type Loc = {
+  id: string
+  name: string
+  lat: number
+  lon: number
+  category: string
+  tier: string
+  difficulty: number | null
+  story: string | null
+  extra: string | null
+  storyUrl: string | null
+  status: string
+  shape?: number[][][]
+  photo?: { url: string; attribution: string } | null
+}
+
+const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
+
+// CARTO serves label-free tiles, which is what keeps the map unreadable during
+// play. Keyless requests are watermarked, so the key is required for a clean
+// board; without it the game falls back to Esri, which labels parks and streets
+// at high zoom.
+const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
+---
+
+<Base title="ATXactly · Hagen Fritz">
+  <div
+    id="mt"
+    data-locations={JSON.stringify(eligible)}
+    data-carto-key={cartoKey}
+  >
+    <header class="mt-head">
+      <div class="mt-score"><span>SCORE</span><b id="mt-total">0</b></div>
+      <div class="mt-mid">
+        <div class="mt-band">
+          <span id="mt-band-txt">Round 1 of 5 · Easy</span>
+          <span id="mt-mult" class="mt-mult m1">1x</span>
+        </div>
+        <div class="mt-nameline">
+          <span id="mt-cat" class="mt-cat"></span>
+          <span id="mt-name" class="mt-name">Loading…</span>
+        </div>
+        <div id="mt-sub" class="mt-sub">Tap as close as you can</div>
+      </div>
+      <button id="mt-help" class="mt-help" aria-label="How to play">?</button>
+      <button id="mt-again" class="mt-btn" hidden>Play again</button>
+      <button id="mt-share" class="mt-btn" hidden>Copy score</button>
+    </header>
+
+    <div class="mt-stage">
+      <canvas id="mt-tiles"></canvas>
+      <canvas id="mt-over"></canvas>
+      <div id="mt-toast" class="mt-toast">
+        <b id="mt-toast-d"></b>
+        <span id="mt-toast-p"></span>
+        <span id="mt-toast-break" class="mt-break" hidden>
+          <span id="mt-break-base"></span>
+          <span id="mt-break-mult" class="mt-break-chip"></span>
+        </span>
+      </div>
+      <div class="mt-zoom">
+        <button
+          id="mt-zoom-in"
+          class="mt-zoom-btn"
+          aria-label="Zoom in"
+          data-tip="Zoom in (↑ or +)">+</button
+        >
+        <button
+          id="mt-zoom-out"
+          class="mt-zoom-btn"
+          aria-label="Zoom out"
+          data-tip="Zoom out (↓ or −)">&minus;</button
+        >
+      </div>
+      <div id="mt-hint" class="mt-hint" hidden>Tap a pin to read its story</div>
+      <div id="mt-confirm" class="mt-confirm" hidden>
+        <span>Drop your guess here? <kbd class="mt-kbd">Enter</kbd></span>
+        <button id="mt-confirm-yes" class="mt-btn">Confirm</button>
+        <button id="mt-confirm-no" class="mt-ghost">Cancel</button>
+      </div>
+    </div>
+
+    <div id="mt-guide" class="mt-guide" hidden>
+      <svg id="mt-guide-mask" class="mt-guide-mask" aria-hidden="true"></svg>
+      <div id="mt-guide-notes"></div>
+      <button id="mt-guide-close" class="mt-btn mt-guide-close">Got it</button>
+    </div>
+
+    <dialog id="mt-dialog" class="mt-dialog">
+      <button id="mt-close" class="mt-close" aria-label="Close">×</button>
+      <div class="mt-dialog-meta" id="mt-d-meta"></div>
+      <h2 id="mt-d-name"></h2>
+      <figure id="mt-d-photo" class="mt-dialog-photo" hidden>
+        <img id="mt-d-img" alt="" loading="lazy" />
+        <figcaption id="mt-d-credit"></figcaption>
+      </figure>
+      <p id="mt-d-story"></p>
+      <p id="mt-d-extra"></p>
+      <a id="mt-d-link" target="_blank" rel="noopener" hidden>Wikipedia</a>
+    </dialog>
+  </div>
+</Base>
+
+<style is:global>
+  #mt {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0b0f1a;
+    z-index: 50;
+    color: #e6e8ee;
+  }
+  .mt-head {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #0e1424;
+    border-bottom: 1px solid #1e2740;
+    flex: 0 0 auto;
+  }
+  .mt-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #c2410c;
+    border-radius: 8px;
+    padding: 4px 16px;
+    min-width: 104px;
+  }
+  .mt-score span {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: #c2410c;
+  }
+  .mt-score b {
+    font-size: 40px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    transition: transform 0.15s;
+  }
+  .mt-score b.bump {
+    transform: scale(1.18);
+    color: #f59e5b;
+  }
+  .mt-mid {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+  .mt-band {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8b93a7;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .mt-mult {
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    transition:
+      color 0.3s,
+      transform 0.3s;
+  }
+  .mt-mult.m1 {
+    color: #8b93a7;
+  }
+  .mt-mult.m2 {
+    color: #38bdf8;
+  }
+  .mt-mult.m3 {
+    color: #f59e5b;
+  }
+  .mt-mult.pulse {
+    transform: scale(1.25);
+  }
+  .pts-m1 {
+    color: #8b93a7;
+  }
+  .pts-m2 {
+    color: #38bdf8;
+  }
+  .pts-m3 {
+    color: #f59e5b;
+  }
+  .mt-nameline {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+  .mt-cat {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .mt-cat .ico {
+    font-size: 13px;
+    line-height: 1;
+  }
+  .mt-cat.c-neighborhood {
+    color: #5ea9e8;
+  }
+  .mt-cat.c-park {
+    color: #6bbf59;
+  }
+  .mt-cat.c-landmark {
+    color: #f59e5b;
+  }
+  .mt-cat.c-civic {
+    color: #c084fc;
+  }
+  .mt-cat.c-venue {
+    color: #e8546b;
+  }
+  .mt-cat.c-town {
+    color: #e8b04b;
+  }
+  .mt-cat.c-food {
+    color: #f2778a;
+  }
+  .mt-cat.c-water {
+    color: #4cc3d9;
+  }
+  .mt-name {
+    font-size: 22px;
+    font-weight: 650;
+    line-height: 1.15;
+    animation: mt-slide 0.35s ease-out;
+  }
+  .mt-sub {
+    font-size: 13px;
+    color: #8b93a7;
+  }
+  @keyframes mt-slide {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .mt-btn {
+    background: #c2410c;
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+  }
+  .mt-stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  #mt-tiles,
+  #mt-over {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #mt-tiles {
+    /* CARTO's dark_nolabels averages about 15/255 luminance, so it needs a
+       hard lift to read at all. The Esri fallback is mid-grey and would be
+       blown out by this, but the fallback only applies without a key. */
+    filter: brightness(2.6) contrast(1.45) saturate(0.7);
+  }
+  #mt-tiles.labelled {
+    filter: brightness(1.35) contrast(1.15) saturate(0.8);
+  }
+  #mt-over {
+    touch-action: none;
+    cursor: crosshair;
+  }
+  #mt-over.pins {
+    cursor: pointer;
+  }
+  .mt-toast {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translate(-50%, 30px);
+    opacity: 0;
+    background: #0e1424f0;
+    border: 1px solid #2a3556;
+    border-radius: 14px;
+    padding: 14px 26px;
+    text-align: center;
+    pointer-events: none;
+    transition:
+      transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+      opacity 0.25s;
+    box-shadow: 0 10px 40px #0008;
+  }
+  .mt-toast.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  .mt-toast b {
+    display: block;
+    font-size: 28px;
+    line-height: 1.1;
+  }
+  .mt-toast > span#mt-toast-p {
+    display: block;
+    margin-top: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #f59e5b;
+  }
+  .mt-break {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 7px;
+    font-family: ui-monospace, monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--mt-break, #8b93a7);
+  }
+  .mt-break-chip {
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    padding: 1px 10px;
+    font-size: 13.5px;
+  }
+  .mt-zoom {
+    position: absolute;
+    right: 14px;
+    bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #2a3556;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #0e1424e8;
+    box-shadow: 0 6px 20px #0007;
+  }
+  .mt-zoom-btn {
+    width: 38px;
+    height: 38px;
+    background: none;
+    border: 0;
+    color: #e6e8ee;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .mt-zoom-btn + .mt-zoom-btn {
+    border-top: 1px solid #2a3556;
+  }
+  .mt-zoom-btn:hover:not(:disabled) {
+    background: #1e2740;
+  }
+  .mt-zoom-btn:disabled {
+    color: #4a5570;
+    cursor: default;
+  }
+  .mt-zoom-btn:focus-visible {
+    outline: 2px solid #c2410c;
+    outline-offset: -2px;
+  }
+  /* Native title= has a browser-controlled delay of about a second and cannot
+     be shortened, so the zoom hints are drawn here instead. */
+  [data-tip] {
+    position: relative;
+  }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    background: #0e1424f5;
+    border: 1px solid #2a3556;
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+    color: #e6e8ee;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease-out 0.08s;
+  }
+  [data-tip]:hover::after,
+  [data-tip]:focus-visible::after {
+    opacity: 1;
+  }
+  .mt-hint {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0e1424e8;
+    border: 1px solid #2a3556;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #8b93a7;
+    pointer-events: none;
+  }
+  .mt-confirm {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0e1424f2;
+    border: 1px solid #2a3556;
+    border-radius: 12px;
+    padding: 10px 12px 10px 16px;
+    box-shadow: 0 10px 40px #0008;
+    font-size: 14px;
+    animation: mt-rise 0.18s ease-out;
+  }
+  @keyframes mt-rise {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 10px);
+    }
+  }
+  .mt-confirm .mt-btn {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+  .mt-ghost {
+    background: none;
+    border: 1px solid #2a3556;
+    color: #8b93a7;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .mt-ghost:hover {
+    color: #e6e8ee;
+    border-color: #4a5570;
+  }
+  .mt-kbd {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border: 1px solid #2a3556;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #8b93a7;
+  }
+  .mt-help {
+    align-self: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1.5px solid #2a3556;
+    color: #8b93a7;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .mt-help:hover {
+    color: #e6e8ee;
+    border-color: #c2410c;
+  }
+  .mt-guide {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+  }
+  .mt-guide-mask {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .mt-guide-note {
+    position: absolute;
+    /* fixed, not max-width: an absolutely positioned box measures at its
+       shrink-to-fit width, so placement maths was using the wrong number */
+    width: min(280px, calc(100vw - 32px));
+    background: #0e1424f7;
+    border: 1px solid #2a3556;
+    border-left: 3px solid #c2410c;
+    border-radius: 9px;
+    padding: 11px 14px;
+    box-shadow: 0 10px 40px #000a;
+    animation: mt-fade 0.25s ease-out both;
+  }
+  .mt-guide-note h4 {
+    margin: 0 0 3px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #e6e8ee;
+  }
+  .mt-guide-note p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #9aa2b0;
+  }
+  @keyframes mt-fade {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  .mt-guide-close {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%);
+  }
+  .mt-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    background: #0e1424;
+    color: #e6e8ee;
+    border: 1px solid #2a3556;
+    border-radius: 14px;
+    padding: 22px 26px 20px;
+    max-width: min(60ch, 92vw);
+    box-shadow: 0 20px 60px #000a;
+  }
+  .mt-dialog::backdrop {
+    background: #0b0f1aaa;
+    backdrop-filter: blur(2px);
+  }
+  .mt-dialog[open] {
+    animation: mt-pop 0.22s ease-out;
+  }
+  @keyframes mt-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+  .mt-dialog h2 {
+    margin: 2px 0 10px;
+    font-size: 20px;
+  }
+  .mt-dialog p {
+    margin: 0 0 10px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .mt-dialog-meta {
+    font-size: 12px;
+    color: #8b93a7;
+    letter-spacing: 0.04em;
+  }
+  .mt-dialog-meta b {
+    font-weight: 700;
+  }
+  .mt-dialog a {
+    font-size: 13px;
+    color: #c2410c;
+  }
+  .mt-dialog-photo {
+    margin: 0 0 12px;
+  }
+  .mt-dialog-photo img {
+    display: block;
+    width: 100%;
+    /* reserve the box before the image arrives, so the story text below
+       does not reflow on load */
+    aspect-ratio: 16 / 9;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #2a3556;
+    background: #0b0f1a;
+  }
+  .mt-dialog-photo figcaption {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #8b93a7;
+  }
+  .mt-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: 0;
+    color: #8b93a7;
+    font-size: 24px;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  type Loc = {
+    id: string
+    name: string
+    lat: number
+    lon: number
+    category: string
+    difficulty: number
+    story: string
+    extra: string | null
+    storyUrl: string | null
+    shape?: number[][][]
+    photo?: { url: string; attribution: string } | null
+  }
+
+  const root = document.getElementById('mt') as HTMLElement
+  const ALL: Loc[] = JSON.parse(root.dataset.locations!)
+
+  // One round per UTC day, remembered on the device. This is an honour lock,
+  // not a security boundary: clearing site data or a private window resets it.
+  // Acceptable here because there is no leaderboard to farm, so a replay only
+  // fools the player.
+  const PLAYED_KEY = 'atxactly.lastPlayed'
+  function readStore(key: string): string | null {
+    try {
+      return localStorage.getItem(key)
+    } catch {
+      return null
+    }
+  }
+  function writeStore(key: string, val: string) {
+    try {
+      localStorage.setItem(key, val)
+    } catch {
+      /* private window or blocked storage: the lock just does not persist */
+    }
+  }
+
+  const tilesC = document.getElementById('mt-tiles') as HTMLCanvasElement
+  const overC = document.getElementById('mt-over') as HTMLCanvasElement
+  const tctx = tilesC.getContext('2d')!
+  const octx = overC.getContext('2d')!
+  const TILE = 256
+  const MULTIPLIERS = [1, 1, 2, 2, 3]
+  const MAX_TOTAL = 100 * MULTIPLIERS.reduce((a, b) => a + b, 0)
+  // Wide enough to contain every eligible polygon, not just the centres.
+  // Kyle, Bastrop and Dripping Springs extend past the original box, which
+  // made them unwinnable: the camera clamped before the player could reach them.
+  const BOX = { s: 29.93, w: -98.15, n: 30.77, e: -97.29 }
+
+  const lonToX = (lon: number, z: number) => ((lon + 180) / 360) * TILE * 2 ** z
+  const latToY = (lat: number, z: number) => {
+    const s = Math.sin((lat * Math.PI) / 180)
+    return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * TILE * 2 ** z
+  }
+  const xToLon = (x: number, z: number) => (x / (TILE * 2 ** z)) * 360 - 180
+  const yToLat = (y: number, z: number) => {
+    const n = Math.PI - 2 * Math.PI * (y / (TILE * 2 ** z))
+    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+  }
+
+  function haversine(aLat: number, aLon: number, bLat: number, bLon: number) {
+    const R = 6371008.8
+    const rad = Math.PI / 180
+    const dLat = (bLat - aLat) * rad
+    const dLon = (bLon - aLon) * rad
+    const h =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLon / 2) ** 2
+    return 2 * R * Math.asin(Math.sqrt(h))
+  }
+  function pointInRing(lon: number, lat: number, ring: number[][]) {
+    let inside = false
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [x1, y1] = ring[i]
+      const [x2, y2] = ring[j]
+      if (y1 > lat !== y2 > lat) {
+        const xint = ((x2 - x1) * (lat - y1)) / (y2 - y1) + x1
+        if (lon < xint) inside = !inside
+      }
+    }
+    return inside
+  }
+  function distToSegment(lat: number, lon: number, a: number[], b: number[]) {
+    const kx = 111320 * Math.cos((lat * Math.PI) / 180)
+    const ky = 110574
+    const px = lon * kx,
+      py = lat * ky
+    const ax = a[0] * kx,
+      ay = a[1] * ky
+    const bx = b[0] * kx,
+      by = b[1] * ky
+    const dx = bx - ax,
+      dy = by - ay
+    if (dx === 0 && dy === 0) return Math.hypot(px - ax, py - ay)
+    let t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)
+    t = Math.max(0, Math.min(1, t))
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+  }
+  // Areas score flat 100 anywhere inside; outside measures to the edge.
+  function effectiveDistance(lat: number, lon: number, loc: Loc) {
+    if (!loc.shape) return haversine(lat, lon, loc.lat, loc.lon)
+    for (const ring of loc.shape) if (pointInRing(lon, lat, ring)) return 0
+    let best = Infinity
+    for (const ring of loc.shape)
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++)
+        best = Math.min(best, distToSegment(lat, lon, ring[i], ring[j]))
+    return best
+  }
+  // FLOOR: a guess this close counts as exact. The board opens at zoom 11
+  // where one pixel is 66 m, so anything tighter rewards zooming rather than
+  // knowing. MAXD: about the diameter of Austin proper, so being in the city
+  // still scores and the wrong end of the metro does not.
+  const FLOOR = 100,
+    MAXD = 25000
+  // Inside an area the score eases from 100 at the centre to INSIDE_EDGE at
+  // the boundary, scaled to that polygon's own radius. Flat-100 made a tap on
+  // the far edge of Georgetown (176 km²) worth as much as one on the
+  // courthouse; a fixed metre falloff punished small parks for being small.
+  // Anywhere inside still beats outside: worst interior is 75, and 1 km beyond
+  // any boundary scores 52.
+  const INSIDE_EDGE = 75
+  function reachOf(loc: Loc) {
+    let best = 0
+    for (const ring of loc.shape!)
+      for (const [lon, lat] of ring) {
+        const d = haversine(loc.lat, loc.lon, lat, lon)
+        if (d > best) best = d
+      }
+    return best
+  }
+  function scoreInside(lat: number, lon: number, loc: Loc) {
+    const reach = reachOf(loc)
+    if (reach <= 0) return 100
+    const frac = Math.min(1, haversine(lat, lon, loc.lat, loc.lon) / reach)
+    return Math.round((100 - (100 - INSIDE_EDGE) * frac) * 10) / 10
+  }
+  // Distance on the point curve that already scores exactly INSIDE_EDGE.
+  // Adding it to an outside-a-polygon distance keeps the curve continuous
+  // across the boundary: without it, stepping 1 m outside a shape jumped the
+  // score from 75 back to 100, rewarding a deliberate miss.
+  const EDGE_OFFSET =
+    FLOOR * (10 ** ((1 - INSIDE_EDGE / 100) * Math.log10(1 + MAXD / FLOOR)) - 1)
+
+  function scoreLocation(lat: number, lon: number, loc: Loc) {
+    const d = effectiveDistance(lat, lon, loc)
+    if (!loc.shape) return { base: scoreOf(d), dist: d }
+    if (d === 0) return { base: scoreInside(lat, lon, loc), dist: 0 }
+    return { base: scoreOf(d + EDGE_OFFSET), dist: d }
+  }
+
+  function scoreOf(m: number) {
+    if (m <= FLOOR) return 100
+    if (m >= MAXD) return 0
+    const v =
+      100 * (1 - Math.log10(1 + m / FLOOR) / Math.log10(1 + MAXD / FLOOR))
+    return Math.round(v * 10) / 10
+  }
+
+  function mulberry(seed: number) {
+    return () => {
+      seed |= 0
+      seed = (seed + 0x6d2b79f5) | 0
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+  }
+  const today = new Date()
+  const puzzleNo = Math.floor(
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()) /
+      86400000,
+  )
+
+  function shuffled(pool: Loc[], seed: number) {
+    const rnd = mulberry(seed)
+    const deck = [...pool]
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1))
+      const t = deck[i]
+      deck[i] = deck[j]
+      deck[j] = t
+    }
+    return deck
+  }
+
+  // Each band is a deck dealt front to back, `count` locations a day, so a
+  // location cannot come back until the whole band has played through: 42
+  // days for easy, 59 medium, 134 hard at the current pool.
+  //
+  // The deck is reshuffled every cycle, but a location stays in the half it
+  // was already in and is only shuffled within that half. That is what keeps
+  // the cycle boundary honest: a location dealt late in one cycle stays late
+  // in the next, so it cannot land right after itself across the seam. A
+  // plain reshuffle put repeats one day apart, and reshuffling once and never
+  // again fixed the order forever.
+  function deckFor(pool: Loc[], cycle: number, band: number) {
+    let deck = shuffled(pool, band)
+    for (let c = 1; c <= cycle; c++) {
+      const h = Math.ceil(deck.length / 2)
+      const s = (Math.imul(c, 0x9e3779b9) + band) | 0
+      deck = [
+        ...shuffled(deck.slice(0, h), s),
+        ...shuffled(deck.slice(h), s ^ 0x5bf03635),
+      ]
+    }
+    return deck
+  }
+
+  function drawFrom(pool: Loc[], day: number, count: number, band: number) {
+    if (pool.length <= count) return pool.slice(0, count)
+    const days = Math.floor(pool.length / count)
+    const deck = deckFor(pool, Math.floor(day / days), band)
+    const slot = (day % days) * count
+    const out: Loc[] = []
+    for (let i = 0; i < count; i++) out.push(deck[(slot + i) % deck.length])
+    return out
+  }
+
+  // Rounds 1-2 easy, 3-4 medium, 5 hard.
+  function buildRound(day: number): Loc[] {
+    const band = (d: number) => ALL.filter((l) => l.difficulty === d)
+    return [
+      ...drawFrom(band(1), day, 2, 1),
+      ...drawFrom(band(2), day, 2, 2),
+      ...drawFrom(band(3), day, 1, 3),
+    ]
+  }
+
+  let ROUND = buildRound(puzzleNo)
+  let idx = 0
+  let total = 0
+  let results: {
+    loc: Loc
+    guess: { lat: number; lon: number }
+    dist: number
+    base: number
+    pts: number
+  }[] = []
+  // A tap only proposes a guess; it is committed by the confirm button. Pans
+  // and pinches on a touchscreen were landing as accidental guesses.
+  let pending: { lat: number; lon: number } | null = null
+  let reveal: {
+    guess: { lat: number; lon: number }
+    loc: Loc
+    t0: number
+  } | null = null
+  let revealRaf = 0
+  // The initial ROUND is built straight from puzzleNo; reset() re-derives
+  // this for practice rounds so they never touch the daily lock.
+  let isDaily = true
+  let locked = false
+  let finished = false
+  // header is showing no live round (already played, or the run is over)
+  let idle = false
+  let pinHover = -1
+
+  let center = { lat: 30.2672, lon: -97.7431 }
+  let zoom = 11
+
+  // Two basemaps. During play, no text of any kind, so the map cannot be read
+  // for the answer; at the results screen, full labels, because the point is
+  // to learn the city. With a key both come from CARTO (dark_nolabels and
+  // dark_all). Without one, play falls back to Esri's Canvas Dark Gray Base
+  // (which prints park and street names from about z15) and results to OSM
+  // (a bright basemap under a dark UI); keyed sessions also fall back at
+  // runtime when CARTO itself errors, so an outage degrades instead of
+  // blanking the map. The key parameter is ?key=, not ?api_key= — the wrong
+  // name returns HTTP 200 with a watermarked tile, which nothing can detect.
+  const CARTO_KEY = root.dataset.cartoKey || ''
+  // On a retina display a 256 px tile is upscaled 2x before anything else
+  // happens, which is most of the blur. CARTO serves 512 px @2x tiles.
+  const RETINA = (window.devicePixelRatio || 1) > 1.3 ? '@2x' : ''
+  const FALLBACK_URL = {
+    base: (sub: string, z: number, x: number, y: number) =>
+      `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`,
+    labels: (sub: string, z: number, x: number, y: number) =>
+      `https://tile.openstreetmap.org/${z}/${x}/${y}.png`,
+  }
+  const CARTO_URL = {
+    base: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_nolabels/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`,
+    labels: (sub: string, z: number, x: number, y: number) =>
+      `https://${sub}.basemaps.cartocdn.com/rastertiles/dark_all/${z}/${x}/${y}${RETINA}.png?key=${CARTO_KEY}`,
+  }
+  const TILE_URL = CARTO_KEY ? CARTO_URL : FALLBACK_URL
+  type Layer = keyof typeof FALLBACK_URL
+
+  const tiles = new Map<string, HTMLImageElement>()
+  // Failure count per tile: two retries against the primary source, then one
+  // attempt against the fallback when a key is configured. Without this a
+  // single transient error left a permanently blank square.
+  const tileTries = new Map<string, number>()
+  const TILE_MAX_TRIES = CARTO_KEY ? 3 : 2
+  function getTile(tx: number, ty: number, z: number, layer: Layer) {
+    const key = `${layer}/${z}/${tx}/${ty}`
+    const hit = tiles.get(key)
+    if (hit) return hit
+    // A long session at high zoom can touch thousands of tiles; drop the
+    // oldest half so decoded bitmaps stay bounded (the browser HTTP cache
+    // makes a refetch cheap).
+    if (tiles.size > 600) {
+      let drop = 300
+      for (const k of tiles.keys()) {
+        if (drop-- <= 0) break
+        tiles.delete(k)
+      }
+    }
+    if (tileTries.size > 2000) tileTries.clear()
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => drawTiles()
+    img.onerror = () => {
+      const tries = (tileTries.get(key) ?? 0) + 1
+      tileTries.set(key, tries)
+      if (tries < TILE_MAX_TRIES) {
+        setTimeout(() => {
+          tiles.delete(key)
+          drawTiles()
+        }, 800 * tries)
+      } else {
+        img.setAttribute('data-failed', 'true')
+      }
+    }
+    const sub = 'abcd'[(tx + ty) % 4]!
+    const source =
+      CARTO_KEY && (tileTries.get(key) ?? 0) >= 2 ? FALLBACK_URL : TILE_URL
+    img.src = source[layer](sub, z, tx, ty)
+    tiles.set(key, img)
+    return img
+  }
+
+  function viewSize() {
+    const r = overC.getBoundingClientRect()
+    return { w: r.width, h: r.height }
+  }
+  function fit() {
+    const { w, h } = viewSize()
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    for (const [c, ctx] of [
+      [tilesC, tctx],
+      [overC, octx],
+    ] as const) {
+      c.width = Math.round(w * dpr)
+      c.height = Math.round(h * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    clampCamera()
+    drawTiles()
+    drawOverlay()
+    syncZoomButtons()
+  }
+  function minZoom() {
+    const { w, h } = viewSize()
+    for (let t = 8; t <= 18; t += 0.05) {
+      const pw = Math.abs(lonToX(BOX.e, t) - lonToX(BOX.w, t))
+      const ph = Math.abs(latToY(BOX.s, t) - latToY(BOX.n, t))
+      if (pw >= w && ph >= h) return t
+    }
+    return 10
+  }
+  function clampCamera() {
+    zoom = Math.max(minZoom(), Math.min(17, zoom))
+    center.lat = Math.max(BOX.s, Math.min(BOX.n, center.lat))
+    center.lon = Math.max(BOX.w, Math.min(BOX.e, center.lon))
+  }
+  function project(lat: number, lon: number) {
+    const { w, h } = viewSize()
+    return {
+      x: lonToX(lon, zoom) - (lonToX(center.lon, zoom) - w / 2),
+      y: latToY(lat, zoom) - (latToY(center.lat, zoom) - h / 2),
+    }
+  }
+  function unproject(px: number, py: number) {
+    const { w, h } = viewSize()
+    return {
+      lon: xToLon(lonToX(center.lon, zoom) - w / 2 + px, zoom),
+      lat: yToLat(latToY(center.lat, zoom) - h / 2 + py, zoom),
+    }
+  }
+
+  function drawTiles() {
+    const { w, h } = viewSize()
+    tctx.fillStyle = '#0b0f1a'
+    tctx.fillRect(0, 0, w, h)
+    const z = Math.round(zoom)
+    const scale = 2 ** (zoom - z)
+    const ox = lonToX(center.lon, z) - w / (2 * scale)
+    const oy = latToY(center.lat, z) - h / (2 * scale)
+    const span = 2 ** z
+    for (
+      let tx = Math.floor(ox / TILE);
+      tx <= Math.floor((ox + w / scale) / TILE);
+      tx++
+    ) {
+      for (
+        let ty = Math.floor(oy / TILE);
+        ty <= Math.floor((oy + h / scale) / TILE);
+        ty++
+      ) {
+        if (ty < 0 || ty >= span) continue
+        const wrapped = ((tx % span) + span) % span
+        // OSM standard is a full basemap, not a transparent overlay, so the
+        // results screen swaps to it rather than stacking on top.
+        const layers: Layer[] = finished ? ['labels'] : ['base']
+        for (const layer of layers) {
+          const img = getTile(wrapped, ty, z, layer)
+          if (img.complete && !img.hasAttribute('data-failed')) {
+            tctx.drawImage(
+              img,
+              (tx * TILE - ox) * scale,
+              (ty * TILE - oy) * scale,
+              TILE * scale,
+              TILE * scale,
+            )
+          }
+        }
+      }
+    }
+  }
+
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3)
+  const clamp01 = (t: number) => Math.max(0, Math.min(1, t))
+  // Overshooting drop for the answer pin.
+  const bounce = (t: number) => {
+    const c = 1.7
+    return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2)
+  }
+
+  function pin(x: number, y: number, color: string, r = 8, scale = 1) {
+    if (scale <= 0) return
+    octx.save()
+    octx.translate(x, y)
+    octx.scale(scale, scale)
+    octx.beginPath()
+    octx.arc(0, 0, r + 5, 0, Math.PI * 2)
+    octx.fillStyle = color + '33'
+    octx.fill()
+    octx.beginPath()
+    octx.arc(0, 0, r, 0, Math.PI * 2)
+    octx.fillStyle = color
+    octx.fill()
+    octx.strokeStyle = '#0b0f1a'
+    octx.lineWidth = 2.5
+    octx.stroke()
+    octx.restore()
+  }
+
+  function shapePath(loc: Loc) {
+    octx.beginPath()
+    for (const ring of loc.shape!) {
+      ring.forEach(([lon, lat], i) => {
+        const p = project(lat, lon)
+        i ? octx.lineTo(p.x, p.y) : octx.moveTo(p.x, p.y)
+      })
+      octx.closePath()
+    }
+  }
+
+  // Pins near each other would otherwise stack their labels on top of one
+  // another (Willie Nelson and Stevie Ray Vaughan are ~200 m apart).
+  // Each label claims a box, and a colliding one steps up until it is clear.
+  type Box = { x1: number; y1: number; x2: number; y2: number }
+  let claimed: Box[] = []
+  const overlaps = (a: Box, b: Box) =>
+    a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1
+
+  function label(x: number, y: number, text: string, hot: boolean) {
+    octx.font = `600 13px ui-sans-serif, system-ui, sans-serif`
+    const tw = octx.measureText(text).width
+    const px = 9,
+      h = 24
+    const bx = x - tw / 2 - px
+    let by = y - 34
+    for (let i = 0; i < 8; i++) {
+      const box = { x1: bx, y1: by, x2: bx + tw + px * 2, y2: by + h }
+      if (!claimed.some((c) => overlaps(box, c))) break
+      by -= h + 4
+    }
+    claimed.push({ x1: bx, y1: by, x2: bx + tw + px * 2, y2: by + h })
+    octx.fillStyle = hot ? '#c2410c' : '#0e1424ee'
+    octx.strokeStyle = hot ? '#f59e5b' : '#2a3556'
+    octx.lineWidth = 1
+    octx.beginPath()
+    octx.roundRect(bx, by, tw + px * 2, h, 7)
+    octx.fill()
+    octx.stroke()
+    octx.fillStyle = '#e6e8ee'
+    octx.textBaseline = 'middle'
+    octx.textAlign = 'center'
+    octx.fillText(text, x, by + h / 2)
+  }
+
+  function drawOverlay() {
+    const { w, h } = viewSize()
+    octx.clearRect(0, 0, w, h)
+
+    if (finished) {
+      claimed = []
+      results.forEach((r, i) => {
+        const p = project(r.loc.lat, r.loc.lon)
+        const col = catOf(r.loc.category).color
+        if (r.loc.shape) {
+          shapePath(r.loc)
+          octx.fillStyle = col + '38'
+          octx.fill()
+          octx.strokeStyle = col
+          octx.lineWidth = 1.5
+          octx.stroke()
+        }
+        pin(p.x, p.y, col, 9, i === pinHover ? 1.15 : 1)
+        label(p.x, p.y, r.loc.name, i === pinHover)
+      })
+      return
+    }
+
+    if (pending) {
+      const p = project(pending.lat, pending.lon)
+      octx.setLineDash([4, 4])
+      octx.strokeStyle = '#e6e8ee'
+      octx.lineWidth = 1.5
+      octx.beginPath()
+      octx.arc(p.x, p.y, 16, 0, Math.PI * 2)
+      octx.stroke()
+      octx.setLineDash([])
+      pin(p.x, p.y, '#e6e8ee', 7, 1)
+    }
+
+    if (!reveal) return
+    const t = (performance.now() - reveal.t0) / 1000
+    const { guess, loc } = reveal
+    const a = project(guess.lat, guess.lon)
+    const b = project(loc.lat, loc.lon)
+
+    // 0.00-0.25s guess pops in
+    const gs = t < 0.25 ? bounce(clamp01(t / 0.25)) : 1
+    // 0.25-0.80s line draws out, polygon fades in
+    const lp = ease(clamp01((t - 0.25) / 0.55))
+    // 0.65-1.05s answer pin drops
+    const ap = clamp01((t - 0.65) / 0.4)
+
+    const revealCol = catOf(loc.category).color
+    if (loc.shape && lp > 0) {
+      shapePath(loc)
+      octx.globalAlpha = lp
+      octx.fillStyle = revealCol + '48'
+      octx.fill()
+      octx.strokeStyle = revealCol
+      octx.lineWidth = 2
+      octx.stroke()
+      octx.globalAlpha = 1
+    }
+    if (lp > 0) {
+      octx.strokeStyle = '#8b93a7'
+      octx.lineWidth = 2
+      octx.setLineDash([6, 6])
+      octx.beginPath()
+      octx.moveTo(a.x, a.y)
+      octx.lineTo(a.x + (b.x - a.x) * lp, a.y + (b.y - a.y) * lp)
+      octx.stroke()
+      octx.setLineDash([])
+    }
+    pin(a.x, a.y, '#e6e8ee', 8, gs)
+    if (ap > 0) {
+      const drop = (1 - bounce(ap)) * -48
+      pin(b.x, b.y + drop, revealCol, 9, 1)
+    }
+    // One animation chain, ever. drawOverlay is also called directly from pan,
+    // zoom, and resize; without the cancel each of those calls during the
+    // reveal window spawned its own self-sustaining rAF loop (measured 11,741
+    // frames where ~78 belong).
+    if (revealRaf) cancelAnimationFrame(revealRaf)
+    if (t < 1.3)
+      revealRaf = requestAnimationFrame(() => {
+        revealRaf = 0
+        drawOverlay()
+      })
+  }
+
+  const elTotal = document.getElementById('mt-total')!
+  // Category drives the badge and the answer-pin colour, so a player can tell
+  // a neighbourhood boundary from a single-point landmark before guessing.
+  const CATEGORY: Record<
+    string,
+    { label: string; icon: string; color: string }
+  > = {
+    neighborhood: { label: 'Neighborhood', icon: '\u25A6', color: '#5ea9e8' },
+    park: { label: 'Park', icon: '\u2663', color: '#6bbf59' },
+    landmark: { label: 'Landmark', icon: '\u2691', color: '#f59e5b' },
+    civic: { label: 'Civic', icon: '\u25C8', color: '#c084fc' },
+    venue: { label: 'Venue', icon: '\u266A', color: '#e8546b' },
+    town: { label: 'Town', icon: '\u2302', color: '#e8b04b' },
+    food: { label: 'Food & Drink', icon: '\u2615\uFE0E', color: '#f2778a' },
+    water: { label: 'Water', icon: '\u2248', color: '#4cc3d9' },
+  }
+  // The fallback must never win for shipped data: the extractor validates
+  // category against its own list, and this map must cover that list.
+  const catOf = (c: string) =>
+    CATEGORY[c] ?? { label: c, icon: '\u25CF', color: '#c2410c' }
+
+  function setCatBadge(category: string) {
+    const cat = catOf(category)
+    elCat.className = `mt-cat c-${category}`
+    elCat.textContent = ''
+    const ico = document.createElement('span')
+    ico.className = 'ico'
+    ico.textContent = cat.icon
+    elCat.append(ico, cat.label)
+    elCat.hidden = false
+  }
+
+  const elCat = document.getElementById('mt-cat')!
+  const elBandTxt = document.getElementById('mt-band-txt')!
+  const elMult = document.getElementById('mt-mult')!
+  const elShare = document.getElementById('mt-share') as HTMLButtonElement
+  const elName = document.getElementById('mt-name')!
+  const elSub = document.getElementById('mt-sub')!
+  const elToast = document.getElementById('mt-toast')!
+  const MULT_COLOR: Record<number, string> = {
+    1: '#8b93a7',
+    2: '#38bdf8',
+    3: '#f59e5b',
+  }
+  const elBreak = document.getElementById('mt-toast-break')!
+  const elBreakBase = document.getElementById('mt-break-base')!
+  const elBreakMult = document.getElementById('mt-break-mult')!
+  const elToastD = document.getElementById('mt-toast-d')!
+  const elToastP = document.getElementById('mt-toast-p')!
+  const elAgain = document.getElementById('mt-again') as HTMLButtonElement
+  const elHint = document.getElementById('mt-hint')!
+  const elConfirm = document.getElementById('mt-confirm')!
+  const dlg = document.getElementById('mt-dialog') as HTMLDialogElement
+
+  const bandName = (d: number) =>
+    d === 1 ? 'Easy' : d === 2 ? 'Medium' : 'Hard'
+  const fmtDist = (d: number) =>
+    d === 0
+      ? 'Inside!'
+      : d < 1000
+        ? `${Math.round(d)} m off`
+        : `${(d / 1000).toFixed(1)} km off`
+
+  function setMult(m: number) {
+    elMult.textContent = `${m}x`
+    elMult.className = `mt-mult m${m}`
+    elMult.classList.add('pulse')
+    setTimeout(() => elMult.classList.remove('pulse'), 320)
+  }
+
+  function renderPrompt() {
+    idle = false
+    const loc = ROUND[idx]
+    elBandTxt.textContent = `Round ${idx + 1} of ${ROUND.length} · ${bandName(loc.difficulty)}`
+    setCatBadge(loc.category)
+    setMult(MULTIPLIERS[idx])
+    elName.textContent = loc.name
+    elName.style.animation = 'none'
+    void elName.offsetWidth
+    elName.style.animation = ''
+    elSub.textContent = 'Tap as close as you can'
+  }
+
+  let shown = 0
+  function animateTotal(to: number) {
+    const from = shown
+    const t0 = performance.now()
+    elTotal.classList.add('bump')
+    const step = () => {
+      const t = clamp01((performance.now() - t0) / 650)
+      shown = from + (to - from) * ease(t)
+      elTotal.textContent = String(Math.round(shown))
+      if (t < 1) requestAnimationFrame(step)
+      else elTotal.classList.remove('bump')
+    }
+    step()
+  }
+
+  function commit(lat: number, lon: number) {
+    if (locked || finished) return
+    locked = true
+    const loc = ROUND[idx]
+    const { base, dist: d } = scoreLocation(lat, lon, loc)
+    const pts = base * MULTIPLIERS[idx]
+    total += pts
+    results.push({ loc, guess: { lat, lon }, dist: d, base, pts })
+    reveal = { guess: { lat, lon }, loc, t0: performance.now() }
+    elSub.textContent = '…'
+    drawOverlay()
+
+    setTimeout(() => {
+      elToastD.textContent = fmtDist(d)
+      elToastP.textContent = `+${Math.round(pts)} pts`
+      const mcol = MULT_COLOR[MULTIPLIERS[idx]] ?? '#8b93a7'
+      elBreak.style.setProperty('--mt-break', mcol)
+      elBreakBase.textContent = String(Math.round(base))
+      elBreakMult.textContent = `\u00d7${MULTIPLIERS[idx]}`
+      elBreak.hidden = false
+      elToast.classList.add('show')
+      animateTotal(total)
+    }, 900)
+
+    setTimeout(() => {
+      elToast.classList.remove('show')
+      reveal = null
+      pending = null
+      elConfirm.hidden = true
+      locked = false
+      idx++
+      if (idx >= ROUND.length) finish()
+      else {
+        renderPrompt()
+        drawOverlay()
+      }
+    }, 3400)
+  }
+
+  function finish() {
+    finished = true
+    pending = null
+    elConfirm.hidden = true
+    tilesC.classList.add('labelled')
+    overC.classList.add('pins')
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elCat.hidden = true
+    elName.textContent = `${Math.round(total)} / ${MAX_TOTAL}`
+    elSub.textContent = 'Round complete'
+    elAgain.hidden = false
+    elShare.hidden = false
+    elHint.hidden = false
+    // Only the daily round consumes the daily lock. Finishing a practice
+    // round must not lock a player out of a puzzle they never played.
+    if (isDaily) writeStore(PLAYED_KEY, String(puzzleNo))
+    fitToResults()
+    drawTiles()
+    drawOverlay()
+  }
+
+  function fitToResults() {
+    const lats = results.map((r) => r.loc.lat)
+    const lons = results.map((r) => r.loc.lon)
+    const s = Math.min(...lats),
+      n = Math.max(...lats)
+    const w_ = Math.min(...lons),
+      e = Math.max(...lons)
+    center = { lat: (s + n) / 2, lon: (w_ + e) / 2 }
+    const { w, h } = viewSize()
+    for (let z = 16; z >= 9; z -= 0.1) {
+      const pw = Math.abs(lonToX(e, z) - lonToX(w_, z)) + 220
+      const ph = Math.abs(latToY(s, z) - latToY(n, z)) + 160
+      if (pw <= w && ph <= h) {
+        zoom = z
+        break
+      }
+    }
+    clampCamera()
+  }
+
+  function openStory(r: (typeof results)[number], i: number) {
+    const m = MULTIPLIERS[i]
+    document.getElementById('mt-d-meta')!.innerHTML =
+      `Round ${i + 1} · ${bandName(r.loc.difficulty)} · <b class="pts-m${m}">${m}x</b> · ${fmtDist(r.dist)} · <b class="pts-m${m}">${Math.round(r.pts)} pts</b>`
+    document.getElementById('mt-d-name')!.textContent = r.loc.name
+    const fig = document.getElementById('mt-d-photo')!
+    const img = document.getElementById('mt-d-img') as HTMLImageElement
+    fig.hidden = !r.loc.photo
+    // Clear src first so a slow network never shows the previous round's photo.
+    img.removeAttribute('src')
+    if (r.loc.photo) {
+      // A dead URL otherwise leaves a broken-image box under a caption still
+      // crediting a photographer for an image nobody can see.
+      img.onerror = () => {
+        fig.hidden = true
+      }
+      img.src = r.loc.photo.url
+      img.alt = r.loc.name
+      document.getElementById('mt-d-credit')!.textContent =
+        `Photo: ${r.loc.photo.attribution}`
+    }
+    document.getElementById('mt-d-story')!.textContent = r.loc.story
+    const ex = document.getElementById('mt-d-extra')!
+    ex.textContent = r.loc.extra ?? ''
+    ex.hidden = !r.loc.extra
+    const link = document.getElementById('mt-d-link') as HTMLAnchorElement
+    // The pipeline writes Wikipedia URLs, but the data upstream (Wikidata) is
+    // publicly editable and rel=noopener does not stop javascript: hrefs.
+    link.hidden = true
+    if (r.loc.storyUrl) {
+      try {
+        const u = new URL(r.loc.storyUrl)
+        if (u.protocol === 'https:') {
+          link.href = u.href
+          link.hidden = false
+        }
+      } catch {
+        /* malformed URL: leave the link hidden */
+      }
+    }
+    dlg.showModal()
+  }
+  document
+    .getElementById('mt-close')!
+    .addEventListener('click', () => dlg.close())
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) dlg.close()
+  })
+
+  function hitPin(px: number, py: number) {
+    let best = -1,
+      bd = 26
+    results.forEach((r, i) => {
+      const p = project(r.loc.lat, r.loc.lon)
+      const d = Math.hypot(p.x - px, p.y - py)
+      if (d < bd) {
+        bd = d
+        best = i
+      }
+    })
+    return best
+  }
+
+  function reset(seed: number) {
+    isDaily = seed === puzzleNo
+    ROUND = buildRound(seed)
+    idx = 0
+    total = 0
+    shown = 0
+    results = []
+    reveal = null
+    pending = null
+    locked = false
+    finished = false
+    pinHover = -1
+    overC.classList.remove('pins')
+    elConfirm.hidden = true
+    tilesC.classList.remove('labelled')
+    elMult.hidden = false
+    elCat.hidden = false
+    elAgain.hidden = true
+    elAgain.textContent = 'Play again'
+    elShare.hidden = true
+    elHint.hidden = true
+    elTotal.textContent = '0'
+    center = { lat: 30.2672, lon: -97.7431 }
+    zoom = 11
+    clampCamera()
+    renderPrompt()
+    drawTiles()
+    drawOverlay()
+  }
+  // Squares read as a spoiler-free summary: orange near-perfect, amber close,
+  // grey rough, dark for a miss.
+  function shareGrid() {
+    return results
+      .map((r) =>
+        r.base >= 90
+          ? '\u{1F7E7}'
+          : r.base >= 70
+            ? '\u{1F7E8}'
+            : r.base >= 40
+              ? '\u2B1C'
+              : '\u2B1B',
+      )
+      .join('')
+  }
+
+  elShare.addEventListener('click', async () => {
+    const text = `ATXactly #${puzzleNo} \u2014 ${Math.round(total)}/${MAX_TOTAL}\n${shareGrid()}`
+    try {
+      await navigator.clipboard.writeText(text)
+      elBreak.hidden = true
+      elToastD.textContent = 'Copied'
+      elToastP.textContent = 'paste it anywhere'
+    } catch {
+      elBreak.hidden = true
+      elToastD.textContent = 'Could not copy'
+      elToastP.textContent = 'clipboard blocked'
+    }
+    elToast.classList.add('show')
+    setTimeout(() => elToast.classList.remove('show'), 1600)
+  })
+
+  elAgain.addEventListener('click', () =>
+    reset(Math.floor(Math.random() * 1e9)),
+  )
+
+  // ---- interaction ----
+  let dragging = false,
+    moved = false,
+    last = { x: 0, y: 0 }
+  const local = (e: PointerEvent) => {
+    const r = overC.getBoundingClientRect()
+    return { x: e.clientX - r.left, y: e.clientY - r.top }
+  }
+  overC.addEventListener('pointerdown', (e) => {
+    dragging = true
+    moved = false
+    last = { x: e.clientX, y: e.clientY }
+    overC.setPointerCapture(e.pointerId)
+  })
+  overC.addEventListener('pointermove', (e) => {
+    if (finished && !dragging) {
+      const { x, y } = local(e)
+      const h = hitPin(x, y)
+      if (h !== pinHover) {
+        pinHover = h
+        drawOverlay()
+      }
+    }
+    if (!dragging) return
+    const dx = e.clientX - last.x,
+      dy = e.clientY - last.y
+    if (Math.abs(dx) + Math.abs(dy) > 4) moved = true
+    last = { x: e.clientX, y: e.clientY }
+    center = {
+      lon: xToLon(lonToX(center.lon, zoom) - dx, zoom),
+      lat: yToLat(latToY(center.lat, zoom) - dy, zoom),
+    }
+    clampCamera()
+    drawTiles()
+    drawOverlay()
+  })
+  // A browser-interrupted gesture (system edge swipe, context menu) fires
+  // pointercancel, not pointerup; without this the map kept panning with no
+  // finger down and swallowed the next tap.
+  overC.addEventListener('pointercancel', () => {
+    dragging = false
+    moved = false
+  })
+  overC.addEventListener('pointerup', (e) => {
+    dragging = false
+    if (moved) return
+    const { x, y } = local(e)
+    if (finished) {
+      const h = hitPin(x, y)
+      if (h >= 0) openStory(results[h], h)
+      return
+    }
+    if (locked) return
+    const { lat, lon } = unproject(x, y)
+    pending = { lat, lon }
+    elConfirm.hidden = false
+    drawOverlay()
+  })
+  // Zoom stays on whole levels so tiles render 1:1, but a trackpad fires
+  // dozens of wheel events per gesture. Accumulate the delta and step only
+  // when it crosses a threshold, otherwise one flick jumps to max zoom.
+  let wheelAccum = 0
+  let lastZoomAt = 0
+  const WHEEL_STEP = 500
+  // A trackpad flick can deliver thousands of delta in a few hundred ms. Rate
+  // limiting to one level per interval is what keeps a single gesture from
+  // running the whole zoom range.
+  const ZOOM_COOLDOWN_MS = 260
+
+  function zoomBy(steps: number, px?: number, py?: number) {
+    if (!steps) return
+    const { w, h } = viewSize()
+    const cx = px ?? w / 2
+    const cy = py ?? h / 2
+    const before = unproject(cx, cy)
+    zoom = Math.round(zoom) + steps
+    clampCamera()
+    const after = unproject(cx, cy)
+    center = {
+      lon: center.lon + (before.lon - after.lon),
+      lat: center.lat + (before.lat - after.lat),
+    }
+    clampCamera()
+    drawTiles()
+    drawOverlay()
+    syncZoomButtons()
+  }
+
+  function syncZoomButtons() {
+    const mz = minZoom()
+    ;(document.getElementById('mt-zoom-in') as HTMLButtonElement).disabled =
+      zoom >= 17
+    ;(document.getElementById('mt-zoom-out') as HTMLButtonElement).disabled =
+      zoom <= mz
+  }
+
+  overC.addEventListener(
+    'wheel',
+    (e) => {
+      e.preventDefault()
+      const { x, y } = local(e as unknown as PointerEvent)
+      // A pinch arrives as ctrl+wheel with small deltas; give it a lower bar.
+      const unit = e.deltaMode === 1 ? 40 : 1
+      wheelAccum += e.deltaY * unit * (e.ctrlKey ? 6 : 1)
+      const now = performance.now()
+      if (Math.abs(wheelAccum) < WHEEL_STEP) return
+      if (now - lastZoomAt < ZOOM_COOLDOWN_MS) {
+        // still inside one gesture: hold the accumulator at the threshold so
+        // it fires once more when the cooldown lapses, not several times
+        wheelAccum = Math.sign(wheelAccum) * WHEEL_STEP
+        return
+      }
+      lastZoomAt = now
+      const dir = wheelAccum < 0 ? 1 : -1
+      wheelAccum = 0
+      zoomBy(dir, x, y)
+    },
+    { passive: false },
+  )
+
+  // Already played today: show the locked state rather than dealing a round
+  // the score would not count for.
+  function showAlreadyPlayed() {
+    // `locked` is what actually stops a tap from scoring; without it the map
+    // still commits guesses behind the message.
+    locked = true
+    idle = true
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elName.textContent = 'Already played today'
+    elSub.textContent = 'A new puzzle unlocks at midnight UTC'
+    elAgain.hidden = false
+    elAgain.textContent = 'Practice round'
+  }
+
+  document.getElementById('mt-confirm-yes')!.addEventListener('click', () => {
+    if (!pending) return
+    const { lat, lon } = pending
+    pending = null
+    elConfirm.hidden = true
+    commit(lat, lon)
+  })
+  document.getElementById('mt-confirm-no')!.addEventListener('click', () => {
+    pending = null
+    elConfirm.hidden = true
+    drawOverlay()
+  })
+
+  document
+    .getElementById('mt-zoom-in')!
+    .addEventListener('click', () => zoomBy(1))
+  document
+    .getElementById('mt-zoom-out')!
+    .addEventListener('click', () => zoomBy(-1))
+
+  window.addEventListener('keydown', (e) => {
+    if (!guide.hidden) {
+      // the overlay swallows game keys while it is up
+      if (e.key === 'Escape' || e.key === 'Enter') {
+        e.preventDefault()
+        closeGuide()
+      }
+      return
+    }
+    if (e.key === 'ArrowUp' || e.key === '+' || e.key === '=') {
+      e.preventDefault()
+      zoomBy(1)
+      return
+    }
+    if (e.key === 'ArrowDown' || e.key === '-' || e.key === '_') {
+      e.preventDefault()
+      zoomBy(-1)
+      return
+    }
+    if (!pending) return
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const { lat, lon } = pending
+      pending = null
+      elConfirm.hidden = true
+      commit(lat, lon)
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      pending = null
+      elConfirm.hidden = true
+      drawOverlay()
+    }
+  })
+
+  // How-to overlay: dim everything, cut holes over the real elements, and pin
+  // a note beside each. Measured at open time so it tracks the live layout
+  // rather than hardcoded coordinates.
+  const guide = document.getElementById('mt-guide')!
+  const guideMask = document.getElementById('mt-guide-mask')!
+  const guideNotes = document.getElementById('mt-guide-notes')!
+
+  // Each step anchors a note to a point on its target and draws a connector
+  // from note edge to that point. Anchoring to a point rather than an element
+  // edge matters for .mt-mid, which spans most of the header and so has no
+  // edge that reads as "this thing".
+  const GUIDE_STEPS: {
+    sel: string
+    /* union of these is the spotlight cut; defaults to sel */
+    hole?: string[]
+    title: string
+    body: string
+    side: 'below' | 'above' | 'left' | 'right' | 'center'
+    noArrow?: boolean
+    noHole?: boolean
+  }[] = [
+    {
+      sel: '.mt-score',
+      title: 'Your running score',
+      body: 'Five locations a day. Rounds 1 and 2 score as-is, rounds 3 and 4 double, and round 5 triples, so a perfect day is 900.',
+      side: 'below',
+    },
+    {
+      sel: '.mt-cat',
+      // the rows span the header, so cut around their contents instead
+      hole: ['.mt-cat', '#mt-name', '#mt-mult'],
+      title: 'What to find',
+      body: 'The badge names the kind of place: neighborhood, park, landmark, and so on. The pill above it is this round\u2019s multiplier.',
+      side: 'below',
+    },
+    {
+      sel: '.mt-stage',
+      title: 'Tap where you think it is',
+      body: 'Drag to pan. Tap to place a guess, then confirm it or press Enter. Closer is worth more, and landing inside a neighborhood or park counts as a hit.',
+      side: 'center',
+      // the map is the whole screen: a connector would point into open space,
+      // and an outline around it is just a rule under the header
+      noArrow: true,
+      noHole: true,
+    },
+    {
+      sel: '.mt-zoom',
+      title: 'Zoom',
+      body: 'Use the buttons, the arrow keys (\u2191 in, \u2193 out), or scroll. One level at a time. The map has no labels while you guess, and gains street names once the round ends.',
+      side: 'left',
+    },
+  ]
+
+  const GAP = 26
+
+  // After the daily puzzle is done the header has no category, name, or
+  // multiplier, so the notes would point at empty boxes. Show a sample while
+  // the guide is open and put the real text back on close.
+  let restoreHeader: (() => void) | null = null
+  function sampleHeader() {
+    if (!idle && !finished) return
+    const prevCat = elCat.innerHTML
+    const prevCatCls = elCat.className
+    const prevCatHidden = elCat.hidden
+    const prevName = elName.textContent
+    const prevMultHidden = elMult.hidden
+    setCatBadge('landmark')
+    elName.textContent = 'UT Tower'
+    elMult.hidden = false
+    restoreHeader = () => {
+      elCat.innerHTML = prevCat
+      elCat.className = prevCatCls
+      elCat.hidden = prevCatHidden
+      elName.textContent = prevName
+      elMult.hidden = prevMultHidden
+    }
+  }
+
+  function openGuide() {
+    // Re-entry (Space on the still-focused ? button) would make sampleHeader
+    // capture the sample as the "previous" header and restore the wrong one.
+    if (!guide.hidden) return
+    sampleHeader()
+    const W = window.innerWidth
+    const H = window.innerHeight
+    const holes: string[] = []
+    const arrows: string[] = []
+    const placed: DOMRect[] = []
+    guideNotes.innerHTML = ''
+    // Reveal before measuring: getBoundingClientRect inside a hidden subtree
+    // returns zeros, which silently defeated every clamp below.
+    guide.hidden = false
+    // Treat the dismiss button as occupied space so no note lands under it.
+    placed.push(
+      document.getElementById('mt-guide-close')!.getBoundingClientRect(),
+    )
+    for (const step of GUIDE_STEPS) {
+      const el = document.querySelector(step.sel) as HTMLElement | null
+      if (!el) continue
+      const r = el.getBoundingClientRect()
+      const holeRects = (step.hole ?? [step.sel])
+        .map((h) => document.querySelector(h) as HTMLElement | null)
+        .filter((n): n is HTMLElement => !!n)
+        .map((n) => n.getBoundingClientRect())
+      const hr = holeRects.length
+        ? new DOMRect(
+            Math.min(...holeRects.map((b) => b.left)),
+            Math.min(...holeRects.map((b) => b.top)),
+            Math.max(...holeRects.map((b) => b.right)) -
+              Math.min(...holeRects.map((b) => b.left)),
+            Math.max(...holeRects.map((b) => b.bottom)) -
+              Math.min(...holeRects.map((b) => b.top)),
+          )
+        : r
+      const pad = 6
+      if (!step.noHole)
+        holes.push(
+          `M${hr.left - pad} ${hr.top - pad} H${hr.right + pad} V${hr.bottom + pad} H${hr.left - pad} Z`,
+        )
+      const note = document.createElement('div')
+      note.className = 'mt-guide-note'
+      note.innerHTML = `<h4>${step.title}</h4><p>${step.body}</p>`
+      // park it off-screen first: an unpositioned absolute note measures at
+      // its shrink-to-fit width, which is not the width it renders at
+      note.style.left = '-9999px'
+      note.style.top = '0'
+      guideNotes.appendChild(note)
+      const nr = note.getBoundingClientRect()
+
+      // the point the arrow lands on
+      const ax = r.left + r.width / 2
+      const ay =
+        step.side === 'below'
+          ? r.bottom
+          : step.side === 'above'
+            ? r.top
+            : r.top + r.height / 2
+
+      let top: number
+      let left: number
+      if (step.side === 'below') {
+        top = r.bottom + GAP
+        left = ax - nr.width / 2
+      } else if (step.side === 'above') {
+        top = r.top - nr.height - GAP
+        left = ax - nr.width / 2
+      } else if (step.side === 'center') {
+        top = r.top + r.height / 2 - nr.height / 2
+        left = r.left + r.width / 2 - nr.width / 2
+      } else if (step.side === 'left') {
+        top = r.top + r.height / 2 - nr.height / 2
+        left = r.left - nr.width - GAP
+      } else {
+        top = r.top + r.height / 2 - nr.height / 2
+        left = r.right + GAP
+      }
+      left = Math.max(10, Math.min(left, W - nr.width - 10))
+      top = Math.max(10, Math.min(top, H - nr.height - 10))
+
+      // Resolve collisions sideways first: notes hang off header elements that
+      // sit next to each other, so sliding across keeps each arrow short,
+      // where pushing down would stretch it across the whole map.
+      const overlaps = (l: number, t: number) =>
+        placed.some(
+          (p) =>
+            l < p.right + 10 &&
+            l + nr.width > p.left - 10 &&
+            t < p.bottom + 10 &&
+            t + nr.height > p.top - 10,
+        )
+      if (overlaps(left, top)) {
+        const slid = placed
+          .filter((p) => top < p.bottom + 10 && top + nr.height > p.top - 10)
+          .map((p) => p.right + 10)
+          .reduce((a, b) => Math.max(a, b), left)
+        if (slid + nr.width <= W - 10 && !overlaps(slid, top)) left = slid
+        else {
+          let guard = 0
+          while (overlaps(left, top) && guard++ < 12) {
+            // drop just below whatever is actually in the way, so a tall stack
+            // does not overshoot the viewport in one jump
+            const below = placed
+              .filter(
+                (p) =>
+                  left < p.right + 10 &&
+                  left + nr.width > p.left - 10 &&
+                  top < p.bottom + 10 &&
+                  top + nr.height > p.top - 10,
+              )
+              .map((p) => p.bottom + 10)
+            top = below.length ? Math.max(...below) : top + nr.height + 10
+          }
+          if (top + nr.height > H - 10) {
+            // out of room below: fall back to the largest free vertical gap
+            const bands = [10, ...placed.map((p) => p.bottom + 10)]
+              .filter((t) => t + nr.height <= H - 10)
+              .filter((t) => !overlaps(left, t))
+            top = bands.length
+              ? bands[bands.length - 1]
+              : Math.max(10, H - nr.height - 10)
+          }
+        }
+      }
+
+      note.style.top = `${top}px`
+      note.style.left = `${left}px`
+      const box = new DOMRect(left, top, nr.width, nr.height)
+      placed.push(box)
+      if (!step.noArrow) arrows.push(connector(box, ax, ay))
+    }
+    guideMask.innerHTML = `<defs><mask id="mt-guide-cut">
+        <rect width="100%" height="100%" fill="white"/>
+        ${holes.map((d) => `<path d="${d}" fill="black"/>`).join('')}
+      </mask></defs>
+      <rect width="100%" height="100%" fill="#0b0f1a" opacity="0.82" mask="url(#mt-guide-cut)"/>
+      ${holes.map((d) => `<path d="${d}" fill="none" stroke="#c2410c" stroke-width="2"/>`).join('')}
+      ${arrows.join('')}`
+  }
+
+  // Draw from the note edge nearest the anchor, so the line never crosses the
+  // note it belongs to. The curve bows perpendicular to the run.
+  function connector(box: DOMRect, ax: number, ay: number) {
+    const cx = Math.max(box.left + 12, Math.min(ax, box.right - 12))
+    const cy = Math.max(box.top + 12, Math.min(ay, box.bottom - 12))
+    let sx: number
+    let sy: number
+    if (ay < box.top) {
+      sx = cx
+      sy = box.top
+    } else if (ay > box.bottom) {
+      sx = cx
+      sy = box.bottom
+    } else if (ax < box.left) {
+      sx = box.left
+      sy = cy
+    } else {
+      sx = box.right
+      sy = cy
+    }
+    const dx = ax - sx
+    const dy = ay - sy
+    const len = Math.hypot(dx, dy) || 1
+    const bow = Math.min(18, len * 0.22)
+    const mx = (sx + ax) / 2 - (dy / len) * bow
+    const my = (sy + ay) / 2 + (dx / len) * bow
+    // arrowhead aligned to the curve's final tangent
+    const ang = Math.atan2(ay - my, ax - mx)
+    const hl = 9
+    const spread = 0.45
+    const p1x = ax - hl * Math.cos(ang - spread)
+    const p1y = ay - hl * Math.sin(ang - spread)
+    const p2x = ax - hl * Math.cos(ang + spread)
+    const p2y = ay - hl * Math.sin(ang + spread)
+    return `<path d="M${sx} ${sy} Q${mx} ${my} ${ax} ${ay}" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round"/>
+      <path d="M${ax} ${ay} L${p1x} ${p1y} L${p2x} ${p2y} Z" fill="#c2410c"/>`
+  }
+
+  function closeGuide() {
+    guide.hidden = true
+    restoreHeader?.()
+    restoreHeader = null
+  }
+
+  document.getElementById('mt-help')!.addEventListener('click', openGuide)
+  document
+    .getElementById('mt-guide-close')!
+    .addEventListener('click', closeGuide)
+  guide.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement
+    if (!t.closest('.mt-guide-note') && !t.closest('.mt-guide-close'))
+      closeGuide()
+  })
+
+  window.addEventListener('resize', () => {
+    // measured positions go stale on resize
+    if (!guide.hidden) closeGuide()
+    fit()
+  })
+  fit()
+  syncZoomButtons()
+  if (readStore(PLAYED_KEY) === String(puzzleNo)) showAlreadyPlayed()
+  else renderPrompt()
+</script>

@@ -1,0 +1,912 @@
+#!/usr/bin/env python3
+"""Build the Austin ATXactly location pool from public data sources.
+
+Stdlib only. See docs/brainstorms/2026-08-11-001-atxactly-requirements.md
+for the sources, the category taxonomy, and why each source is shaped this way.
+
+    python3 scripts/build_atxactly_locations.py discover
+    python3 scripts/build_atxactly_locations.py discover --source osm-poi
+    python3 scripts/build_atxactly_locations.py stats
+
+Hand-edited fields (story, difficulty, category, name, status, lat, lon) are
+never overwritten by a re-run. Discovery merges on `id`: new entries are added,
+existing entries keep every field a human may have touched. Nothing is ever
+promoted to `eligible` automatically.
+"""
+
+import argparse
+import json
+import math
+import os
+import re
+import subprocess
+import sys
+import time
+import unicodedata
+import urllib.error
+import urllib.parse
+import urllib.request
+from collections import Counter
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parent.parent
+
+# Two files, because they have different audiences and lifespans.
+# POOL ships with the site and holds only reviewed locations, so the Astro
+# bundle never carries 2,300 unreviewed OSM rows. RAW is the working harvest,
+# kept out of src/ and used only by this script.
+POOL = REPO / "src" / "data" / "atxactly-locations.json"
+RAW = REPO / "docs" / "atxactly" / "candidates.json"
+
+UA = "itshagennothagen-dev/1.0 (+https://itshagennothagen.dev)"
+
+# Content box: where locations may exist. Padding for tiles is a render concern,
+# not a data concern, so discovery uses the content box unpadded.
+SOUTH, WEST, NORTH, EAST = 30.05, -98.05, 30.62, -97.35
+BBOX = f"{SOUTH},{WEST},{NORTH},{EAST}"
+
+COA_URL = "https://data.austintexas.gov/resource/inrm-c3ee.json?$limit=500"
+OVERPASS = "https://overpass-api.de/api/interpreter"
+
+# Central Austin: inside Loop 1 / US-183 / Ben White, roughly. Used to seed the
+# tier field, which the hand pass then corrects.
+CENTRAL = (30.22, -97.79, 30.33, -97.70)
+URBAN = (30.15, -97.88, 30.45, -97.60)
+
+# Fields a human may edit. Discovery must not clobber these on re-run.
+PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
+             "story", "extra", "storySource", "storyUrl", "status", "notes",
+             "shape", "photo")
+
+# district was dropped after curation: the only real districts in OSM are
+# shopping centres (a venue). water is still harvested but nothing has been
+# promoted from it yet.
+CATEGORIES = ("neighborhood", "park", "landmark", "civic", "venue", "town",
+              "food", "water")
+
+# The game's camera box (BOX in atxactly.astro). Wider than the harvest box
+# because a few towns were included deliberately; anything shipped outside it
+# is unreachable and therefore unwinnable.
+GAME_BOX = (29.93, -98.15, 30.77, -97.29)
+
+
+def fetch_json(url, data=None, tries=4):
+    """GET or POST with backoff. Overpass 429s under load; the CoA portal is
+    reliable but slow enough to need a real timeout."""
+    body = data.encode() if data else None
+    for attempt in range(tries):
+        req = urllib.request.Request(url, data=body, headers={"User-Agent": UA})
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 504, 503) and attempt < tries - 1:
+                wait = 10 * (attempt + 1)
+                print(f"  HTTP {e.code}, retrying in {wait}s", file=sys.stderr)
+                time.sleep(wait)
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt < tries - 1:
+                print(f"  {e}, retrying", file=sys.stderr)
+                time.sleep(10)
+                continue
+            raise
+    raise RuntimeError("unreachable")
+
+
+def slugify(text):
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    text = re.sub(r"[^\w\s-]", "", text).strip().lower()
+    return re.sub(r"[-\s]+", "-", text)
+
+
+ACRONYMS = {"RMMA", "MLK", "UT", "NPA", "ACC", "ABIA"}
+LOWER_WORDS = {"of", "the", "and", "at", "in", "on", "de", "del"}
+
+
+def titlecase(name):
+    """CoA names arrive as uppercase zoning labels ("HYDE PARK", "MLK-183").
+
+    Only a curated set stays uppercase. Matching "any all-caps token" would
+    match every word in the input, which is entirely uppercase.
+    """
+    words = []
+    for i, w in enumerate(name.split()):
+        core = w.strip(".,")
+        if core.upper() in ACRONYMS:
+            words.append(core.upper())
+        elif re.fullmatch(r"[A-Z]{2,}-\d+", core):   # MLK-183
+            words.append(core)
+        elif "-" in w:
+            words.append("-".join(p.capitalize() for p in w.split("-")))
+        elif i > 0 and core.lower() in LOWER_WORDS:
+            words.append(core.lower())
+        else:
+            words.append(core.capitalize())
+    return " ".join(words)
+
+
+def in_box(lat, lon, box):
+    s, w, n, e = box
+    return s <= lat <= n and w <= lon <= e
+
+
+def seed_tier(lat, lon):
+    if in_box(lat, lon, CENTRAL):
+        return "central"
+    if in_box(lat, lon, URBAN):
+        return "urban"
+    return "suburb"
+
+
+# ---------- geometry: point-on-surface without shapely ----------
+
+def ring_area(ring):
+    a = 0.0
+    for i in range(len(ring) - 1):
+        x1, y1 = ring[i]
+        x2, y2 = ring[i + 1]
+        a += x1 * y2 - x2 * y1
+    return a / 2.0
+
+
+def point_in_ring(pt, ring):
+    x, y = pt
+    inside = False
+    for i in range(len(ring) - 1):
+        x1, y1 = ring[i]
+        x2, y2 = ring[i + 1]
+        if (y1 > y) != (y2 > y):
+            xint = (x2 - x1) * (y - y1) / (y2 - y1) + x1
+            if x < xint:
+                inside = not inside
+    return inside
+
+
+def point_in_poly(pt, poly):
+    if not point_in_ring(pt, poly[0]):
+        return False
+    return not any(point_in_ring(pt, hole) for hole in poly[1:])
+
+
+def point_on_surface(polys):
+    """A representative interior point of the largest polygon.
+
+    A vertex average is wrong for concave or multi-part areas: Highland's
+    centroid falls outside the neighborhood entirely. Try the centroid, and if
+    it is not inside, grid-sample and take the interior point furthest from any
+    edge so the answer marker sits somewhere defensible.
+    """
+    best = max(polys, key=lambda p: abs(ring_area(p[0])))
+    ring = best[0]
+    xs = [p[0] for p in ring]
+    ys = [p[1] for p in ring]
+    cx, cy = sum(xs) / len(xs), sum(ys) / len(ys)
+    if point_in_poly((cx, cy), best):
+        return cy, cx
+    minx, maxx, miny, maxy = min(xs), max(xs), min(ys), max(ys)
+    bestpt, bestd = None, -1.0
+    N = 48
+    for i in range(1, N):
+        px = minx + (maxx - minx) * i / N
+        for j in range(1, N):
+            py = miny + (maxy - miny) * j / N
+            if not point_in_poly((px, py), best):
+                continue
+            d = min(math.dist((px, py), v) for r in best for v in r)
+            if d > bestd:
+                bestd, bestpt = d, (px, py)
+    if bestpt is None:
+        return cy, cx
+    return bestpt[1], bestpt[0]
+
+
+def _perp_dist(p, a, b):
+    if a == b:
+        return math.dist(p, a)
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy)
+    t = max(0.0, min(1.0, t))
+    return math.dist(p, (a[0] + t * dx, a[1] + t * dy))
+
+
+def simplify(points, eps):
+    """Ramer-Douglas-Peucker. Iterative, because a 3,000-vertex ring blows
+    the recursion limit."""
+    if len(points) < 3:
+        return list(points)
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        lo, hi = stack.pop()
+        dmax, idx = 0.0, lo
+        for i in range(lo + 1, hi):
+            d = _perp_dist(points[i], points[lo], points[hi])
+            if d > dmax:
+                dmax, idx = d, i
+        if dmax > eps:
+            keep[idx] = True
+            stack.append((lo, idx))
+            stack.append((idx, hi))
+    return [p for p, k in zip(points, keep) if k]
+
+
+# ~25 m at this latitude. Boundaries are fuzzy social facts, not survey lines,
+# so this precision is far finer than the question deserves.
+SIMPLIFY_EPS = 0.00025
+
+
+def shape_of(polys):
+    """Simplified outer rings for area scoring, largest fragment first.
+
+    A fixed tolerance flattens small areas into slivers: Rollingwood collapsed
+    far enough that its own representative point fell 1.8 m outside the result.
+    Back the tolerance off until the simplified ring still contains that point.
+    """
+    out = []
+    for poly in sorted(polys, key=lambda p: -abs(ring_area(p[0]))):
+        ring = [(float(x), float(y)) for x, y in poly[0]]
+        lat, lon = point_on_surface([[ring]])
+        eps = SIMPLIFY_EPS
+        for _ in range(6):
+            s = simplify(ring, eps)
+            if len(s) >= 4 and point_in_poly((lon, lat), [s]):
+                break
+            eps /= 3
+        if len(s) >= 4:
+            out.append([[round(x, 5), round(y, 5)] for x, y in s])
+    return out
+
+
+# ---------- sources ----------
+
+def discover_coa():
+    """City of Austin Neighborhood Planning Areas. 95 rows, ~65 distinct areas
+    once polygon fragments are merged by name."""
+    print("fetching City of Austin planning areas")
+    rows = fetch_json(COA_URL)
+    groups = {}
+    for row in rows:
+        name = row.get("planning_area_name")
+        geom = row.get("the_geom")
+        if not name or not geom:
+            continue
+        polys = (geom["coordinates"] if geom["type"] == "MultiPolygon"
+                 else [geom["coordinates"]])
+        groups.setdefault(name, []).extend(polys)
+
+    out = []
+    for raw_name, polys in groups.items():
+        lat, lon = point_on_surface(polys)
+        if not in_box(lat, lon, (SOUTH, WEST, NORTH, EAST)):
+            continue
+        name = titlecase(raw_name)
+        out.append({
+            "id": slugify(name),
+            "name": name,
+            "lat": round(lat, 6),
+            "lon": round(lon, 6),
+            "category": "neighborhood",
+            "tier": seed_tier(lat, lon),
+            "difficulty": None,
+            "story": None,
+            "storySource": None,
+            "storyUrl": None,
+            "sourceRef": raw_name,
+            "source": "coa-npa",
+            "status": "candidate",
+            "fragments": len(polys),
+            "shape": shape_of(polys),
+        })
+    print(f"  {len(rows)} rows -> {len(out)} distinct areas")
+    return out
+
+
+PLACE_CATEGORY = {
+    "town": "town", "village": "town",
+    "suburb": "district", "neighbourhood": "neighborhood",
+}
+
+
+def discover_osm_places():
+    print("fetching OSM place nodes")
+    q = (f'[out:json][timeout:120];'
+         f'(node["place"~"^(suburb|neighbourhood|town|village)$"]({BBOX}););'
+         f'out body;')
+    data = fetch_json(OVERPASS, urllib.parse.urlencode({"data": q}))
+    out = []
+    for el in data["elements"]:
+        tags = el.get("tags", {})
+        name = tags.get("name")
+        if not name:
+            continue
+        lat, lon = el["lat"], el["lon"]
+        if not in_box(lat, lon, (SOUTH, WEST, NORTH, EAST)):
+            continue
+        out.append({
+            "id": slugify(name),
+            "name": name,
+            "lat": round(lat, 6),
+            "lon": round(lon, 6),
+            "category": PLACE_CATEGORY.get(tags.get("place"), "neighborhood"),
+            "tier": seed_tier(lat, lon),
+            "difficulty": None,
+            "story": None,
+            "storySource": "wikipedia" if wiki_of(tags) else None,
+            "storyUrl": wiki_of(tags),
+            "sourceRef": f"node/{el['id']}",
+            "source": "osm-place",
+            "status": "candidate",
+        })
+    print(f"  {len(out)} place nodes")
+    return out
+
+
+POI_QUERIES = [
+    ('nwr["tourism"~"^(attraction|museum|artwork|viewpoint)$"]["name"]', "landmark"),
+    ('nwr["leisure"="park"]["name"]', "park"),
+    ('nwr["leisure"~"^(nature_reserve|water_park)$"]["name"]', "park"),
+    ('nwr["natural"~"^(water|spring)$"]["name"]', "water"),
+    # peaks are landmarks, not water: filing them together put Mount Bonnell
+    # and Pilot Knob in the water category
+    ('nwr["natural"="peak"]["name"]', "landmark"),
+    ('nwr["waterway"="waterfall"]["name"]', "water"),
+    ('nwr["amenity"~"^(theatre|cinema|university|college|hospital|library|'
+     'townhall|arts_centre)$"]["name"]', "civic"),
+    ('nwr["amenity"~"^(bar|pub|nightclub|restaurant)$"]["name"]["wikipedia"]', "venue"),
+    ('nwr["shop"="mall"]["name"]', "venue"),
+    ('nwr["aeroway"="aerodrome"]["name"]', "civic"),
+    ('nwr["historic"~"^(monument|memorial|building)$"]["name"]', "landmark"),
+    ('nwr["man_made"~"^(bridge|tower|lighthouse)$"]["name"]', "landmark"),
+]
+
+
+def wiki_of(tags):
+    w = tags.get("wikipedia")
+    if w and ":" in w:
+        lang, title = w.split(":", 1)
+        return f"https://{lang}.wikipedia.org/wiki/{urllib.parse.quote(title.replace(' ', '_'))}"
+    return None
+
+
+def discover_osm_pois():
+    """Landmarks, parks, water, civic buildings, notable venues.
+
+    Split into several Overpass calls rather than one giant union: a single
+    query for all of this times out, and a partial failure here should not cost
+    the whole run.
+    """
+    seen = {}
+    for selector, category in POI_QUERIES:
+        label = selector[:48]
+        print(f"fetching OSM POIs: {category} ({label}...)")
+        q = f'[out:json][timeout:120];({selector}({BBOX}););out tags center;'
+        try:
+            data = fetch_json(OVERPASS, urllib.parse.urlencode({"data": q}))
+        except Exception as e:
+            print(f"  FAILED: {e}", file=sys.stderr)
+            continue
+        n = 0
+        for el in data["elements"]:
+            tags = el.get("tags", {})
+            name = tags.get("name")
+            if not name:
+                continue
+            lat = el.get("lat") or (el.get("center") or {}).get("lat")
+            lon = el.get("lon") or (el.get("center") or {}).get("lon")
+            if lat is None or lon is None:
+                continue
+            if not in_box(lat, lon, (SOUTH, WEST, NORTH, EAST)):
+                continue
+            # Chains share a name: OSM has five "Alamo Drafthouse Cinema" in
+            # this bbox. Deduping on the bare name kept one and silently
+            # dropped the rest, and a prompt reading just "Alamo Drafthouse
+            # Cinema" would be unanswerable anyway. Disambiguate with the
+            # branch tag, falling back to the addr locality/suburb.
+            # addr:city is too coarse to disambiguate ("(Austin)" on a name
+            # that is already unique adds noise), so only a branch or a
+            # suburb qualifies.
+            branch = tags.get("branch") or tags.get("addr:suburb")
+            display = f"{name} ({branch})" if branch else name
+            key = slugify(display)
+            if key in seen:
+                continue
+            seen[key] = {
+                "id": key,
+                "name": display,
+                "lat": round(lat, 6),
+                "lon": round(lon, 6),
+                "category": category,
+                "tier": seed_tier(lat, lon),
+                "difficulty": None,
+                "story": None,
+                "storySource": "wikipedia" if wiki_of(tags) else None,
+                "storyUrl": wiki_of(tags),
+                "sourceRef": f"{el['type']}/{el['id']}",
+                "source": "osm-poi",
+                "status": "candidate",
+                "osmTags": {k: v for k, v in tags.items()
+                            if k in ("tourism", "leisure", "amenity", "natural",
+                                     "historic", "man_made", "shop", "aeroway",
+                                     "wikidata", "wikipedia", "branch")},
+            }
+            n += 1
+        print(f"  +{n}")
+        time.sleep(2)  # be polite to a free shared endpoint
+    print(f"  {len(seen)} distinct POIs")
+    return list(seen.values())
+
+
+# ---------- merge ----------
+
+STATUS_RANK = {"eligible": 2, "shortlist": 1}
+
+
+def load_existing():
+    """Both files as one list. Every command works on the union and write()
+    re-splits by status, so an entry promoted to shortlist/eligible migrates
+    from the raw harvest into the shipped pool automatically.
+
+    An id present in both files keeps the higher-status copy: promotion edits
+    the pool file but leaves the stale candidate row behind in the raw harvest,
+    and letting that stale row win would silently revert the curation."""
+    by_id = {}
+    for path in (POOL, RAW):
+        if not path.exists():
+            continue
+        for e in json.loads(path.read_text()):
+            cur = by_id.get(e["id"])
+            if cur is None or (STATUS_RANK.get(e.get("status"), 0)
+                               > STATUS_RANK.get(cur.get("status"), 0)):
+                by_id[e["id"]] = e
+    return list(by_id.values())
+
+
+def merge(existing, discovered):
+    """Add new entries; never overwrite human-edited fields on existing ones.
+
+    Machine fields (sourceRef, osmTags, fragments) refresh so upstream data
+    corrections flow through. Everything in PROTECTED is left exactly as-is.
+    """
+    by_id = {e["id"]: e for e in existing}
+    added = updated = 0
+    for new in discovered:
+        cur = by_id.get(new["id"])
+        if cur is None:
+            by_id[new["id"]] = new
+            added += 1
+            continue
+        before = dict(cur)
+        for k, v in new.items():
+            if k in PROTECTED:
+                continue
+            # Provenance belongs to whichever source first contributed the
+            # entry; a later source corroborating the same slug must not
+            # rewrite where it came from.
+            if k in ("source", "sourceRef"):
+                continue
+            cur[k] = v
+        others = set(cur.get("alsoIn", []))
+        if new["source"] != cur.get("source"):
+            others.add(new["source"])
+        if others:
+            cur["alsoIn"] = sorted(others)
+        # Backfill only fields still unset by a human.
+        for k in ("category", "tier", "storyUrl", "storySource", "shape"):
+            if cur.get(k) in (None, "") and new.get(k) not in (None, ""):
+                cur[k] = new[k]
+        if cur != before:
+            updated += 1
+    return list(by_id.values()), added, updated
+
+
+def validate(entries):
+    """Refuse to write a pool that would break the game.
+
+    The client assumes these invariants at parse time (a bare NaN alone makes
+    JSON.parse throw and the page render nothing), so a violation aborts before
+    any file is touched."""
+    errors = []
+    seen = set()
+    south, west, north, east = GAME_BOX
+    for e in entries:
+        eid = e.get("id")
+        if not eid or not str(e.get("name") or "").strip():
+            errors.append(f"{eid or '<no id>'}: missing id or name")
+            continue
+        if eid in seen:
+            errors.append(f"{eid}: duplicate id")
+        seen.add(eid)
+        lat, lon = e.get("lat"), e.get("lon")
+        if not (isinstance(lat, (int, float)) and isinstance(lon, (int, float))
+                and math.isfinite(lat) and math.isfinite(lon)):
+            errors.append(f"{eid}: non-finite coordinates")
+            continue
+        if e.get("status") != "eligible":
+            continue
+        if e.get("category") not in CATEGORIES:
+            errors.append(f"{eid}: unknown category {e.get('category')!r}")
+        if not (south <= lat <= north and west <= lon <= east):
+            errors.append(f"{eid}: outside the game camera box")
+        if not str(e.get("story") or "").strip() \
+                or not str(e.get("extra") or "").strip():
+            errors.append(f"{eid}: eligible without story/extra")
+        shape = e.get("shape")
+        if shape:
+            if sum(len(r) for r in shape) > 2000:
+                errors.append(f"{eid}: shape has too many vertices")
+            if not any(point_in_poly((lon, lat), [ring]) for ring in shape):
+                errors.append(f"{eid}: shape does not contain its own point")
+        photo = e.get("photo")
+        if photo and not (photo.get("url") and photo.get("attribution")):
+            errors.append(f"{eid}: photo missing url or attribution")
+    if errors:
+        for msg in errors[:20]:
+            print(f"  INVALID {msg}", file=sys.stderr)
+        sys.exit(f"validation failed: {len(errors)} problem(s), nothing written")
+
+
+def write(entries):
+    validate(entries)
+    entries.sort(key=lambda e: (e["category"], e["id"]))
+    pool = [e for e in entries if e.get("status") in ("shortlist", "eligible")]
+    raw = [e for e in entries if e.get("status") not in ("shortlist", "eligible")]
+    for path, rows in ((POOL, pool), (RAW, raw)):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n")
+        os.replace(tmp, path)
+        print(f"wrote {path.relative_to(REPO)} ({len(rows)} entries)")
+    # CI runs `prettier --check`. Python's json.dumps always expands short
+    # arrays that prettier keeps inline, so without this the two tools rewrite
+    # each other's output on every run.
+    run_prettier([POOL, RAW])
+
+
+def run_prettier(paths):
+    try:
+        subprocess.run(["npx", "--no-install", "prettier", "--write",
+                        *[str(p) for p in paths]],
+                       cwd=REPO, check=True, capture_output=True, timeout=180)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired,
+            FileNotFoundError) as e:
+        print(f"  note: prettier did not run ({type(e).__name__}); "
+              f"run `npm run format` before committing", file=sys.stderr)
+
+
+# ---------- commands ----------
+
+def cmd_discover(args):
+    sources = {
+        "coa": discover_coa,
+        "osm-place": discover_osm_places,
+        "osm-poi": discover_osm_pois,
+    }
+    picked = [args.source] if args.source else list(sources)
+    found = []
+    for s in picked:
+        found.extend(sources[s]())
+    existing = load_existing()
+    merged, added, updated = merge(existing, found)
+    print(f"\n{added} added, {updated} refreshed, {len(merged)} total")
+    write(merged)
+    cmd_stats(args)
+
+
+NOISE_NAME = re.compile(
+    r"\b(pond|detention|wet pond|retention|drainage|easement|tract|lot \d|"
+    r"bldg|building \d|parking|greenbelt access|trailhead|substation)\b", re.I)
+
+# historic=memorial is overwhelmingly individual grave markers and roadside
+# plaques in this bbox (582 of them). Named people are not places.
+PERSON_NAME = re.compile(r"^(mr|mrs|dr|judge|rev|capt|col|gen)\.?\s|"
+                         r"^[A-Z]\.\s*[A-Z]\.\s|"
+                         r"\b(memorial|cemetery|grave|headstone)\b", re.I)
+
+
+def prominence(e):
+    """Heuristic 0-100 for how likely a person is to know this place.
+
+    Not a difficulty score. This only decides what is worth a human's attention
+    during pruning; difficulty is hand-tagged afterward.
+    """
+    score = 0
+    tags = e.get("osmTags", {})
+    if e.get("storyUrl"):
+        score += 50          # has a Wikipedia article
+    if tags.get("wikidata"):
+        score += 15
+    if e["source"] == "coa-npa":
+        score += 30          # an official planning area is a real place
+    # Corroboration is the strongest non-Wikipedia signal available: a name
+    # that shows up independently in the city's zoning data and in OSM is a
+    # place people actually refer to.
+    score += 20 * len(e.get("alsoIn", []))
+    if e["category"] in ("town", "district"):
+        score += 25
+    if e["category"] == "neighborhood":
+        score += 10
+    kind = (tags.get("historic") or tags.get("man_made") or tags.get("natural")
+            or tags.get("amenity") or tags.get("leisure") or "")
+    if kind in ("memorial", "artwork"):
+        score -= 25
+    if kind in ("university", "aerodrome", "museum", "attraction"):
+        score += 20
+    if NOISE_NAME.search(e["name"]):
+        score -= 30
+    if PERSON_NAME.search(e["name"]):
+        score -= 30
+    if len(e["name"]) <= 3:
+        score -= 20
+    return max(0, min(100, score))
+
+
+def cmd_triage(args):
+    """Rank candidates by prominence so pruning starts with what matters."""
+    entries = load_existing()
+    cands = [e for e in entries if e.get("status") in ("candidate", "shortlist")]
+    for e in cands:
+        e["_p"] = prominence(e)
+    cands.sort(key=lambda e: (-e["_p"], e["category"], e["name"]))
+    if args.category:
+        cands = [e for e in cands if e["category"] == args.category]
+    shown = cands[:args.limit]
+    print(f"{len(cands)} candidates, showing top {len(shown)} by prominence\n")
+    for e in shown:
+        w = "W" if e.get("storyUrl") else " "
+        print(f"  {e['_p']:3d} [{w}] {e['category']:13s} {e['tier']:8s} "
+              f"{e['name'][:46]:48s} {e['id']}")
+    below = [e for e in cands if e["_p"] < args.floor]
+    print(f"\n{len(below)} candidates score below {args.floor} "
+          f"and are likely prunable")
+
+
+def cmd_promote(args):
+    """Move named locations into the shortlist by hand.
+
+    The prominence scorer cannot rank the raw file usefully: without a
+    Wikipedia tag almost everything ties at 15, so Mount Bonnell and Barton
+    Creek Greenbelt sit level with Alamo Pocket Park. Human judgement is the
+    only signal available, and this is how it gets applied.
+
+    Names are matched case-insensitively against `name`, then `id`. Reports
+    anything it could not find rather than failing silently.
+    """
+    entries = load_existing()
+    by_name = {}
+    for e in entries:
+        by_name.setdefault(e["name"].lower(), e)
+        by_name.setdefault(e["id"].lower(), e)
+
+    wanted = list(args.names)
+    if args.from_file:
+        wanted += [ln.strip() for ln in Path(args.from_file).read_text().splitlines()
+                   if ln.strip() and not ln.startswith("#")]
+
+    hit, miss, already = [], [], []
+    for name in wanted:
+        e = by_name.get(name.lower())
+        if e is None:
+            miss.append(name)
+        elif e.get("status") in ("shortlist", "eligible"):
+            already.append(e["name"])
+        else:
+            e["status"] = "shortlist"
+            hit.append(e["name"])
+
+    for n in hit:
+        print(f"  promoted  {n}")
+    for n in already:
+        print(f"  already   {n}")
+    for n in miss:
+        print(f"  NOT FOUND {n}", file=sys.stderr)
+    print(f"\n{len(hit)} promoted, {len(already)} already listed, {len(miss)} not found")
+    if args.dry_run:
+        print("dry run, nothing written")
+        return
+    if hit:
+        write(entries)
+
+
+def cmd_shortlist(args):
+    """Mark high-prominence candidates as `shortlist` for human review.
+
+    Deliberately non-destructive. An early pass at floor 30 would have dropped
+    Alamo Drafthouse, ACC Highland, and Dell Seton purely for lacking a
+    Wikipedia tag, so the low scorers stay in the file as `candidate` and can be
+    promoted later by raising the floor or by hand. Nothing is deleted, and the
+    scorer is a triage aid, not an oracle.
+    """
+    entries = load_existing()
+    n = 0
+    for e in entries:
+        if e.get("status") not in ("candidate", "shortlist"):
+            continue
+        want = "shortlist" if prominence(e) >= args.floor else "candidate"
+        if e["status"] != want:
+            e["status"] = want
+            n += 1
+    print(f"{n} status changes at floor {args.floor}")
+    if args.dry_run:
+        print("dry run, nothing written")
+        return
+    write(entries)
+    cmd_stats(args)
+
+
+def _strip_html(text):
+    return re.sub(r"<[^>]+>", "", text).strip()
+
+
+def cmd_photos(args):
+    """Fill `photo` on eligible entries from Wikidata's image property (P18).
+
+    Three hops, each batched: sourceRef -> wikidata QID via Overpass,
+    QID -> Commons filename via wbgetentities, filename -> photographer and
+    licence via the Commons imageinfo API. Coverage is partial by design:
+    entries without a wikidata tag (most restaurants, murals, neighborhoods)
+    are skipped, and murals/sculpture stay uncovered because Commons rarely
+    hosts them (no US freedom of panorama for 2D art). Hand-set photos are
+    never overwritten.
+    """
+    entries = load_existing()
+    todo = [e for e in entries
+            if e.get("status") == "eligible" and not e.get("photo")
+            and re.match(r"^(node|way|relation)/\d+$", e.get("sourceRef") or "")]
+    print(f"{len(todo)} eligible entries without a photo")
+
+    by_ref = {e["sourceRef"]: e for e in todo}
+    ids = {"node": [], "way": [], "relation": []}
+    for ref in by_ref:
+        typ, oid = ref.split("/")
+        ids[typ].append(oid)
+    parts = "".join(f"{t}(id:{','.join(v)});" for t, v in ids.items() if v)
+    print("fetching wikidata tags from Overpass")
+    data = fetch_json(OVERPASS, urllib.parse.urlencode(
+        {"data": f"[out:json][timeout:120];({parts});out tags;"}))
+    qid_of = {}
+    for el in data["elements"]:
+        qid = el.get("tags", {}).get("wikidata")
+        if qid and re.match(r"^Q\d+$", qid):
+            qid_of[f"{el['type']}/{el['id']}"] = qid
+    print(f"  {len(qid_of)} have a wikidata tag")
+
+    file_of = {}  # qid -> Commons filename
+    qids = sorted(set(qid_of.values()))
+    for i in range(0, len(qids), 50):
+        batch = qids[i:i + 50]
+        url = ("https://www.wikidata.org/w/api.php?action=wbgetentities"
+               f"&ids={'|'.join(batch)}&props=claims&format=json")
+        for qid, ent in fetch_json(url).get("entities", {}).items():
+            for claim in ent.get("claims", {}).get("P18", []):
+                val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
+                if isinstance(val, str):
+                    file_of[qid] = val
+                    break
+        time.sleep(1)
+    print(f"  {len(file_of)} have an image (P18)")
+
+    meta_of = {}  # filename -> attribution
+    files = sorted(set(file_of.values()))
+    for i in range(0, len(files), 50):
+        batch = files[i:i + 50]
+        titles = urllib.parse.quote("|".join(f"File:{f}" for f in batch))
+        url = ("https://commons.wikimedia.org/w/api.php?action=query"
+               f"&titles={titles}&prop=imageinfo&iiprop=extmetadata"
+               "&iiextmetadatafilter=Artist|LicenseShortName&format=json")
+        pages = fetch_json(url).get("query", {}).get("pages", {})
+        for page in pages.values():
+            info = (page.get("imageinfo") or [{}])[0].get("extmetadata", {})
+            artist = _strip_html(info.get("Artist", {}).get("value", ""))
+            licence = info.get("LicenseShortName", {}).get("value", "")
+            name = page.get("title", "").removeprefix("File:")
+            parts = [p for p in (artist, licence) if p]
+            meta_of[name] = ", ".join(parts) or "Wikimedia Commons"
+        time.sleep(1)
+
+    n = 0
+    for ref, e in by_ref.items():
+        qid = qid_of.get(ref)
+        fname = file_of.get(qid) if qid else None
+        if not fname:
+            continue
+        # quote() leaves "/" unencoded, so a hostile filename could redirect
+        # the path elsewhere on Commons.
+        if "/" in fname or ".." in fname:
+            print(f"  SKIP suspicious filename for {e['name']}: {fname!r}",
+                  file=sys.stderr)
+            continue
+        e["photo"] = {
+            "url": ("https://commons.wikimedia.org/wiki/Special:FilePath/"
+                    f"{urllib.parse.quote(fname)}?width=640"),
+            "attribution": meta_of.get(fname, "Wikimedia Commons"),
+        }
+        n += 1
+        print(f"  photo     {e['name']}")
+    print(f"\n{n} photos attached, {len(todo) - n} still without")
+    if args.dry_run:
+        print("dry run, nothing written")
+        return
+    if n:
+        write(entries)
+
+
+def cmd_validate(args):
+    entries = load_existing()
+    validate(entries)
+    elig = sum(1 for e in entries if e.get("status") == "eligible")
+    print(f"OK: {len(entries)} entries, {elig} eligible, all invariants hold")
+
+
+def cmd_stats(args):
+    entries = load_existing()
+    if not entries:
+        print("no data yet")
+        return
+    print(f"\n{'':-<52}\npool: {len(entries)} entries")
+    for field in ("status", "source", "category", "tier"):
+        c = Counter(e.get(field) for e in entries)
+        print(f"\n{field}:")
+        for k, v in c.most_common():
+            print(f"  {str(k):16s} {v:4d}")
+    elig = [e for e in entries if e.get("status") == "eligible"]
+    withstory = [e for e in entries if e.get("story")]
+    wikitagged = [e for e in entries if e.get("storyUrl")]
+    print(f"\neligible:        {len(elig):4d}")
+    print(f"has story:       {len(withstory):4d}")
+    print(f"wikipedia link:  {len(wikitagged):4d}  (story fetchable)")
+    # Difficulty 1/2/3 maps straight onto the game's easy/medium/hard pools
+    # (buildRound deals 2 easy, 2 medium, 1 hard per day). The multiplier is
+    # per round position, not per difficulty, so it has no place here.
+    bands = Counter()
+    for e in elig:
+        d = e.get("difficulty")
+        label = {1: "easy", 2: "medium", 3: "hard"}.get(d, "untagged")
+        bands[label] += 1
+    if elig:
+        print("\neligible by band (dealt 2/2/1 per day):")
+        for k in ("easy", "medium", "hard", "untagged"):
+            print(f"  {k:16s} {bands[k]:4d}")
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = p.add_subparsers(dest="cmd", required=True)
+    d = sub.add_parser("discover", help="fetch sources and merge into the pool")
+    d.add_argument("--source", choices=("coa", "osm-place", "osm-poi"),
+                   help="run a single source instead of all three")
+    d.set_defaults(func=cmd_discover)
+    t = sub.add_parser("triage", help="rank candidates by prominence")
+    t.add_argument("--limit", type=int, default=60)
+    t.add_argument("--floor", type=int, default=30)
+    t.add_argument("--category", choices=CATEGORIES)
+    t.set_defaults(func=cmd_triage)
+    sl = sub.add_parser("shortlist",
+                        help="mark high-prominence candidates for review")
+    sl.add_argument("--floor", type=int, default=30)
+    sl.add_argument("--dry-run", action="store_true")
+    sl.set_defaults(func=cmd_shortlist)
+    pm = sub.add_parser("promote",
+                        help="hand-promote named locations into the shortlist")
+    pm.add_argument("names", nargs="*", help="location names or ids")
+    pm.add_argument("--from-file", help="newline-delimited names, # comments ok")
+    pm.add_argument("--dry-run", action="store_true")
+    pm.set_defaults(func=cmd_promote)
+    ph = sub.add_parser("photos",
+                        help="fill photo urls from Wikidata/Commons")
+    ph.add_argument("--dry-run", action="store_true")
+    ph.set_defaults(func=cmd_photos)
+    s = sub.add_parser("stats", help="summarize the current pool")
+    s.set_defaults(func=cmd_stats)
+    v = sub.add_parser("validate",
+                       help="check the data invariants the game relies on")
+    v.set_defaults(func=cmd_validate)
+    args = p.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

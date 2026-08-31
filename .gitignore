@@ -44,3 +44,22 @@ docs/side-quests/
 
 # album-cover skill scratch output (staging area, not final storage)
 docs/music/covers/
+
+# Python bytecode (scripts/)
+__pycache__/
+*.pyc
+
+# Spotify library working files (local-only, contain personal library data)
+docs/music/liked-songs.json
+docs/music/sort-plan.json
+docs/music/undo-*.json
+
+# Local env (CARTO basemap key)
+.env
+.env.local
+
+# Handoff docs (ephemeral session artifacts)
+docs/handoff/
+
+# Review docs (local working artifacts)
+docs/reviews/

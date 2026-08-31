@@ -11,16 +11,18 @@ I built a Claude Code skill that generates an album cover for each of my
 Spotify playlists. It started when I was organizing my liked songs into
 mood/genre based playlists. A colleague of mine does something similar with his
 own music: dedicated albums for specific genres, each with a unifying visual
-theme. I wanted that for mine too.
+theme and I wanted that for mine too.
 
 ## The template
 
 Every cover follows the same fixed template: dense topographic contour
 lines on a near-black background, terrain shape and color both driven by the
 playlist's mood. I wanted something simple and abstract, and topography felt
-right. Sharp, jagged ridgelines read as high-energy. Slow, undulating ones
-read as hypnotic. The color gradient (warm reds for aggressive, cool blues
-for melancholic, and so on) layers a second signal on top.
+right.
+* Contours: Sharp, jagged ridgelines for high-energy; slow, undulating lines
+for hypnotic soundscapes
+* Colors: warm reds for aggression; cool blue tones
+for melancholic.
 
 ## SAT word title
 
@@ -32,8 +34,7 @@ vocabulary along the way. Plus, some of them make solid names.
 ## Figuring out the genre
 
 Sometimes I already know the genre for a batch of songs. Other times I've
-got just one song I want to build a playlist around, and I'm not sure yet
-what else belongs with it. In that case, the skill asks six questions
+got just one song I want to build a playlist around it. The skill asks six questions
 adapted from real music-information-retrieval (MIR) classification:
 
 - ⚡&nbsp; **Arousal**: is the energy high and driving, or low and calm
