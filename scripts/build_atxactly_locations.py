@@ -54,7 +54,8 @@ URBAN = (30.15, -97.88, 30.45, -97.60)
 
 # Fields a human may edit. Discovery must not clobber these on re-run.
 PROTECTED = ("name", "lat", "lon", "category", "tier", "difficulty",
-             "story", "storySource", "storyUrl", "status", "notes", "shape")
+             "story", "storySource", "storyUrl", "status", "notes", "shape",
+             "photo")
 
 # district and water were dropped after curation: the only real districts in
 # OSM are shopping centres (a venue), and water bodies are either too large to
@@ -700,6 +701,97 @@ def cmd_shortlist(args):
     cmd_stats(args)
 
 
+def _strip_html(text):
+    return re.sub(r"<[^>]+>", "", text).strip()
+
+
+def cmd_photos(args):
+    """Fill `photo` on eligible entries from Wikidata's image property (P18).
+
+    Three hops, each batched: sourceRef -> wikidata QID via Overpass,
+    QID -> Commons filename via wbgetentities, filename -> photographer and
+    licence via the Commons imageinfo API. Coverage is partial by design:
+    entries without a wikidata tag (most restaurants, murals, neighborhoods)
+    are skipped, and murals/sculpture stay uncovered because Commons rarely
+    hosts them (no US freedom of panorama for 2D art). Hand-set photos are
+    never overwritten.
+    """
+    entries = load_existing()
+    todo = [e for e in entries
+            if e.get("status") == "eligible" and not e.get("photo")
+            and re.match(r"^(node|way|relation)/\d+$", e.get("sourceRef") or "")]
+    print(f"{len(todo)} eligible entries without a photo")
+
+    by_ref = {e["sourceRef"]: e for e in todo}
+    ids = {"node": [], "way": [], "relation": []}
+    for ref in by_ref:
+        typ, oid = ref.split("/")
+        ids[typ].append(oid)
+    parts = "".join(f"{t}(id:{','.join(v)});" for t, v in ids.items() if v)
+    print("fetching wikidata tags from Overpass")
+    data = fetch_json(OVERPASS, urllib.parse.urlencode(
+        {"data": f"[out:json][timeout:120];({parts});out tags;"}))
+    qid_of = {}
+    for el in data["elements"]:
+        qid = el.get("tags", {}).get("wikidata")
+        if qid and re.match(r"^Q\d+$", qid):
+            qid_of[f"{el['type']}/{el['id']}"] = qid
+    print(f"  {len(qid_of)} have a wikidata tag")
+
+    file_of = {}  # qid -> Commons filename
+    qids = sorted(set(qid_of.values()))
+    for i in range(0, len(qids), 50):
+        batch = qids[i:i + 50]
+        url = ("https://www.wikidata.org/w/api.php?action=wbgetentities"
+               f"&ids={'|'.join(batch)}&props=claims&format=json")
+        for qid, ent in fetch_json(url).get("entities", {}).items():
+            for claim in ent.get("claims", {}).get("P18", []):
+                val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
+                if isinstance(val, str):
+                    file_of[qid] = val
+                    break
+        time.sleep(1)
+    print(f"  {len(file_of)} have an image (P18)")
+
+    meta_of = {}  # filename -> attribution
+    files = sorted(set(file_of.values()))
+    for i in range(0, len(files), 50):
+        batch = files[i:i + 50]
+        titles = urllib.parse.quote("|".join(f"File:{f}" for f in batch))
+        url = ("https://commons.wikimedia.org/w/api.php?action=query"
+               f"&titles={titles}&prop=imageinfo&iiprop=extmetadata"
+               "&iiextmetadatafilter=Artist|LicenseShortName&format=json")
+        pages = fetch_json(url).get("query", {}).get("pages", {})
+        for page in pages.values():
+            info = (page.get("imageinfo") or [{}])[0].get("extmetadata", {})
+            artist = _strip_html(info.get("Artist", {}).get("value", ""))
+            licence = info.get("LicenseShortName", {}).get("value", "")
+            name = page.get("title", "").removeprefix("File:")
+            parts = [p for p in (artist, licence) if p]
+            meta_of[name] = ", ".join(parts) or "Wikimedia Commons"
+        time.sleep(1)
+
+    n = 0
+    for ref, e in by_ref.items():
+        qid = qid_of.get(ref)
+        fname = file_of.get(qid) if qid else None
+        if not fname:
+            continue
+        e["photo"] = {
+            "url": ("https://commons.wikimedia.org/wiki/Special:FilePath/"
+                    f"{urllib.parse.quote(fname)}?width=640"),
+            "attribution": meta_of.get(fname, "Wikimedia Commons"),
+        }
+        n += 1
+        print(f"  photo     {e['name']}")
+    print(f"\n{n} photos attached, {len(todo) - n} still without")
+    if args.dry_run:
+        print("dry run, nothing written")
+        return
+    if n:
+        write(entries)
+
+
 def cmd_stats(args):
     entries = load_existing()
     if not entries:
@@ -758,6 +850,10 @@ def main():
     pm.add_argument("--from-file", help="newline-delimited names, # comments ok")
     pm.add_argument("--dry-run", action="store_true")
     pm.set_defaults(func=cmd_promote)
+    ph = sub.add_parser("photos",
+                        help="fill photo urls from Wikidata/Commons")
+    ph.add_argument("--dry-run", action="store_true")
+    ph.set_defaults(func=cmd_photos)
     s = sub.add_parser("stats", help="summarize the current pool")
     s.set_defaults(func=cmd_stats)
     args = p.parse_args()

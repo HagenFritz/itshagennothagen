@@ -36,24 +36,6 @@
     }
   },
   {
-    "id": "afs-cinema",
-    "name": "AFS Cinema",
-    "lat": 30.324364,
-    "lon": -97.708716,
-    "category": "civic",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/661314999",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "amenity": "cinema"
-    }
-  },
-  {
     "id": "aisd-performing-arts-center",
     "name": "AISD Performing Arts Center",
     "lat": 30.304327,
@@ -69,25 +51,6 @@
     "status": "candidate",
     "osmTags": {
       "amenity": "theatre"
-    }
-  },
-  {
-    "id": "alamo-drafthouse-cinema",
-    "name": "Alamo Drafthouse Cinema",
-    "lat": 30.360046,
-    "lon": -97.734889,
-    "category": "civic",
-    "tier": "urban",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/3196375766",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "amenity": "cinema",
-      "wikidata": "Q42298376"
     }
   },
   {
@@ -506,6 +469,23 @@
     "osmTags": {
       "amenity": "college"
     }
+  },
+  {
+    "id": "austin-convention-center",
+    "name": "Austin Convention Center",
+    "lat": 30.263641,
+    "lon": -97.739478,
+    "category": "civic",
+    "tier": "central",
+    "difficulty": 2,
+    "story": "The downtown convention center on Cesar Chavez, opened in 1992 and expanded in 2002 to about 880,000 square feet.",
+    "extra": "It is the main venue for SXSW every March. The city approved a full demolition and rebuild, closing it in 2025 for several years.",
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "way/187392350",
+    "source": "osm-poi",
+    "status": "candidate",
+    "notes": "Demolished Oct 2025; replacement opens 2029. Not a place you can visit."
   },
   {
     "id": "austin-educational-theatre",
@@ -3330,6 +3310,96 @@
     }
   },
   {
+    "id": "texas-state-university",
+    "tier": "suburb",
+    "name": "Texas State University",
+    "lat": 29.889385,
+    "lon": -97.940159,
+    "shape": [
+      [
+        [-97.93299, 29.88902],
+        [-97.93317, 29.88973],
+        [-97.93238, 29.89001],
+        [-97.93185, 29.88967],
+        [-97.92688, 29.8922],
+        [-97.92403, 29.89483],
+        [-97.92887, 29.89782],
+        [-97.93179, 29.89581],
+        [-97.93019, 29.89548],
+        [-97.93367, 29.89221],
+        [-97.93422, 29.89113],
+        [-97.93523, 29.89193],
+        [-97.93641, 29.89167],
+        [-97.93973, 29.89376],
+        [-97.94002, 29.89361],
+        [-97.93862, 29.8919],
+        [-97.94026, 29.89122],
+        [-97.9447, 29.89221],
+        [-97.94675, 29.89061],
+        [-97.94872, 29.89001],
+        [-97.95006, 29.88907],
+        [-97.95359, 29.89176],
+        [-97.95547, 29.89017],
+        [-97.95293, 29.88625],
+        [-97.95146, 29.88528],
+        [-97.94947, 29.88518],
+        [-97.94851, 29.8844],
+        [-97.94755, 29.88521],
+        [-97.94803, 29.88565],
+        [-97.94769, 29.88585],
+        [-97.94724, 29.88549],
+        [-97.94667, 29.88592],
+        [-97.94327, 29.88654],
+        [-97.94314, 29.88579],
+        [-97.94205, 29.88593],
+        [-97.94208, 29.88641],
+        [-97.94066, 29.88659],
+        [-97.94047, 29.88553],
+        [-97.93656, 29.88606],
+        [-97.93643, 29.88518],
+        [-97.9359, 29.88517],
+        [-97.93604, 29.88683],
+        [-97.93547, 29.88752],
+        [-97.93412, 29.88757],
+        [-97.93271, 29.88623],
+        [-97.93053, 29.88832],
+        [-97.92859, 29.88663],
+        [-97.92316, 29.89145],
+        [-97.92171, 29.89022],
+        [-97.92286, 29.88926],
+        [-97.92238, 29.88882],
+        [-97.92152, 29.88955],
+        [-97.92184, 29.8901],
+        [-97.92119, 29.88956],
+        [-97.92144, 29.88932],
+        [-97.9194, 29.88758],
+        [-97.91872, 29.88728],
+        [-97.91793, 29.88815],
+        [-97.91843, 29.88855],
+        [-97.91894, 29.88802],
+        [-97.92113, 29.88984],
+        [-97.9205, 29.89039],
+        [-97.92265, 29.89233],
+        [-97.92267, 29.89268],
+        [-97.9216, 29.89272],
+        [-97.91946, 29.89461],
+        [-97.92156, 29.89639],
+        [-97.92716, 29.89156],
+        [-97.93299, 29.88902]
+      ]
+    ],
+    "category": "civic",
+    "difficulty": 3,
+    "story": "A 500-acre campus in San Marcos, south of the metro, with about 40,000 students.",
+    "extra": "Lyndon Johnson graduated from here in 1930, the only US president educated in Texas.",
+    "storySource": "wikipedia",
+    "storyUrl": "https://en.wikipedia.org/wiki/Texas_State_University",
+    "sourceRef": "relation/14615874",
+    "source": "osm-poi",
+    "status": "candidate",
+    "notes": "San Marcos, 47 km out and outside the camera box; best reachable guess scored 33."
+  },
+  {
     "id": "texas-state-university-round-rock",
     "name": "Texas State University - Round Rock",
     "lat": 30.566576,
@@ -4108,24 +4178,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "node/12453821505",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
-    }
-  },
-  {
-    "id": "angelina-eberly",
-    "name": "Angelina Eberly",
-    "lat": 30.268656,
-    "lon": -97.742747,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/10289996520",
     "source": "osm-poi",
     "status": "candidate",
     "osmTags": {
@@ -5235,24 +5287,6 @@
     }
   },
   {
-    "id": "broken-spoke",
-    "name": "Broken Spoke",
-    "lat": 30.24089,
-    "lon": -97.78521,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/12453821476",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
-    }
-  },
-  {
     "id": "buda-christian-church",
     "name": "Buda Christian Church",
     "lat": 30.08274,
@@ -5628,24 +5662,6 @@
     "status": "candidate",
     "osmTags": {
       "historic": "memorial"
-    }
-  },
-  {
-    "id": "cathedral-of-junk",
-    "name": "Cathedral of Junk",
-    "lat": 30.218688,
-    "lon": -97.771766,
-    "category": "landmark",
-    "tier": "urban",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/8155411808",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "artwork"
     }
   },
   {
@@ -8712,24 +8728,6 @@
     }
   },
   {
-    "id": "greetings-from-austin-mural",
-    "name": "Greetings from Austin mural",
-    "lat": 30.247583,
-    "lon": -97.755943,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/3856561923",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "artwork"
-    }
-  },
-  {
     "id": "grinninger-fence",
     "name": "Grinninger Fence",
     "lat": 30.26058,
@@ -9033,24 +9031,6 @@
     "status": "candidate",
     "osmTags": {
       "historic": "memorial"
-    }
-  },
-  {
-    "id": "hi-how-are-you",
-    "name": "Hi, How Are You",
-    "lat": 30.283905,
-    "lon": -97.742177,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/4493392149",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "artwork"
     }
   },
   {
@@ -9429,24 +9409,6 @@
     "status": "candidate",
     "osmTags": {
       "historic": "memorial"
-    }
-  },
-  {
-    "id": "i-love-you-so-much-mural",
-    "name": "I love you so much Mural",
-    "lat": 30.251111,
-    "lon": -97.749332,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/5023332787",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "artwork"
     }
   },
   {
@@ -11090,24 +11052,6 @@
     "status": "candidate",
     "osmTags": {
       "tourism": "artwork"
-    }
-  },
-  {
-    "id": "laguna-gloria",
-    "name": "Laguna Gloria",
-    "lat": 30.31222,
-    "lon": -97.77427,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/12453821316",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
     }
   },
   {
@@ -14666,24 +14610,6 @@
     }
   },
   {
-    "id": "seaholm-power-plant",
-    "name": "Seaholm Power Plant",
-    "lat": 30.265967,
-    "lon": -97.752852,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/8958545850",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
-    }
-  },
-  {
     "id": "seeding-time",
     "name": "Seeding Time",
     "lat": 30.264501,
@@ -17375,25 +17301,6 @@
     }
   },
   {
-    "id": "umlauf-sculpture-garden-museumumlauf-sculpture-garden-and-museum",
-    "name": "Umlauf Sculpture Garden & Museum;Umlauf Sculpture Garden and Museum",
-    "lat": 30.263044,
-    "lon": -97.766242,
-    "category": "landmark",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/1266596014",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "tourism": "museum",
-      "wikidata": "Q7881605"
-    }
-  },
-  {
     "id": "una-cancion-de-fe-y-familia",
     "name": "Una Canción de Fe y Familia",
     "lat": 30.258235,
@@ -19267,6 +19174,68 @@
     "status": "candidate"
   },
   {
+    "id": "cat-mountain",
+    "name": "Cat Mountain",
+    "lat": 30.350914,
+    "lon": -97.77832,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "node/5654120737",
+    "source": "osm-place",
+    "status": "candidate",
+    "osmTags": {
+      "natural": "peak",
+      "wikidata": "Q31697035"
+    },
+    "alsoIn": ["osm-poi"]
+  },
+  {
+    "id": "central-east-austin",
+    "name": "Central East Austin",
+    "lat": 30.271573,
+    "lon": -97.727793,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "CENTRAL EAST AUSTIN",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 2,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.73142, 30.27474],
+        [-97.7344, 30.26622],
+        [-97.72633, 30.2635],
+        [-97.72451, 30.26745],
+        [-97.72692, 30.26839],
+        [-97.71904, 30.26971],
+        [-97.72124, 30.27981],
+        [-97.72981, 30.27851],
+        [-97.73142, 30.27474]
+      ],
+      [
+        [-97.7152, 30.26117],
+        [-97.71338, 30.26324],
+        [-97.71325, 30.26443],
+        [-97.71667, 30.27006],
+        [-97.72692, 30.26839],
+        [-97.72451, 30.26745],
+        [-97.72633, 30.2635],
+        [-97.72233, 30.26212],
+        [-97.72212, 30.26258],
+        [-97.7152, 30.26117]
+      ]
+    ]
+  },
+  {
     "id": "chandler-crossing",
     "name": "Chandler Crossing",
     "lat": 30.540941,
@@ -19385,25 +19354,6 @@
     "sourceRef": "node/5019008242",
     "source": "osm-place",
     "status": "candidate"
-  },
-  {
-    "id": "clarksville",
-    "name": "Clarksville",
-    "lat": 30.27768,
-    "lon": -97.759807,
-    "category": "neighborhood",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/5019008235",
-    "source": "osm-place",
-    "status": "candidate",
-    "osmTags": {
-      "historic": "memorial"
-    },
-    "alsoIn": ["osm-poi"]
   },
   {
     "id": "clear-creek-estates",
@@ -19616,6 +19566,52 @@
     "status": "candidate"
   },
   {
+    "id": "downtown",
+    "name": "Downtown",
+    "lat": 30.267203,
+    "lon": -97.744444,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "DOWNTOWN",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.74374, 30.28228],
+        [-97.74991, 30.28391],
+        [-97.75227, 30.28365],
+        [-97.75079, 30.28158],
+        [-97.75095, 30.27824],
+        [-97.75663, 30.26648],
+        [-97.75211, 30.26507],
+        [-97.75128, 30.26446],
+        [-97.74914, 30.26426],
+        [-97.74659, 30.26345],
+        [-97.74427, 30.26223],
+        [-97.7414, 30.25978],
+        [-97.74062, 30.26042],
+        [-97.74017, 30.26168],
+        [-97.73958, 30.26172],
+        [-97.74027, 30.26024],
+        [-97.74131, 30.2592],
+        [-97.74105, 30.25778],
+        [-97.73956, 30.2544],
+        [-97.73604, 30.25134],
+        [-97.73587, 30.252],
+        [-97.73717, 30.25787],
+        [-97.73682, 30.2596],
+        [-97.7299, 30.27834],
+        [-97.74374, 30.28228]
+      ]
+    ]
+  },
+  {
     "id": "duval-springs",
     "name": "Duval Springs",
     "lat": 30.415416,
@@ -19659,6 +19655,72 @@
     "sourceRef": "node/5019008253",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "east-cesar-chavez",
+    "name": "East Cesar Chavez",
+    "lat": 30.256039,
+    "lon": -97.731831,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "EAST CESAR CHAVEZ",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.72233, 30.26212],
+        [-97.7344, 30.26622],
+        [-97.73715, 30.25815],
+        [-97.73681, 30.25511],
+        [-97.73645, 30.2548],
+        [-97.73587, 30.252],
+        [-97.73604, 30.25134],
+        [-97.72891, 30.24868],
+        [-97.72911, 30.24987],
+        [-97.7277, 30.2507],
+        [-97.7271, 30.25168],
+        [-97.72233, 30.26212]
+      ]
+    ]
+  },
+  {
+    "id": "east-congress",
+    "name": "East Congress",
+    "lat": 30.208548,
+    "lon": -97.762888,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "EAST CONGRESS",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.77485, 30.2049],
+        [-97.77299, 30.20404],
+        [-97.76936, 30.20109],
+        [-97.76617, 30.20006],
+        [-97.76396, 30.19843],
+        [-97.75769, 30.2063],
+        [-97.75182, 30.2158],
+        [-97.753, 30.21603],
+        [-97.75742, 30.2196],
+        [-97.76401, 30.22278],
+        [-97.7728, 30.20887],
+        [-97.77485, 30.2049]
+      ]
+    ]
   },
   {
     "id": "east-riverside-oltorf",
@@ -20025,6 +20087,46 @@
     "status": "candidate"
   },
   {
+    "id": "franklin-park",
+    "name": "Franklin Park",
+    "lat": 30.196959,
+    "lon": -97.753191,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "FRANKLIN PARK",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "shape": [
+      [
+        [-97.746, 30.18205],
+        [-97.73289, 30.2028],
+        [-97.73313, 30.20346],
+        [-97.75334, 30.21332],
+        [-97.75769, 30.2063],
+        [-97.76396, 30.19843],
+        [-97.75955, 30.19619],
+        [-97.76069, 30.19451],
+        [-97.76058, 30.19311],
+        [-97.75711, 30.18948],
+        [-97.75421, 30.18743],
+        [-97.75436, 30.18719],
+        [-97.75231, 30.18533],
+        [-97.75261, 30.18492],
+        [-97.75205, 30.18441],
+        [-97.75232, 30.18326],
+        [-97.75, 30.18272],
+        [-97.74965, 30.18329],
+        [-97.74842, 30.18314],
+        [-97.746, 30.18205]
+      ]
+    ]
+  },
+  {
     "id": "garden-valley-village",
     "name": "Garden Valley Village",
     "lat": 30.223589,
@@ -20038,6 +20140,37 @@
     "sourceRef": "node/5664327666",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "gateway",
+    "name": "Gateway",
+    "lat": 30.387805,
+    "lon": -97.73888,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "GATEWAY",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.73771, 30.3794],
+        [-97.73266, 30.39546],
+        [-97.74174, 30.40019],
+        [-97.746, 30.40036],
+        [-97.74649, 30.39262],
+        [-97.74086, 30.38156],
+        [-97.73847, 30.38085],
+        [-97.73812, 30.38027],
+        [-97.7383, 30.37971],
+        [-97.73771, 30.3794]
+      ]
+    ]
   },
   {
     "id": "glen-ridge",
@@ -20323,6 +20456,25 @@
     "sourceRef": "node/8455007090",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "horizon-lake",
+    "name": "Horizon Lake",
+    "lat": 30.576931,
+    "lon": -97.844734,
+    "category": "neighborhood",
+    "tier": "suburb",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "node/9424161216",
+    "source": "osm-place",
+    "status": "candidate",
+    "osmTags": {
+      "natural": "water"
+    },
+    "alsoIn": ["osm-poi"]
   },
   {
     "id": "hunters-chase",
@@ -20865,6 +21017,80 @@
     "status": "candidate"
   },
   {
+    "id": "mckinney",
+    "name": "Mckinney",
+    "lat": 30.199453,
+    "lon": -97.731706,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "MCKINNEY",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.70927, 30.20112],
+        [-97.71321, 30.20385],
+        [-97.71673, 30.20563],
+        [-97.71229, 30.21222],
+        [-97.73881, 30.21609],
+        [-97.744, 30.21646],
+        [-97.75182, 30.2158],
+        [-97.75334, 30.21332],
+        [-97.73313, 30.20346],
+        [-97.73289, 30.2028],
+        [-97.74629, 30.18159],
+        [-97.74536, 30.18032],
+        [-97.74468, 30.18018],
+        [-97.74312, 30.18092],
+        [-97.74138, 30.1836],
+        [-97.74174, 30.18534],
+        [-97.74089, 30.18604],
+        [-97.74007, 30.18582],
+        [-97.73768, 30.183],
+        [-97.7365, 30.1832],
+        [-97.73604, 30.18389],
+        [-97.73598, 30.18572],
+        [-97.73383, 30.18764],
+        [-97.73354, 30.18887],
+        [-97.73044, 30.19059],
+        [-97.72699, 30.19023],
+        [-97.72398, 30.19274],
+        [-97.72369, 30.19441],
+        [-97.72275, 30.19505],
+        [-97.72025, 30.19867],
+        [-97.71845, 30.19763],
+        [-97.71693, 30.19986],
+        [-97.71352, 30.19723],
+        [-97.70927, 30.20112]
+      ]
+    ]
+  },
+  {
+    "id": "meadow-lake",
+    "name": "Meadow Lake",
+    "lat": 30.550431,
+    "lon": -97.664238,
+    "category": "neighborhood",
+    "tier": "suburb",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "node/5636127719",
+    "source": "osm-place",
+    "status": "candidate",
+    "osmTags": {
+      "natural": "water"
+    },
+    "alsoIn": ["osm-poi"]
+  },
+  {
     "id": "meadow-lake-heights",
     "name": "Meadow Lake Heights",
     "lat": 30.106793,
@@ -21000,6 +21226,129 @@
     "status": "candidate"
   },
   {
+    "id": "mlk",
+    "name": "MLK",
+    "lat": 30.287346,
+    "lon": -97.69483,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "MLK",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 2,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.68262, 30.28587],
+        [-97.67777, 30.29361],
+        [-97.68706, 30.29819],
+        [-97.68921, 30.29463],
+        [-97.68929, 30.29139],
+        [-97.69008, 30.29011],
+        [-97.69074, 30.28978],
+        [-97.69173, 30.28943],
+        [-97.69575, 30.29014],
+        [-97.70131, 30.28754],
+        [-97.70536, 30.28919],
+        [-97.70712, 30.28921],
+        [-97.70633, 30.28627],
+        [-97.70034, 30.27687],
+        [-97.68705, 30.27899],
+        [-97.68262, 30.28587]
+      ],
+      [
+        [-97.69551, 30.26563],
+        [-97.68705, 30.27899],
+        [-97.70034, 30.27687],
+        [-97.69791, 30.27356],
+        [-97.69551, 30.26563]
+      ]
+    ]
+  },
+  {
+    "id": "mlk-183",
+    "name": "MLK-183",
+    "lat": 30.283742,
+    "lon": -97.66199,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "MLK-183",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 3,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.67255, 30.26369],
+        [-97.67031, 30.26358],
+        [-97.66516, 30.26426],
+        [-97.66287, 30.26555],
+        [-97.66163, 30.26734],
+        [-97.65582, 30.28219],
+        [-97.65614, 30.28954],
+        [-97.65447, 30.29874],
+        [-97.65254, 30.30225],
+        [-97.65548, 30.30323],
+        [-97.6611, 30.30265],
+        [-97.66327, 30.29323],
+        [-97.67014, 30.26798],
+        [-97.67255, 30.26369]
+      ],
+      [
+        [-97.66937, 30.28638],
+        [-97.67251, 30.28682],
+        [-97.68262, 30.28587],
+        [-97.69551, 30.26563],
+        [-97.69459, 30.26254],
+        [-97.68324, 30.26559],
+        [-97.67847, 30.26513],
+        [-97.67751, 30.26687],
+        [-97.67802, 30.26778],
+        [-97.67873, 30.26799],
+        [-97.67871, 30.26724],
+        [-97.67913, 30.26716],
+        [-97.67957, 30.26804],
+        [-97.67836, 30.26999],
+        [-97.67917, 30.27045],
+        [-97.67915, 30.2699],
+        [-97.67999, 30.27012],
+        [-97.67144, 30.28324],
+        [-97.67174, 30.28392],
+        [-97.67077, 30.28425],
+        [-97.66937, 30.28638]
+      ],
+      [
+        [-97.67255, 30.26369],
+        [-97.67014, 30.26798],
+        [-97.6654, 30.2857],
+        [-97.66937, 30.28638],
+        [-97.67077, 30.28425],
+        [-97.67174, 30.28392],
+        [-97.67144, 30.28324],
+        [-97.67999, 30.27012],
+        [-97.67915, 30.2699],
+        [-97.67917, 30.27045],
+        [-97.67836, 30.26999],
+        [-97.67957, 30.26804],
+        [-97.67913, 30.26716],
+        [-97.67871, 30.26724],
+        [-97.67873, 30.26799],
+        [-97.67802, 30.26778],
+        [-97.67751, 30.26687],
+        [-97.67847, 30.26513],
+        [-97.67255, 30.26369]
+      ]
+    ]
+  },
+  {
     "id": "mountain-creek",
     "name": "Mountain Creek",
     "lat": 30.430283,
@@ -21043,6 +21392,46 @@
     "sourceRef": "node/6365304604",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "north-austin-civic-association",
+    "name": "North Austin Civic Association",
+    "lat": 30.370112,
+    "lon": -97.709228,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "NORTH AUSTIN CIVIC ASSOCIATION",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.68771, 30.37955],
+        [-97.69412, 30.38267],
+        [-97.69791, 30.38272],
+        [-97.71038, 30.38874],
+        [-97.71467, 30.38181],
+        [-97.71646, 30.37976],
+        [-97.7173, 30.37667],
+        [-97.71887, 30.37529],
+        [-97.72139, 30.37475],
+        [-97.72178, 30.37387],
+        [-97.72118, 30.3719],
+        [-97.72167, 30.37097],
+        [-97.71982, 30.36912],
+        [-97.71905, 30.36775],
+        [-97.71411, 30.35116],
+        [-97.71271, 30.34759],
+        [-97.71043, 30.34988],
+        [-97.7004, 30.35728],
+        [-97.68771, 30.37955]
+      ]
+    ]
   },
   {
     "id": "north-cat-mountain",
@@ -21103,6 +21492,35 @@
     "sourceRef": "node/5635916481",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "north-shoal-creek",
+    "name": "North Shoal Creek",
+    "lat": 30.366753,
+    "lon": -97.735046,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "NORTH SHOAL CREEK",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.72642, 30.37312],
+        [-97.73771, 30.3794],
+        [-97.73933, 30.37651],
+        [-97.74134, 30.37155],
+        [-97.74458, 30.3613],
+        [-97.74083, 30.36108],
+        [-97.73087, 30.35622],
+        [-97.72642, 30.37312]
+      ]
+    ]
   },
   {
     "id": "north-star",
@@ -21345,6 +21763,25 @@
     "status": "candidate"
   },
   {
+    "id": "paloma-lake",
+    "name": "Paloma Lake",
+    "lat": 30.560098,
+    "lon": -97.615871,
+    "category": "neighborhood",
+    "tier": "suburb",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "node/5632893815",
+    "source": "osm-place",
+    "status": "candidate",
+    "osmTags": {
+      "natural": "water"
+    },
+    "alsoIn": ["osm-poi"]
+  },
+  {
     "id": "palomba-at-flintrock",
     "name": "Palomba at Flintrock",
     "lat": 30.331503,
@@ -21418,6 +21855,42 @@
     "sourceRef": "node/5657308154",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "parker-lane",
+    "name": "Parker Lane",
+    "lat": 30.222484,
+    "lon": -97.732182,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "PARKER LANE",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.71229, 30.21222],
+        [-97.71043, 30.21508],
+        [-97.72033, 30.22004],
+        [-97.72292, 30.2242],
+        [-97.7243, 30.22566],
+        [-97.72883, 30.22801],
+        [-97.7308, 30.22971],
+        [-97.73357, 30.23092],
+        [-97.73492, 30.23104],
+        [-97.73939, 30.23335],
+        [-97.74127, 30.23377],
+        [-97.75182, 30.2158],
+        [-97.74514, 30.21647],
+        [-97.73881, 30.21609],
+        [-97.71229, 30.21222]
+      ]
+    ]
   },
   {
     "id": "parkside-at-mayfield-ranch",
@@ -21705,21 +22178,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "node/6078086628",
-    "source": "osm-place",
-    "status": "candidate"
-  },
-  {
-    "id": "rainey-street-historic-district",
-    "name": "Rainey Street Historic District",
-    "lat": 30.258231,
-    "lon": -97.738788,
-    "category": "neighborhood",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/5018989160",
     "source": "osm-place",
     "status": "candidate"
   },
@@ -22219,6 +22677,70 @@
     "status": "candidate"
   },
   {
+    "id": "south-lamar",
+    "name": "South Lamar",
+    "lat": 30.237767,
+    "lon": -97.77937,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "SOUTH LAMAR",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.769, 30.24602],
+        [-97.76995, 30.24849],
+        [-97.77814, 30.24653],
+        [-97.79628, 30.23398],
+        [-97.79206, 30.23145],
+        [-97.78462, 30.22789],
+        [-97.78143, 30.22753],
+        [-97.77648, 30.22763],
+        [-97.77108, 30.24303],
+        [-97.769, 30.24602]
+      ]
+    ]
+  },
+  {
+    "id": "southeast",
+    "name": "Southeast",
+    "lat": 30.209798,
+    "lon": -97.695865,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "SOUTHEAST",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "shape": [
+      [
+        [-97.6866, 30.22081],
+        [-97.68646, 30.22048],
+        [-97.69125, 30.21804],
+        [-97.7083, 30.21242],
+        [-97.71239, 30.21204],
+        [-97.71673, 30.20563],
+        [-97.71078, 30.20233],
+        [-97.68779, 30.18298],
+        [-97.68519, 30.19223],
+        [-97.68348, 30.20551],
+        [-97.6834, 30.21981],
+        [-97.68441, 30.2206],
+        [-97.6866, 30.22081]
+      ]
+    ]
+  },
+  {
     "id": "southeast-austin",
     "name": "Southeast Austin",
     "lat": 30.202593,
@@ -22669,6 +23191,25 @@
     "status": "candidate"
   },
   {
+    "id": "the-arboretum",
+    "name": "The Arboretum",
+    "lat": 30.390928,
+    "lon": -97.749878,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "node/6078086631",
+    "source": "osm-place",
+    "status": "candidate",
+    "osmTags": {
+      "shop": "mall"
+    },
+    "alsoIn": ["osm-poi"]
+  },
+  {
     "id": "the-bluffs-of-great-hills",
     "name": "The Bluffs of Great Hills",
     "lat": 30.390595,
@@ -22999,21 +23540,6 @@
     "status": "candidate"
   },
   {
-    "id": "travis-heights",
-    "name": "Travis Heights",
-    "lat": 30.244474,
-    "lon": -97.744,
-    "category": "neighborhood",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "node/5018964612",
-    "source": "osm-place",
-    "status": "candidate"
-  },
-  {
     "id": "travis-oak-trails",
     "name": "Travis Oak Trails",
     "lat": 30.345902,
@@ -23042,6 +23568,36 @@
     "sourceRef": "node/8406648395",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "triangle-state",
+    "name": "Triangle State",
+    "lat": 30.314452,
+    "lon": -97.728302,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "TRIANGLE STATE",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "shape": [
+      [
+        [-97.72339, 30.31594],
+        [-97.72539, 30.31632],
+        [-97.73091, 30.3188],
+        [-97.7322, 30.31678],
+        [-97.73642, 30.31518],
+        [-97.74302, 30.30525],
+        [-97.73815, 30.30275],
+        [-97.73112, 30.31368],
+        [-97.72638, 30.3114],
+        [-97.72339, 30.31594]
+      ]
+    ]
   },
   {
     "id": "turtle-creek-village",
@@ -23321,6 +23877,50 @@
     "status": "candidate"
   },
   {
+    "id": "west-austin-neighborhood-group",
+    "name": "West Austin Neighborhood Group",
+    "lat": 30.295855,
+    "lon": -97.767772,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "WEST AUSTIN NEIGHBORHOOD GROUP",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "shape": [
+      [
+        [-97.76374, 30.28589],
+        [-97.76043, 30.29086],
+        [-97.7593, 30.29367],
+        [-97.75799, 30.29841],
+        [-97.75831, 30.30355],
+        [-97.75719, 30.30897],
+        [-97.76163, 30.30996],
+        [-97.76418, 30.31185],
+        [-97.76905, 30.31453],
+        [-97.77293, 30.31274],
+        [-97.77384, 30.3126],
+        [-97.77635, 30.31318],
+        [-97.77669, 30.31127],
+        [-97.77852, 30.30651],
+        [-97.78432, 30.30012],
+        [-97.78562, 30.29804],
+        [-97.78663, 30.29515],
+        [-97.78633, 30.2889],
+        [-97.78546, 30.28638],
+        [-97.7829, 30.28274],
+        [-97.77985, 30.28003],
+        [-97.77326, 30.27509],
+        [-97.77123, 30.27418],
+        [-97.76374, 30.28589]
+      ]
+    ]
+  },
+  {
     "id": "west-campus",
     "name": "West Campus",
     "lat": 30.290208,
@@ -23334,6 +23934,83 @@
     "sourceRef": "node/5019008247",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "west-congress",
+    "name": "West Congress",
+    "lat": 30.215886,
+    "lon": -97.773083,
+    "category": "neighborhood",
+    "tier": "urban",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "WEST CONGRESS",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 5,
+    "alsoIn": ["osm-place"],
+    "shape": [
+      [
+        [-97.77275, 30.21763],
+        [-97.77254, 30.2158],
+        [-97.7746, 30.21587],
+        [-97.7751, 30.21752],
+        [-97.78148, 30.20854],
+        [-97.77904, 30.20728],
+        [-97.77841, 30.20822],
+        [-97.77869, 30.20841],
+        [-97.7774, 30.20894],
+        [-97.77633, 30.21006],
+        [-97.77304, 30.20847],
+        [-97.76401, 30.22278],
+        [-97.76951, 30.22638],
+        [-97.77003, 30.22568],
+        [-97.76815, 30.22478],
+        [-97.76904, 30.22337],
+        [-97.77089, 30.22427],
+        [-97.77388, 30.21942],
+        [-97.77237, 30.21855],
+        [-97.77263, 30.2176],
+        [-97.77109, 30.22019],
+        [-97.76923, 30.2193],
+        [-97.77083, 30.21675],
+        [-97.77275, 30.21763]
+      ],
+      [
+        [-97.77485, 30.2049],
+        [-97.77304, 30.20847],
+        [-97.77633, 30.21006],
+        [-97.7774, 30.20894],
+        [-97.77869, 30.20841],
+        [-97.77841, 30.20822],
+        [-97.77904, 30.20728],
+        [-97.77485, 30.2049]
+      ],
+      [
+        [-97.7751, 30.21752],
+        [-97.7746, 30.21587],
+        [-97.77254, 30.2158],
+        [-97.77255, 30.21878],
+        [-97.77388, 30.21942],
+        [-97.7751, 30.21752]
+      ],
+      [
+        [-97.77263, 30.2176],
+        [-97.77083, 30.21675],
+        [-97.76923, 30.2193],
+        [-97.77109, 30.22019],
+        [-97.77263, 30.2176]
+      ],
+      [
+        [-97.77089, 30.22427],
+        [-97.76904, 30.22337],
+        [-97.76815, 30.22478],
+        [-97.77003, 30.22568],
+        [-97.77089, 30.22427]
+      ]
+    ]
   },
   {
     "id": "west-sixth",
@@ -23454,6 +24131,46 @@
     "sourceRef": "node/5019008244",
     "source": "osm-place",
     "status": "candidate"
+  },
+  {
+    "id": "windsor-road",
+    "name": "Windsor Road",
+    "lat": 30.296708,
+    "lon": -97.751409,
+    "category": "neighborhood",
+    "tier": "central",
+    "difficulty": null,
+    "story": null,
+    "storySource": null,
+    "storyUrl": null,
+    "sourceRef": "WINDSOR ROAD",
+    "source": "coa-npa",
+    "status": "candidate",
+    "fragments": 1,
+    "shape": [
+      [
+        [-97.74801, 30.3072],
+        [-97.75053, 30.30705],
+        [-97.75163, 30.30781],
+        [-97.75719, 30.30897],
+        [-97.75831, 30.30355],
+        [-97.75799, 30.29841],
+        [-97.75985, 30.29209],
+        [-97.75726, 30.29083],
+        [-97.7557, 30.28909],
+        [-97.75284, 30.28855],
+        [-97.7505, 30.29159],
+        [-97.74749, 30.29221],
+        [-97.74706, 30.29285],
+        [-97.74725, 30.29382],
+        [-97.74897, 30.2964],
+        [-97.74891, 30.29725],
+        [-97.74847, 30.29821],
+        [-97.74705, 30.29907],
+        [-97.74302, 30.30525],
+        [-97.74801, 30.3072]
+      ]
+    ]
   },
   {
     "id": "woodcliff",
@@ -26033,24 +26750,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "way/585510789",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "park"
-    }
-  },
-  {
-    "id": "caldwell-treaty-oak-park",
-    "name": "Caldwell Treaty Oak Park",
-    "lat": 30.271225,
-    "lon": -97.755504,
-    "category": "park",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/210646847",
     "source": "osm-poi",
     "status": "candidate",
     "osmTags": {
@@ -29795,25 +30494,6 @@
     }
   },
   {
-    "id": "hippie-hollow-park",
-    "name": "Hippie Hollow Park",
-    "lat": 30.413247,
-    "lon": -97.883256,
-    "category": "park",
-    "tier": "suburb",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/201864155",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "park",
-      "wikidata": "Q5768318"
-    }
-  },
-  {
     "id": "historic-stagecoach-park",
     "name": "Historic Stagecoach Park",
     "lat": 30.090515,
@@ -31946,25 +32626,6 @@
     "status": "candidate",
     "osmTags": {
       "leisure": "park"
-    }
-  },
-  {
-    "id": "mayfield-park",
-    "name": "Mayfield Park",
-    "lat": 30.312586,
-    "lon": -97.771095,
-    "category": "park",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/392384616",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "park",
-      "wikidata": "Q49523000"
     }
   },
   {
@@ -34228,24 +34889,6 @@
     "storySource": null,
     "storyUrl": null,
     "sourceRef": "way/285363400",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "park"
-    }
-  },
-  {
-    "id": "red-bud-isle",
-    "name": "Red Bud Isle",
-    "lat": 30.29059,
-    "lon": -97.786714,
-    "category": "park",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "relation/14467114",
     "source": "osm-poi",
     "status": "candidate",
     "osmTags": {
@@ -36536,24 +37179,6 @@
     }
   },
   {
-    "id": "the-contemporary-austin-laguna-gloria",
-    "name": "The Contemporary Austin - Laguna Gloria",
-    "lat": 30.311276,
-    "lon": -97.774055,
-    "category": "park",
-    "tier": "central",
-    "difficulty": null,
-    "story": null,
-    "storySource": null,
-    "storyUrl": null,
-    "sourceRef": "way/971380188",
-    "source": "osm-poi",
-    "status": "candidate",
-    "osmTags": {
-      "leisure": "park"
-    }
-  },
-  {
     "id": "the-denizen-park",
     "name": "The Denizen Park",
     "lat": 30.237756,
@@ -38434,6 +39059,23 @@
     "osmTags": {
       "shop": "mall"
     }
+  },
+  {
+    "id": "the-hideout-theatre",
+    "tier": "central",
+    "name": "The Hideout Theatre",
+    "lat": 30.268571,
+    "lon": -97.742226,
+    "category": "venue",
+    "difficulty": 3,
+    "story": "An improv theatre and coffeehouse on Congress Avenue downtown.",
+    "extra": null,
+    "storySource": "hand",
+    "storyUrl": null,
+    "sourceRef": "node/338450996",
+    "source": "osm-poi",
+    "status": "candidate",
+    "notes": "Left 617 Congress in 2026; OSM point is the old address, now becoming a bar. Re-add at 5555 N Lamar if wanted."
   },
   {
     "id": "the-shops-at-whitestone",
