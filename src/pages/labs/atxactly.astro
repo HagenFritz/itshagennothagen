@@ -296,8 +296,11 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
        blown out by this, but the fallback only applies without a key. */
     filter: brightness(2.6) contrast(1.45) saturate(0.7);
   }
+  /* dark_all is as dark as dark_nolabels, so the results map needs nearly the
+     same lift. The old 1.35 was tuned for the bright OSM fallback and left
+     streets and labels almost invisible once the CARTO key was in place. */
   #mt-tiles.labelled {
-    filter: brightness(1.35) contrast(1.15) saturate(0.8);
+    filter: brightness(2.8) contrast(1.45) saturate(0.9);
   }
   #mt-over {
     touch-action: none;
@@ -1483,24 +1486,43 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     drawTiles()
     drawOverlay()
   }
-  // Squares read as a spoiler-free summary: orange near-perfect, amber close,
-  // grey rough, dark for a miss.
+  // Short link, served by the /atxactly rule in public/_redirects.
+  const SHARE_URL = 'itshagennothagen.dev/atxactly'
+
+  // One emoji per ten points, strictly descending so a better round never
+  // draws a worse badge. 100 gets its own so a perfect guess is visible.
+  const SCORE_EMOJI = [
+    [100, '\u{1F3AF}'],
+    [90, '\u{1F3C6}'],
+    [80, '\u{1F525}'],
+    [70, '\u{1F601}'],
+    [60, '\u{1F44F}'],
+    [50, '\u{1F44D}'],
+    [40, '\u{1F610}'],
+    [30, '\u{1F615}'],
+    [20, '\u{1F62C}'],
+    [10, '\u{1F976}'],
+    [0, '\u{1F480}'],
+  ] as const
+
+  function scoreEmoji(base: number) {
+    for (const [floor, emoji] of SCORE_EMOJI) if (base >= floor) return emoji
+    return SCORE_EMOJI[SCORE_EMOJI.length - 1][1]
+  }
+
   function shareGrid() {
     return results
-      .map((r) =>
-        r.base >= 90
-          ? '\u{1F7E7}'
-          : r.base >= 70
-            ? '\u{1F7E8}'
-            : r.base >= 40
-              ? '\u2B1C'
-              : '\u2B1B',
-      )
-      .join('')
+      .map((r) => `${Math.round(r.base)}${scoreEmoji(r.base)}`)
+      .join(' ')
   }
 
   elShare.addEventListener('click', async () => {
-    const text = `ATXactly #${puzzleNo} \u2014 ${Math.round(total)}/${MAX_TOTAL}\n${shareGrid()}`
+    const day = new Date().toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    })
+    const text = `${SHARE_URL} ${day}\n${shareGrid()}\nFinal score: ${Math.round(total)}`
     try {
       await navigator.clipboard.writeText(text)
       elBreak.hidden = true

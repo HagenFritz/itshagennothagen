@@ -1,0 +1,3 @@
+# Short link for the share text. Keep in sync with SHARE_URL in
+# src/pages/labs/atxactly.astro.
+/atxactly /labs/atxactly 301
