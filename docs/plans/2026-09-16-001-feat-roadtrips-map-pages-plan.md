@@ -686,7 +686,7 @@ nearest-point, and route-to-SVG-path, importable from Astro frontmatter.
   `ERR_UNKNOWN_FILE_EXTENSION ".ts"` ever appears, the fix is
   `vite.ssr.noExternal: ['tile-map']` in `astro.config.mjs`.
 
-- [ ] **Unit 2: Runtime: tile loader, camera, pointer handling,
+- [x] **Unit 2: Runtime: tile loader, camera, pointer handling,
       `createTileMap`**
 
 **Goal:** A DOM-backed map factory that owns two DPR-aware canvases, loads CARTO
