@@ -785,7 +785,7 @@ receives a `view` object with `project`, `unproject`, `zoom` (fractional),
 
 ### Phase B: migrate the existing consumer
 
-- [ ] **Unit 3: Migrate `austin-pogo-map.astro` onto `tile-map`**
+- [x] **Unit 3: Migrate `austin-pogo-map.astro` onto `tile-map`**
 
 **Goal:** The pogo map renders through the package with no loss of behavior
 (radius scoring, filters, hover labels, venue list, locate buttons, reset, scale

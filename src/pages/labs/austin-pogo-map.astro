@@ -20,6 +20,10 @@ const venueAreas = [
   ...new Set(venues.map((v) => v.area).filter(Boolean)),
 ].sort()
 const kinds = [...new Set(venues.map((v) => v.kind))].sort()
+
+// Keyless CARTO returns a watermarked tile with HTTP 200, so the package falls
+// back to Esri when the key is empty rather than rendering the watermark.
+const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 ---
 
 <Base title="Austin Pokémon GO Map · Hagen Fritz">
@@ -58,7 +62,12 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
   <div
     class="relative mt-4 overflow-hidden rounded-lg border border-border bg-card"
   >
-    <canvas id="map" width="1000" height="660" class="block w-full"></canvas>
+    <div
+      id="map"
+      data-carto-key={cartoKey}
+      class="relative aspect-[1000/660] w-full"
+    >
+    </div>
     <div class="absolute right-2 top-2 flex flex-col gap-1">
       <button
         id="zoom-in"
@@ -76,11 +85,14 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     <div
       class="absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground"
     >
-      ©&nbsp;<a
-        href="https://www.openstreetmap.org/copyright"
-        class="underline underline-offset-2">OpenStreetMap</a
-      >
+      <span id="attribution"></span>
     </div>
+    <style>
+      #attribution a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+    </style>
   </div>
 
   <div
@@ -98,7 +110,7 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
       <span class="inline-block h-2.5 w-2.5 rounded-full bg-navy-bright"></span>
       Gym
     </span>
-    <span>Hover a gym for its name · drag to pan</span>
+    <span>Hover a gym for its name · drag to pan · scroll to zoom</span>
   </div>
 
   <div class="mt-6 flex flex-wrap items-start gap-2">
@@ -265,34 +277,29 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
 <script>
   import gymsData from '../../data/pogo-gyms.json'
   import venuesData from '../../data/pogo-venues.json'
+  import {
+    boundsOf,
+    cartoDark,
+    createTileMap,
+    haversineMeters,
+    nearest,
+    OVERLAY_CLASS,
+    type LatLon,
+    type MapView,
+  } from 'tile-map'
 
   type Point = { name: string; lat: number; lon: number }
   type VenuePoint = Point & { kind: string; area?: string }
   const gyms = gymsData as Point[]
   const venues = venuesData as VenuePoint[]
 
-  const TILE = 256
-  const canvas = document.getElementById('map') as HTMLCanvasElement
-  const ctx = canvas.getContext('2d')!
+  const container = document.getElementById('map') as HTMLElement
   const radiusInput = document.getElementById('radius') as HTMLInputElement
   const radiusVal = document.getElementById('radius-val')!
 
-  const bounds = {
-    minLat: Math.min(...[...gyms, ...venues].map((p) => p.lat)),
-    maxLat: Math.max(...[...gyms, ...venues].map((p) => p.lat)),
-    minLon: Math.min(...[...gyms, ...venues].map((p) => p.lon)),
-    maxLon: Math.max(...[...gyms, ...venues].map((p) => p.lon)),
-  }
-  const home = {
-    lat: (bounds.minLat + bounds.maxLat) / 2,
-    lon: (bounds.minLon + bounds.maxLon) / 2,
-  }
-
-  let zoom = 13
-  let center = { ...home }
   let radius = 80
   let selected: string | null = null
-  let hovered: { name: string; lat: number; lon: number } | null = null
+  let hovered: Point | null = null
   const filters: Record<string, Set<string>> = {
     coverage: new Set(),
     kind: new Set(),
@@ -304,7 +311,7 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
       if (filters.kind.size && !filters.kind.has(v.kind)) return false
       if (filters.area.size && !filters.area.has(v.area ?? '')) return false
       if (filters.coverage.size) {
-        const hits = gyms.filter((g) => metersBetween(v, g) <= radius).length
+        const hits = gyms.filter((g) => haversineMeters(v, g) <= radius).length
         // OR across selected thresholds: 1+ is satisfied by anything >= 1
         const ok = [...filters.coverage].some((t) => hits >= Number(t))
         if (!ok) return false
@@ -313,94 +320,21 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     })
   }
 
-  const lonToX = (lon: number, z: number) =>
-    ((lon + 180) / 360) * Math.pow(2, z) * TILE
-  const latToY = (lat: number, z: number) => {
-    const s = Math.sin((lat * Math.PI) / 180)
-    return (
-      (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) *
-      Math.pow(2, z) *
-      TILE
-    )
-  }
-  const xToLon = (x: number, z: number) =>
-    (x / (Math.pow(2, z) * TILE)) * 360 - 180
-  const yToLat = (y: number, z: number) => {
-    const n = Math.PI - (2 * Math.PI * y) / (Math.pow(2, z) * TILE)
-    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+  // Padded so a user zoomed to 18 can still centre on a gym at the edge of the
+  // data rather than having the clamp pull them back off it.
+  const raw = boundsOf([...gyms, ...venues])
+  const pad = 0.02
+  const bounds = {
+    minLat: raw.minLat - pad,
+    maxLat: raw.maxLat + pad,
+    minLon: raw.minLon - pad,
+    maxLon: raw.maxLon + pad,
   }
 
-  const project = (lat: number, lon: number) => ({
-    x: lonToX(lon, zoom) - lonToX(center.lon, zoom) + canvas.width / 2,
-    y: latToY(lat, zoom) - latToY(center.lat, zoom) + canvas.height / 2,
-  })
-  const unproject = (px: number, py: number) => ({
-    lat: yToLat(latToY(center.lat, zoom) - canvas.height / 2 + py, zoom),
-    lon: xToLon(lonToX(center.lon, zoom) - canvas.width / 2 + px, zoom),
-  })
-  const metersPerPixel = () =>
-    (156543.03392 * Math.cos((center.lat * Math.PI) / 180)) / Math.pow(2, zoom)
-
-  function metersBetween(a: Point, b: Point) {
-    const R = 6371000
-    const rad = Math.PI / 180
-    const dLat = (b.lat - a.lat) * rad
-    const dLon = (b.lon - a.lon) * rad
-    const h =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2
-    return 2 * R * Math.asin(Math.sqrt(h))
-  }
-
-  const tiles = new Map<string, HTMLImageElement>()
-  function getTile(tx: number, ty: number, z: number) {
-    const key = `${z}/${tx}/${ty}`
-    const cached = tiles.get(key)
-    if (cached) return cached
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => draw()
-    img.onerror = () => img.setAttribute('data-failed', 'true')
-    img.src = `https://tile.openstreetmap.org/${z}/${tx}/${ty}.png`
-    tiles.set(key, img)
-    return img
-  }
-
-  function draw() {
-    ctx.fillStyle = '#131a2e'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-    const ox = lonToX(center.lon, zoom) - canvas.width / 2
-    const oy = latToY(center.lat, zoom) - canvas.height / 2
-    const span = Math.pow(2, zoom)
-    for (
-      let tx = Math.floor(ox / TILE);
-      tx <= Math.floor((ox + canvas.width) / TILE);
-      tx++
-    ) {
-      for (
-        let ty = Math.floor(oy / TILE);
-        ty <= Math.floor((oy + canvas.height) / TILE);
-        ty++
-      ) {
-        if (ty < 0 || ty >= span) continue
-        const img = getTile(((tx % span) + span) % span, ty, zoom)
-        if (img.complete && !img.hasAttribute('data-failed')) {
-          ctx.drawImage(img, tx * TILE - ox, ty * TILE - oy, TILE, TILE)
-        }
-      }
-    }
-
-    ctx.globalCompositeOperation = 'multiply'
-    ctx.fillStyle = 'rgba(19,26,46,0.85)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.globalCompositeOperation = 'source-over'
-    ctx.fillStyle = 'rgba(11,15,26,0.25)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-    const rPx = radius / metersPerPixel()
+  function draw(ctx: CanvasRenderingContext2D, view: MapView) {
+    const rPx = radius / view.metersPerPixel
     for (const g of gyms) {
-      const p = project(g.lat, g.lon)
+      const p = view.project(g)
       ctx.beginPath()
       ctx.arc(p.x, p.y, rPx, 0, Math.PI * 2)
       ctx.fillStyle = 'rgba(59,91,219,0.12)'
@@ -412,15 +346,12 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
       ctx.setLineDash([])
     }
 
-    for (const g of gyms) {
-      const p = project(g.lat, g.lon)
-      circle(p, 4.5, '#3b5bdb')
-    }
+    for (const g of gyms) circle(ctx, view.project(g), 4.5, '#3b5bdb')
 
     const shown = visibleVenues()
     for (const v of shown) {
-      const p = project(v.lat, v.lon)
-      const hits = gyms.filter((g) => metersBetween(v, g) <= radius).length
+      const p = view.project(v)
+      const hits = gyms.filter((g) => haversineMeters(v, g) <= radius).length
       const isSel = v.name === selected
       const fill = hits >= 2 ? '#1f7a43' : '#c2410c'
       if (isSel) {
@@ -430,21 +361,26 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
         ctx.lineWidth = 1.5
         ctx.stroke()
       }
-      square(p, isSel ? 8 : 6.5, fill)
+      square(ctx, p, isSel ? 8 : 6.5, fill)
     }
 
     // labels last so they sit above every marker
-    if (hovered) label(project(hovered.lat, hovered.lon), hovered.name, true)
+    if (hovered) label(ctx, view.project(hovered), hovered.name, true)
     for (const v of shown) {
-      if (v.name === selected || (zoom >= 15 && !hovered)) {
-        label(project(v.lat, v.lon), v.name, false)
+      if (v.name === selected || (view.zoom >= 15 && !hovered)) {
+        label(ctx, view.project(v), v.name, false)
       }
     }
 
-    drawScale()
+    drawScale(ctx, view)
   }
 
-  function circle(p: { x: number; y: number }, r: number, fill: string) {
+  function circle(
+    ctx: CanvasRenderingContext2D,
+    p: { x: number; y: number },
+    r: number,
+    fill: string,
+  ) {
     ctx.beginPath()
     ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
     ctx.fillStyle = fill
@@ -454,7 +390,12 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     ctx.stroke()
   }
 
-  function square(p: { x: number; y: number }, size: number, fill: string) {
+  function square(
+    ctx: CanvasRenderingContext2D,
+    p: { x: number; y: number },
+    size: number,
+    fill: string,
+  ) {
     const h = size / 2
     const r = 1.5
     ctx.beginPath()
@@ -466,10 +407,14 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     ctx.stroke()
   }
 
-  function label(p: { x: number; y: number }, text: string, emphasis: boolean) {
+  function label(
+    ctx: CanvasRenderingContext2D,
+    p: { x: number; y: number },
+    text: string,
+    emphasis: boolean,
+  ) {
     ctx.font = '500 11.5px ui-sans-serif, system-ui, -apple-system, sans-serif'
     const padX = 7
-    const padY = 5
     const w = ctx.measureText(text).width
     const boxW = w + padX * 2
     const boxH = 22
@@ -492,15 +437,15 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     ctx.textBaseline = 'alphabetic'
   }
 
-  function drawScale() {
-    const mpp = metersPerPixel()
+  function drawScale(ctx: CanvasRenderingContext2D, view: MapView) {
+    const mpp = view.metersPerPixel
     const target = 110
     const choice = [50, 100, 200, 500, 1000, 2000].reduce((a, b) =>
       Math.abs(b / mpp - target) < Math.abs(a / mpp - target) ? b : a,
     )
     const px = choice / mpp
     const x = 16
-    const y = canvas.height - 20
+    const y = view.height - 20
     ctx.strokeStyle = '#eef2fb'
     ctx.lineWidth = 2
     ctx.beginPath()
@@ -514,6 +459,34 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     ctx.fillText(`${choice} m`, x + px + 7, y + 1)
   }
 
+  const map = createTileMap(container, {
+    source: cartoDark(container.dataset.cartoKey ?? ''),
+    bounds,
+    zoom: { min: 11, max: 18 },
+    padding: { top: 24, right: 24, bottom: 24, left: 24 },
+    onDraw: draw,
+    onHover: (px, py, view) => {
+      const best = nearest(gyms, px, py, view.project, 14)
+      map.setCursor(best ? 'pointer' : 'grab')
+      if (best?.name === hovered?.name) return
+      hovered = best
+      map.redraw()
+    },
+  })
+
+  document.getElementById('attribution')!.innerHTML = map.attribution()
+  map.setCursor('grab')
+
+  // The package reports hover but not leave, so the label would stick when the
+  // pointer exits the map.
+  container
+    .querySelector('.' + OVERLAY_CLASS)!
+    .addEventListener('pointerleave', () => {
+      if (!hovered) return
+      hovered = null
+      map.redraw()
+    })
+
   function renderList() {
     const shownNames = new Set(visibleVenues().map((v) => v.name))
     const count = document.getElementById('places-count')!
@@ -523,10 +496,12 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
         : `(${shownNames.size} of ${venues.length})`
     for (const card of document.querySelectorAll<HTMLElement>('.venue-card')) {
       card.hidden = !shownNames.has(card.dataset.name!)
-      const lat = Number(card.dataset.lat)
-      const lon = Number(card.dataset.lon)
+      const at: LatLon = {
+        lat: Number(card.dataset.lat),
+        lon: Number(card.dataset.lon),
+      }
       const ranked = gyms
-        .map((g) => ({ g, d: metersBetween({ name: '', lat, lon }, g) }))
+        .map((g) => ({ g, d: haversineMeters(at, g) }))
         .sort((a, b) => a.d - b.d)
       const inRange = ranked.filter((r) => r.d <= radius)
 
@@ -549,7 +524,7 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
   }
 
   function update() {
-    draw()
+    map.redraw()
     renderList()
   }
 
@@ -560,94 +535,31 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
   })
 
   document.getElementById('reset-view')!.addEventListener('click', () => {
-    center = { ...home }
-    zoom = 13
     selected = null
     for (const c of document.querySelectorAll('.venue-card'))
       c.classList.remove('border-primary')
-    draw()
+    map.fitBounds()
   })
 
-  function setZoom(next: number) {
-    const clamped = Math.max(11, Math.min(18, next))
-    if (clamped === zoom) return
-    zoom = clamped
-    draw()
-  }
   document
     .getElementById('zoom-in')!
-    .addEventListener('click', () => setZoom(zoom + 1))
+    .addEventListener('click', () => map.zoomBy(1))
   document
     .getElementById('zoom-out')!
-    .addEventListener('click', () => setZoom(zoom - 1))
+    .addEventListener('click', () => map.zoomBy(-1))
 
   for (const card of document.querySelectorAll<HTMLElement>('.venue-card')) {
     card.querySelector('.locate-btn')!.addEventListener('click', () => {
-      center = { lat: Number(card.dataset.lat), lon: Number(card.dataset.lon) }
-      zoom = 16
       selected = card.dataset.name ?? null
       for (const c of document.querySelectorAll('.venue-card'))
         c.classList.toggle('border-primary', c === card)
-      draw()
-      document
-        .getElementById('map')!
-        .scrollIntoView({ behavior: 'smooth', block: 'center' })
+      map.setView(
+        { lat: Number(card.dataset.lat), lon: Number(card.dataset.lon) },
+        16,
+      )
+      container.scrollIntoView({ behavior: 'smooth', block: 'center' })
     })
   }
-
-  let drag: { x: number; y: number } | null = null
-  canvas.addEventListener('pointerdown', (e) => {
-    const r = canvas.getBoundingClientRect()
-    const s = canvas.width / r.width
-    drag = { x: (e.clientX - r.left) * s, y: (e.clientY - r.top) * s }
-    canvas.setPointerCapture(e.pointerId)
-  })
-  canvas.addEventListener('pointermove', (e) => {
-    if (!drag) return
-    const r = canvas.getBoundingClientRect()
-    const s = canvas.width / r.width
-    const nx = (e.clientX - r.left) * s
-    const ny = (e.clientY - r.top) * s
-    center = {
-      lat: yToLat(latToY(center.lat, zoom) - (ny - drag.y), zoom),
-      lon: xToLon(lonToX(center.lon, zoom) - (nx - drag.x), zoom),
-    }
-    drag = { x: nx, y: ny }
-    draw()
-  })
-  canvas.addEventListener('pointerup', () => {
-    drag = null
-  })
-
-  canvas.addEventListener('pointermove', (e) => {
-    if (drag) return
-    const r = canvas.getBoundingClientRect()
-    const s = canvas.width / r.width
-    const mx = (e.clientX - r.left) * s
-    const my = (e.clientY - r.top) * s
-    let best: typeof hovered = null
-    let bestD = 14
-    for (const g of gyms) {
-      const p = project(g.lat, g.lon)
-      const d = Math.hypot(p.x - mx, p.y - my)
-      if (d < bestD) {
-        bestD = d
-        best = g
-      }
-    }
-    if (best?.name !== hovered?.name) {
-      hovered = best
-      canvas.style.cursor = best ? 'pointer' : 'grab'
-      draw()
-    }
-  })
-
-  canvas.addEventListener('pointerleave', () => {
-    if (hovered) {
-      hovered = null
-      draw()
-    }
-  })
 
   const menus = [
     ...document.querySelectorAll<HTMLDetailsElement>('.filter-menu'),
@@ -710,32 +622,6 @@ const kinds = [...new Set(venues.map((v) => v.kind))].sort()
     if (e.key !== 'Escape') return
     for (const menu of menus) menu.open = false
   })
-  let wheelAccum = 0
-  canvas.addEventListener(
-    'wheel',
-    (e) => {
-      e.preventDefault()
-      wheelAccum += e.deltaY
-      if (Math.abs(wheelAccum) < 120) return
-      const step = wheelAccum < 0 ? 1 : -1
-      wheelAccum = 0
-      const r = canvas.getBoundingClientRect()
-      const s = canvas.width / r.width
-      const px = (e.clientX - r.left) * s
-      const py = (e.clientY - r.top) * s
-      const before = unproject(px, py)
-      const next = Math.max(11, Math.min(18, zoom + step))
-      if (next === zoom) return
-      zoom = next
-      const after = unproject(px, py)
-      center = {
-        lat: center.lat + (before.lat - after.lat),
-        lon: center.lon + (before.lon - after.lon),
-      }
-      draw()
-    },
-    { passive: false },
-  )
 
   update()
 </script>
