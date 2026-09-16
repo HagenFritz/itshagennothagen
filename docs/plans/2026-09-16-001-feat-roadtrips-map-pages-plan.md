@@ -598,7 +598,7 @@ container (relative)
 
 ### Phase A: shared package
 
-- [ ] **Unit 1: Scaffold `packages/tile-map` with the pure `geo` module**
+- [x] **Unit 1: Scaffold `packages/tile-map` with the pure `geo` module**
 
 **Goal:** A second workspace package exists, is wired into root tooling, and
 exports tested pure geometry: Mercator projection, bounds, fit zoom, haversine,
