@@ -513,23 +513,33 @@ Verified during deepening, in this repo, with the installed toolchain (astro
 
 ### Deferred to Implementation
 
-- Exact map height on `[slug]`: fill the viewport below the title with a minimum
-  around 420px, tuned once the page exists. Likely `100dvh` minus the header and
-  title height.
+- Exact map height on `[slug]`: settled at `calc(100dvh - 20rem)` with
+  `min-height: 420px`. 20rem is the measured header, back link, title, and
+  tagline stack; at 1280x900 it yields a 578px map and at 390x844 a 524px map
+  with the stop list just below the fold.
 - Whether `dark_all` needs a brightness filter at trip zoom levels the way
-  atxactly's results map did at z11. Decide by looking at it; the tiles-canvas
-  class hook exists either way.
-- Measured Douglas-Peucker results for the first trip (raw points, points at
-  0.001°, YAML size). Adjust the default only if the measured numbers argue for
-  it, and record them here.
-- The OSRM demo server's actual waypoint cap. Log the first successful
-  response's waypoint count rather than assuming 500.
-- Precise card offset, width, flip thresholds, and whether the card needs a
-  `max-height` with internal scroll so a three-photo card cannot exceed a short
-  viewport (clamping alone cannot solve that). Set against real blurbs and
-  photos.
-- Docked card height used for the asymmetric fit padding: measure the rendered
-  collapsed and expanded heights rather than hard-coding.
+  atxactly's results map did at z11. Not needed: at the fitted zoom (z7 to z8)
+  and through z17, `dark_all` reads fine under the burnt-orange route with no
+  filter. The tiles-canvas class hook is unused on this page.
+- Measured Douglas-Peucker results, recorded from the first trip (Austin to
+  Cinnamon Shore, 229 miles): 3,578 raw points simplified to 129 at 0.001°, a
+  129-line `route:` block. The default tolerance stands. (First run, before the
+  JFK Causeway stop was nudged off the wrong carriageway: 3,684 raw, 133
+  simplified, 235 miles, with a visible U-turn loop at the causeway.)
+- The OSRM demo server accepted 8 waypoints and reported 8 snapped; the cap
+  remains unpublished and untested above that.
+- Card geometry, set against the real trip: 320px wide, offset 14px from the
+  pin, 8px clamp inset, flip when the right edge would pass
+  `containerWidth - 8`. The card does need `max-height` with internal scroll:
+  `70%` of the container anchored, `60%` docked. Photos are additionally capped
+  at `max-height: 12rem` inside their 3:4 aspect box, and every slide in a stop
+  reserves the same caption band so advancing the carousel never resizes the
+  card. The anchored card also stops `20px` short of the bottom so the
+  attribution strip stays legible.
+- Docked card height used for the asymmetric fit padding: measured at mount by
+  unhiding the collapsed intro card and reading its rendered height, then
+  re-measured on the `matchMedia` change. At 390px the collapsed dock measures
+  123px, so the bottom fit padding is 131px.
 - Whether pogo's labels and scale bar need size adjustments after moving from
   the 1000px internal buffer to CSS-pixel drawing (they will render at their
   nominal size for the first time; likely fine).
@@ -1000,7 +1010,7 @@ coordinates, dates, short blurbs, and photos.
 - The route block in the YAML follows real roads when plotted (checked in Unit
   6), and codespell in CI passes on the blurbs.
 
-- [ ] **Unit 6: `/roadtrips/[slug]` map page**
+- [x] **Unit 6: `/roadtrips/[slug]` map page**
 
 **Goal:** The trip page is the map: route stroke, stop pins, anchored cards with
 stable sizing, intro open by default (collapsed dock on phones), hash deep

@@ -1,11 +1,11 @@
 title: Austin to Cinnamon Shore
-miles: 235
+miles: 229
 tagline: >-
   An afternoon down the coastal bend to Mustang Island, second year running.
 intro:
   - >-
     My wife and I drove from Austin down to Cinnamon Shore on a Monday
-    afternoon, leaving around 4pm and pulling in a little before 7pm. We did
+    afternoon, leaving around 2:30pm and pulling in a little before 7pm. We did
     this same drive last year, and it turns out the part I remember best is not
     the beach at the end of it. It is the flat, marshy stretch of island road
     right before you get there.
@@ -108,8 +108,8 @@ stops:
           An old, abandoned hotel of some kind right next door. Looked kind of
           creepy and eerie.
   - title: JFK Causeway
-    lat: 27.64369
-    lon: -97.24925
+    lat: 27.64682
+    lon: -97.25156
     date: 2026-09-15
     blurb: >-
       The JFK Memorial Causeway carries Park Road 22 out of Flour Bluff and
@@ -145,8 +145,8 @@ stops:
     lon: -97.10572
     date: 2026-09-15
     blurb: >-
-      Pulled into Cinnamon Shore North on Mustang Island just before 7pm, about
-      three hours after leaving Austin.
+      Pulled into Cinnamon Shore North on Mustang Island around 6:45pm, roughly
+      four hours after leaving Austin.
 route:
   - [30.26721, -97.74313]
   - [30.26900, -97.74246]
@@ -268,11 +268,7 @@ route:
   - [27.69322, -97.34109]
   - [27.67686, -97.30601]
   - [27.67434, -97.29504]
-  - [27.65691, -97.25909]
-  - [27.63672, -97.24403]
-  - [27.65699, -97.25903]
-  - [27.66828, -97.28252]
-  - [27.65614, -97.25794]
+  - [27.65676, -97.25916]
   - [27.63748, -97.24517]
   - [27.62712, -97.22341]
   - [27.62377, -97.22180]

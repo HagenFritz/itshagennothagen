@@ -308,6 +308,118 @@ body {
   color: var(--foreground);
 }
 
+/* ── Map attribution (tile and routing credits, a license obligation) ─ */
+.map-credit a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Road trip stop card (DOM node floating over the map canvas) ────── */
+.trip-card {
+  position: absolute;
+  z-index: 1;
+  width: 20rem;
+  max-width: calc(100% - 1rem);
+  max-height: 70%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Vertical swipes scroll the card; horizontal ones reach the carousel
+     track. Anything else falls through to the canvas underneath. */
+  touch-action: pan-y;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
+}
+.trip-card[hidden] {
+  display: none;
+}
+.trip-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+/* Sticky rather than absolute: the card scrolls internally and the close
+   button has to stay reachable. The hit area runs to the card edge so a tap
+   aimed at the corner never falls through to the canvas. */
+.trip-card-close {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin-left: auto;
+  margin-bottom: -2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-bottom-left-radius: var(--radius);
+  background: rgb(11 15 26 / 0.75);
+  color: var(--foreground);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.trip-card-close:hover {
+  background: var(--background);
+  color: var(--primary);
+}
+/* The aspect box reserves the photo's height before it loads, so the card is
+   final-size the moment it is unhidden and positions in one pass. */
+.trip-card-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 12rem;
+  object-fit: cover;
+  background: var(--background);
+}
+.trip-card-slide {
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+}
+/* Captions vary in length, so every slide in a stop reserves the same band and
+   the card does not resize as the carousel advances. */
+.trip-card-caption {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem 0;
+  font-size: 0.75rem;
+  line-height: 1.1rem;
+  color: var(--muted-foreground);
+}
+
+/* Below `sm` the card spans the container bottom and the script stops
+   positioning it; the collapsed intro is the only part that shows. */
+@media (max-width: 639px) {
+  .trip-card {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    max-width: none;
+    max-height: 60%;
+    border-width: 1px 0 0;
+    border-radius: 0;
+  }
+  .trip-card.is-collapsed {
+    max-height: none;
+    overflow: hidden;
+  }
+  .trip-card.is-collapsed .trip-card-body {
+    display: none;
+  }
+}
+.trip-card-summary {
+  display: none;
+}
+@media (max-width: 639px) {
+  .trip-card.is-collapsed .trip-card-summary {
+    display: block;
+  }
+}
+
 /* ── Pokémon matcher cards (injected via JS) ────────────────────────── */
 .match-card {
   border-color: var(--border);
