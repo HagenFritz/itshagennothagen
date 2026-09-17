@@ -378,6 +378,8 @@ body {
   width: 100%;
   flex-shrink: 0;
   scroll-snap-align: center;
+  /* One swipe moves one slide; without this a flick coasts past several. */
+  scroll-snap-stop: always;
 }
 /* Captions vary in length, so every slide in a stop reserves the same band and
    the card does not resize as the carousel advances. */

@@ -91,36 +91,11 @@ const mapData = {
       >
     </div>
 
-    <article
-      id="intro"
-      class="trip-card is-collapsed"
-      data-stop="intro"
-      tabindex="-1"
-      hidden
-    >
-      <button
-        type="button"
-        class="trip-card-close"
-        aria-label="Close"
-        data-close>&times;</button
-      >
-      <div class="p-4 pr-10">
-        <h2 class="font-medium">{title}</h2>
-        <p class="mt-0.5 text-sm text-muted-foreground">{tagline}</p>
-        <p class="trip-card-summary mt-2 text-xs text-muted-foreground">
-          {summary}
-        </p>
-      </div>
-      <div class="trip-card-body space-y-3 px-4 pb-4 text-sm text-foreground">
-        {intro.map((paragraph) => <p set:html={paragraph} />)}
-      </div>
-    </article>
-
     {
       stops.map((stop, i) => (
         <article
           id={`stop-${i + 1}`}
-          class="trip-card"
+          class:list={['trip-card', i === 0 && 'is-collapsed']}
           data-stop={i + 1}
           tabindex="-1"
           hidden
@@ -133,7 +108,23 @@ const mapData = {
           >
             &times;
           </button>
+          {i === 0 && (
+            <div class="p-4 pr-10">
+              <h2 class="font-medium">{title}</h2>
+              <p class="mt-0.5 text-sm text-muted-foreground">{tagline}</p>
+              <p class="trip-card-summary mt-2 text-xs text-muted-foreground">
+                {summary}
+              </p>
+            </div>
+          )}
           <div class="trip-card-body">
+            {i === 0 && (
+              <div class="space-y-3 px-4 pb-4 text-sm text-foreground">
+                {intro.map((paragraph) => (
+                  <p set:html={paragraph} />
+                ))}
+              </div>
+            )}
             {stop.images.length > 0 && (
               <div class="relative" data-carousel>
                 <div
@@ -175,17 +166,15 @@ const mapData = {
               </div>
             )}
             <div class="p-4 pr-10">
-              <div class="flex items-baseline justify-between gap-3">
-                <h2 class="font-medium">
-                  {i + 1}. {stop.title}
-                </h2>
-                <time
-                  datetime={stop.date.toISOString().slice(0, 10)}
-                  class="shrink-0 text-xs text-muted-foreground"
-                >
-                  {fmt(stop.date)}
-                </time>
-              </div>
+              <h2 class="font-medium">
+                {i + 1}. {stop.title}
+              </h2>
+              <time
+                datetime={stop.date.toISOString().slice(0, 10)}
+                class="mt-0.5 block text-xs italic text-muted-foreground"
+              >
+                {fmt(stop.date)}
+              </time>
               <p class="mt-2 text-sm text-muted-foreground">{stop.blurb}</p>
             </div>
           </div>
@@ -260,19 +249,8 @@ const mapData = {
     ...document.querySelectorAll<HTMLButtonElement>('#stop-list button'),
   ]
 
-  // The start pin sits on the first stop, which is where route[0] is; tapping
-  // it reopens the trip intro rather than that stop's own card.
-  const startIndex = stops.reduce(
-    (best, s, i) =>
-      Math.hypot(s.lat - routePoints[0]!.lat, s.lon - routePoints[0]!.lon) <
-      Math.hypot(
-        stops[best]!.lat - routePoints[0]!.lat,
-        stops[best]!.lon - routePoints[0]!.lon,
-      )
-        ? i
-        : best,
-    0,
-  )
+  // The first stop's card carries the trip intro and is the one open on load.
+  const START = '1'
 
   const docked = window.matchMedia('(max-width: 639px)')
   const canHover = window.matchMedia('(hover: hover)')
@@ -292,14 +270,13 @@ const mapData = {
   // an anchored card stops short of it rather than being covered by it.
   const CREDIT_HEIGHT = 20
 
-  const anchorOf = (key: string) =>
-    key === 'intro' ? stops[startIndex]! : stops[Number(key) - 1]!
+  const anchorOf = (key: string) => stops[Number(key) - 1]!
 
   const bounds = boundsOf([...routePoints, ...stops])
 
   function dockHeight() {
     if (!docked.matches) return 32
-    const card = cards.get('intro')!
+    const card = cards.get(START)!
     const wasHidden = card.hidden
     card.hidden = false
     const h = card.getBoundingClientRect().height
@@ -336,9 +313,8 @@ const mapData = {
         select(null)
         return
       }
-      const index = stops.indexOf(hit)
       restoreFocus = container
-      select(index === startIndex ? 'intro' : String(index + 1))
+      select(String(stops.indexOf(hit) + 1))
     },
     onHover: (px, py, view) => {
       if (!canHover.matches) return
@@ -364,8 +340,7 @@ const mapData = {
     ctx.lineJoin = 'round'
     ctx.stroke()
 
-    const selectedIndex =
-      selected === 'intro' ? startIndex : selected ? Number(selected) - 1 : null
+    const selectedIndex = selected ? Number(selected) - 1 : null
 
     for (const [i, s] of stops.entries()) {
       const p = view.project(s)
@@ -433,7 +408,7 @@ const mapData = {
     }
     const card = cards.get(key)!
     card.hidden = false
-    card.classList.toggle('is-collapsed', key === 'intro')
+    card.classList.toggle('is-collapsed', key === START)
     if (options.pan !== false) panIntoView(key)
     position()
     map.redraw()
@@ -466,22 +441,22 @@ const mapData = {
   // replaceState never fires hashchange, so the listener below cannot loop back
   // into select(); the guard is only for a hash the user edits by hand.
   function writeHash() {
-    const hash = selected && selected !== 'intro' ? `#stop-${selected}` : ''
+    const hash = selected && selected !== START ? `#stop-${selected}` : ''
     const url = location.pathname + location.search + hash
     if (url !== location.pathname + location.search + location.hash) {
       history.replaceState(null, '', url)
     }
   }
 
-  // On load the intro opens over the fitted route with no pan (the table's
-  // "fit route" row); a deep-linked stop pans its pin and card into view.
+  // On load the first stop opens over the fitted route with no pan; a
+  // deep-linked stop pans its pin and card into view.
   function readHash(options: { focus?: boolean } = {}) {
     const match = /^#stop-(\d+)$/.exec(location.hash)
     const index = match ? Number(match[1]) : null
     if (index && index >= 1 && index <= stops.length) {
       select(String(index), options)
     } else {
-      select('intro', { ...options, pan: false })
+      select(START, { ...options, pan: false })
     }
   }
 
@@ -499,6 +474,14 @@ const mapData = {
   for (const card of cards.values()) {
     card.addEventListener('wheel', (e) => e.stopPropagation())
     card.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const carousel = card.querySelector<HTMLElement>('[data-carousel]')
+        const step = carousel && carousels.get(carousel)
+        if (!step) return
+        e.preventDefault()
+        step(e.key === 'ArrowRight' ? 1 : -1)
+        return
+      }
       if (e.key !== 'Escape') return
       e.stopPropagation()
       restoreFocus = restoreFocus ?? container
@@ -512,8 +495,8 @@ const mapData = {
 
   // The collapsed dock is a tap target in its own right: tapping anywhere on it
   // that is not the close button expands it.
-  cards.get('intro')!.addEventListener('click', (e) => {
-    const card = cards.get('intro')!
+  cards.get(START)!.addEventListener('click', (e) => {
+    const card = cards.get(START)!
     if (!card.classList.contains('is-collapsed')) return
     if ((e.target as HTMLElement).closest('[data-close]')) return
     card.classList.remove('is-collapsed')
@@ -539,10 +522,7 @@ const mapData = {
     if (selected) {
       cards
         .get(selected)!
-        .classList.toggle(
-          'is-collapsed',
-          selected === 'intro' && docked.matches,
-        )
+        .classList.toggle('is-collapsed', selected === START && docked.matches)
     }
     map.fitBounds()
     position()
@@ -550,6 +530,7 @@ const mapData = {
 
   window.addEventListener('hashchange', () => readHash())
 
+  const carousels = new Map<HTMLElement, (delta: number) => void>()
   for (const carousel of document.querySelectorAll<HTMLElement>(
     '[data-carousel]',
   )) {
@@ -574,10 +555,12 @@ const mapData = {
     )
     for (const slide of slides) observer.observe(slide)
 
-    track.addEventListener('click', () => {
-      const next = (index + 1) % slides.length
+    const step = (delta: number) => {
+      const next = (index + delta + slides.length) % slides.length
       track.scrollTo({ left: slides[next]!.offsetLeft, behavior: 'smooth' })
-    })
+    }
+    carousels.set(carousel, step)
+    track.addEventListener('click', () => step(1))
   }
 
   map.fitBounds()
