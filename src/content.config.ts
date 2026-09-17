@@ -48,7 +48,13 @@ const roadtrips = defineCollection({
             date: z.coerce.date(),
             blurb: z.string(),
             images: z
-              .array(z.object({ src: image(), alt: z.string() }))
+              .array(
+                z.object({
+                  src: image(),
+                  alt: z.string(),
+                  caption: z.string().optional(),
+                }),
+              )
               .default([]),
           }),
         )

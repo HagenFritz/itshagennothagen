@@ -44,7 +44,8 @@ below were settled in conversation and are recorded here as the source of truth.
 - R1. A `roadtrips` content collection: one YAML per trip with `title`,
   `tagline`, `intro` (paragraphs), a `route` polyline of `[lat, lon]` pairs
   following real roads, and `stops`, each with `title`, `lat`, `lon`, `date`,
-  `blurb`, and `images` (may be empty). (Unit 4)
+  `blurb`, and `images` (may be empty; each image has `alt` and an optional
+  `caption`). (Units 4, 5)
 - R2. `/roadtrips` index: plain list in the style of `/albums`, each row showing
   an inline SVG of the route shape as the thumbnail, computed at build time.
   Linked from the Albums index; the nav stays at six items. (Unit 7)
@@ -53,9 +54,10 @@ below were settled in conversation and are recorded here as the source of truth.
   ceiling of 17; the route is a real road-following stroke in burnt orange.
   (Units 2, 6)
 - R4. Stop pins are hit-tested by nearest point. Clicking one opens a floating
-  card anchored to the pin with title, date, blurb, and photos. The card flips
-  to the other side of the pin when near an edge and docks to the bottom of the
-  map below 640px. (Unit 6)
+  card anchored to the pin with title, date, blurb, and photos. Multiple photos
+  render as a swipe carousel (the albums pattern) with each photo's caption
+  under it. The card flips to the other side of the pin when near an edge and
+  docks to the bottom of the map below 640px. (Unit 6)
 - R5. The trip intro is a card open by default, anchored to the first route
   coordinate. Clicking the start pin brings it back. On phones the docked intro
   opens collapsed (title, tagline, summary line) and expands on tap. (Unit 6)
@@ -407,6 +409,13 @@ Verified during deepening, in this repo, with the installed toolchain (astro
   modal `<dialog>`, which would make the map non-interactive while a card is
   open. It remains the named escape hatch if the DOM-over-canvas approach proves
   unworkable during Unit 6.
+- **Photo carousel and one stop per place**: a stop's images render in the
+  snap-scroll carousel already built for `albums/[slug].astro` (dots,
+  click-to-advance), with an optional per-image `caption` under the slide.
+  Photos taken within a few meters of each other (a gas station and the hotel
+  across from it) belong to one stop, because two pins 7 m apart cannot be told
+  apart at any zoom the page allows; the captions carry the per-photo story.
+  Decided during Unit 5 when the first trip's photos arrived.
 - **Event ownership between card and canvas** (new territory in this repo): the
   card is a DOM sibling above the overlay canvas. The card sets
   `touch-action: pan-y` so vertical swipes scroll its content; it stops `wheel`
@@ -955,7 +964,7 @@ in this class of script.
 - Running the script against the Unit 5 trip produces a route that visibly
   follows highways when rendered in Unit 6, and a second run changes nothing.
 
-- [ ] **Unit 5: First real trip content**
+- [x] **Unit 5: First real trip content**
 
 **Goal:** One real trip exists as YAML with stops, blurbs, photos, and a
 generated route.
