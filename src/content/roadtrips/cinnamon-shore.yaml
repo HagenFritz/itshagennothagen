@@ -1,67 +1,77 @@
 title: Austin to Cinnamon Shore
-miles: 229
+miles: 242
 tagline: >-
   An afternoon down the coastal bend to Mustang Island, second year running.
 intro:
   - >-
-    My wife and I drove from Austin down to Cinnamon Shore on a Monday
-    afternoon, leaving around 2:30pm and pulling in a little before 7pm. We did
-    this same drive last year, and it turns out the part I remember best is not
-    the beach at the end of it. It is the flat, marshy stretch of island road
-    right before you get there.
+    My wife and I drove from Austin down to Cinnamon Shore on a Tuesday
+    afternoon in early September. We left around 1:30pm and pulled in a little
+    before 7pm. Similar drive to what we did last year, but avoiding San Antonio
+    in favor of some country roads.
   - >-
-    This is the first road trip I have put on the site. I have been wanting to
-    keep track of these drives, so here is one: the small towns, the gas station
+    This is the first road trip on the site: the small towns, the gas station
     finds, and the bridge over the bay.
 stops:
-  - title: Austin
-    lat: 30.26720
-    lon: -97.74310
+  - title: Northwest Austin
+    lat: 30.36435
+    lon: -97.79232
     date: 2026-09-15
     blurb: >-
-      Out of downtown mid afternoon. It is roughly a four hour run south through
-      the coastal bend to the island.
-  - title: Kenedy
-    lat: 28.81944
-    lon: -97.84797
+      Where the drive started, up in the hills off 360.
+  - title: H-E-B on South Congress
+    lat: 30.16883
+    lon: -97.78709
     date: 2026-09-15
     blurb: >-
-      I believe this is the town of Kenedy, so I looked it up afterward. It grew
-      up around the San Antonio and Aransas Pass Railway in 1886 on land Mifflin
-      Kenedy bought, and started life as Kenedy Junction. In the early 1900s,
-      bar patrons on South First Street shot at passing trains often enough that
-      the place picked up the nickname Six Shooter Junction.
+      First stop: the big HEB at South Congress to load up on goodies. Chips,
+      dips, fruit, and pre-made meals rounded out the majority of the haul.
     images:
-      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6092.jpg
+      - src: ../../assets/roadtrips/cinnamon-shore/heb1.jpg
         alt: >-
-          Two lane highway seen through a windshield, dry grass and a fence on
-          one side, a lone live oak on the horizon
+          H-E-B storefront under a grey sky, red canopy and big red letters over
+          a glass wall, a green SUV parked in front and the Texas Backyard
+          garden center to the side
+      - src: ../../assets/roadtrips/cinnamon-shore/heb2.jpg
+        alt: >-
+          Modern H-E-B with a sweeping orange roofline and a green and yellow
+          geometric entrance under a bright blue sky with puffy clouds
+  - title: Kenedy
+    lat: 28.82615
+    lon: -97.84852
+    via:
+      - [30.04391, -97.69059]
+    date: 2026-09-15
+    blurb: >-
+      The town of Kenedy. It grew up around the San Antonio and Aransas Pass
+      Railway in 1886 on land that Mifflin Kenedy bought, and started life as
+      Kenedy Junction. In the early 1900s, bar patrons on South First Street
+      shot at passing trains often enough that the place picked up the nickname
+      Six Shooter Junction.
+    images:
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6094.jpg
         alt: >-
           Wide small town main street with low brick storefronts, ornate street
           lamps, and a banner reading Kenedy on the corner building
-        caption: I believe this is the town of Kenedy.
-  - title: Old church house
-    lat: 28.81806
-    lon: -97.85183
-    date: 2026-09-15
-    blurb: >-
-      A rundown house with a tile roof and an arched porch sitting behind
-      overgrown trees at an intersection. I think it was converted into a church
-      at some point, but I could not tell whether anyone still uses it, and I
-      could not find anything about it online either.
-    images:
+        caption: The town of Kenedy as viewed through the windshield
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6092.jpg
+        alt: >-
+          Two lane highway seen through a windshield, dry grass and a fence on
+          one side, a lone live oak on the horizon
+        caption: The road into town.
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6095.jpg
         alt: >-
           Weathered two story house with a clay tile roof and arched entry, half
           hidden by trees, beside a traffic signal and an empty street
+        caption: >-
+          A weathered house I liked. Seemed significatn, but I could not find
+          anything about it online.
   - title: Wind turbine
     lat: 28.15755
     lon: -97.76843
     date: 2026-09-15
     blurb: >-
       One turbine right up against the road with a whole field of them running
-      off to the horizon behind it.
+      off to the horizon behind and in front.
     images:
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6096.jpg
         alt: >-
@@ -72,17 +82,20 @@ stops:
     lon: -97.81890
     date: 2026-09-15
     blurb: >-
-      We stopped for snacks at a really cool gas station mart outside Mathis.
-      There was a ton of Pokémon card merch and a cooler full of sodas I had
-      never seen before.
+      We stopped for snacks at the Speedy Express #38 gas station in Mathis. I
+      was surprised to see the array of Pokémon card merch - nearly all the
+      latest booster packs and more! They also had some rare, international
+      treats/flavors so we had to stock up. I got some Coriander Doritos which
+      were really good (and a bit spicy) while my wife got Kimbap-flavored Lays.
+      They had other interesting candy and soda flavors including a
+      ketchup-flavored soda.
     images:
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6097.jpg
         alt: >-
           Pegboard wall hung with rows of Pokémon trading card booster packs and
           blister packs, orange price tags on each hook
         caption: >-
-          They had all the booster packs for Pokémon cards, but they were all
-          expensive.
+          Assorted Pokemon booster packs for $15-ish!
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6098.jpg
         alt: >-
           Hand holding a glass bottle of bright red Grandpa Joe's Ketchup Soda
@@ -98,30 +111,28 @@ stops:
           Green bag of coriander flavor Doritos held over a car console with a
           green can and a Snyder's pretzel pieces bag in the cupholder
         caption: >-
-          The haul: coriander flavored Doritos (super good), lime Liquid Death,
-          and Snyder's honey mustard and onion pretzel pieces.
+          Coriander-flavored Doritos, lime Liquid Death, and honey mustard and
+          onion pretzel pieces.
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6101.jpg
         alt: >-
           Three story tan hotel with boarded and blanked out windows behind a
           fence, empty concrete lot in front
         caption: >-
           An old, abandoned hotel of some kind right next door. Looked kind of
-          creepy and eerie.
+          eerie.
   - title: JFK Causeway
     lat: 27.64682
     lon: -97.25156
     date: 2026-09-15
     blurb: >-
       The JFK Memorial Causeway carries Park Road 22 out of Flour Bluff and
-      across the Laguna Madre to North Padre Island. The original 1950 span was
-      the first post-tensioned segmental concrete bridge built in the United
-      States.
+      across the Laguna Madre to North Padre Island.
     images:
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6102.jpg
         alt: >-
           View through a windshield of a divided causeway crossing open water,
           with the arch of the bridge ahead and a pickup truck in the next lane
-        caption: The bridge that takes us over to the island.
+        caption: Bridge view from the car.
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6103.jpg
         alt: >-
           Flat hazy water of the Laguna Madre seen over a concrete barrier from
@@ -133,8 +144,7 @@ stops:
     date: 2026-09-15
     blurb: >-
       Heading up the island toward Cinnamon Shore. This is the scenery I
-      remember most from last year's drive: flat and marshy, grass and power
-      lines and not much else.
+      remember most from last year's drive: flat and marshy with not much else.
     images:
       - src: ../../assets/roadtrips/cinnamon-shore/IMG_6104.jpg
         alt: >-
@@ -145,22 +155,35 @@ stops:
     lon: -97.10572
     date: 2026-09-15
     blurb: >-
-      Pulled into Cinnamon Shore North on Mustang Island around 6:45pm, roughly
-      four hours after leaving Austin.
+      Pulled into Cinnamon Shore North on Mustang Island just before close at
+      7:00 pm.
 route:
-  - [30.26721, -97.74313]
-  - [30.26900, -97.74246]
-  - [30.26015, -97.70964]
-  - [30.25034, -97.69219]
-  - [30.24150, -97.68992]
-  - [30.22988, -97.68314]
-  - [30.20564, -97.68344]
-  - [30.19184, -97.68529]
-  - [30.14947, -97.69689]
-  - [30.06394, -97.69280]
-  - [30.02239, -97.68752]
-  - [30.01421, -97.68835]
-  - [30.00031, -97.68677]
+  - [30.36371, -97.79192]
+  - [30.36431, -97.79024]
+  - [30.35806, -97.79191]
+  - [30.32325, -97.81406]
+  - [30.31510, -97.82641]
+  - [30.30595, -97.82528]
+  - [30.29984, -97.82794]
+  - [30.29026, -97.82832]
+  - [30.27499, -97.81803]
+  - [30.26487, -97.81776]
+  - [30.24693, -97.80370]
+  - [30.23462, -97.79721]
+  - [30.22841, -97.78498]
+  - [30.22710, -97.77074]
+  - [30.22234, -97.76444]
+  - [30.20483, -97.77490]
+  - [30.17091, -97.78507]
+  - [30.16925, -97.78674]
+  - [30.16849, -97.78563]
+  - [30.11132, -97.80827]
+  - [30.11058, -97.79602]
+  - [30.09995, -97.77815]
+  - [30.08108, -97.72947]
+  - [30.08197, -97.71113]
+  - [30.08061, -97.69334]
+  - [30.00186, -97.68702]
   - [29.94106, -97.67209]
   - [29.92072, -97.67756]
   - [29.91396, -97.68081]
@@ -173,8 +196,8 @@ route:
   - [29.77351, -97.65731]
   - [29.74982, -97.65459]
   - [29.72115, -97.65618]
-  - [29.70661, -97.64955]
-  - [29.69219, -97.64569]
+  - [29.70713, -97.64974]
+  - [29.69304, -97.64565]
   - [29.66886, -97.64876]
   - [29.66109, -97.65545]
   - [29.64869, -97.66105]
@@ -211,7 +234,7 @@ route:
   - [28.87881, -97.83316]
   - [28.85601, -97.83893]
   - [28.84882, -97.84504]
-  - [28.83256, -97.84642]
+  - [28.82804, -97.84678]
   - [28.82232, -97.84478]
   - [28.81427, -97.85818]
   - [28.77326, -97.85239]
