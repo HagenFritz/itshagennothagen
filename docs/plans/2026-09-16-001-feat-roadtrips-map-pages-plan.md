@@ -1,7 +1,7 @@
 ---
 title: 'feat: Road trips as map pages, backed by a shared tile-map package'
 type: feat
-status: active
+status: completed
 date: 2026-09-16
 deepened: 2026-09-16
 ---
