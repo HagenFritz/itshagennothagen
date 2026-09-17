@@ -24,6 +24,10 @@ rather than guessing: flow-style stops ({lat: .., lon: ..}), inline comments
 after a coordinate value, and commented-out stops. Stops must be block style
 with `- title:`, `lat:`, and `lon:` on their own lines.
 
+A stop may carry a `via:` list of `- [lat, lon]` lines: waypoints the route
+must pass through on the way to that stop, in order. They shape the drive (the
+toll road you actually took) without becoming pins on the map.
+
 OSRM demo server etiquette (https://github.com/Project-OSRM/osrm-backend/wiki/
 Api-usage-policy): non-commercial, best effort, may be withdrawn without notice,
 no more than 1 request per second. One run makes one request. Routes are a
@@ -64,17 +68,22 @@ class Refused(Exception):
 
 
 class Stop:
-    def __init__(self, title, lat, lon, date, lat_text, lon_text):
+    def __init__(self, title, lat, lon, date, lat_text, lon_text, via=()):
         self.title = title
         self.lat = lat
         self.lon = lon
         self.date = date
         self.lat_text = lat_text
         self.lon_text = lon_text
+        self.via = list(via)
+
+    def waypoints(self):
+        """(lat, lon) pairs OSRM must pass through, ending at the stop itself."""
+        return self.via + [(self.lat, self.lon)]
 
     def __eq__(self, other):
-        return (self.title, self.lat_text, self.lon_text) == \
-            (other.title, other.lat_text, other.lon_text)
+        return (self.title, self.lat_text, self.lon_text, self.via) == \
+            (other.title, other.lat_text, other.lon_text, other.via)
 
 
 # ---------- reading the YAML, textually ----------
@@ -85,6 +94,8 @@ TITLE_LINE = re.compile(r"^\s*-\s+title:\s*(.+?)\s*$")
 LAT_LINE = re.compile(r"^\s*lat:\s*(\S+)\s*$")
 LON_LINE = re.compile(r"^\s*lon:\s*(\S+)\s*$")
 DATE_LINE = re.compile(r"^\s*date:\s*(\S+)\s*$")
+VIA_KEY = re.compile(r"^\s*via:\s*$")
+VIA_POINT = re.compile(r"^\s*-\s*\[\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*\]\s*$")
 
 
 def split_lines(text):
@@ -147,13 +158,26 @@ def scan_stops(text):
         raise Refused(f"{len(heads)} top-level `stops:` keys, expected one")
 
     start, end = block_span(lines, heads[0])
-    titles, lats, lons, dates = [], [], [], []
+    titles, lats, lons, dates, vias = [], [], [], [], []
+    in_via = False
     for ln in lines[start + 1:end]:
         if ln.lstrip().startswith("#"):
+            continue
+        # A via block is the indented `- [lat, lon]` lines directly under a
+        # stop's `via:` key; any other line ends it.
+        if in_via:
+            m = VIA_POINT.match(ln)
+            if m and vias:
+                vias[-1].append((float(m.group(1)), float(m.group(2))))
+                continue
+            in_via = False
+        if VIA_KEY.match(ln):
+            in_via = True
             continue
         m = TITLE_LINE.match(ln)
         if m:
             titles.append(m.group(1))
+            vias.append([])
             continue
         m = LAT_LINE.match(ln)
         if m:
@@ -185,7 +209,7 @@ def scan_stops(text):
         if not (-90 <= lat <= 90 and -180 <= lon <= 180):
             raise Refused(f"stop {title!r} is outside the coordinate range")
         date = dates[i] if i < len(dates) else None
-        stops.append(Stop(title, lat, lon, date, lats[i], lons[i]))
+        stops.append(Stop(title, lat, lon, date, lats[i], lons[i], vias[i]))
     return stops
 
 
@@ -277,10 +301,11 @@ def route_from_payload(payload, stops):
     if len(coords) < 2:
         raise Refused(f"OSRM returned {len(coords)} geometry point(s)")
 
-    south = min(s.lat for s in stops) - BOX_PAD
-    north = max(s.lat for s in stops) + BOX_PAD
-    west = min(s.lon for s in stops) - BOX_PAD
-    east = max(s.lon for s in stops) + BOX_PAD
+    anchors = [p for s in stops for p in s.waypoints()]
+    south = min(lat for lat, _ in anchors) - BOX_PAD
+    north = max(lat for lat, _ in anchors) + BOX_PAD
+    west = min(lon for _, lon in anchors) - BOX_PAD
+    east = max(lon for _, lon in anchors) + BOX_PAD
 
     route = []
     for lon, lat in coords:
@@ -400,7 +425,7 @@ def run_prettier(path):
 # ---------- OSRM ----------
 
 def osrm_url(base_url, stops):
-    pairs = ";".join(f"{s.lon},{s.lat}" for s in stops)
+    pairs = ";".join(f"{lon},{lat}" for s in stops for lat, lon in s.waypoints())
     return (f"{base_url.rstrip('/')}/route/v1/driving/{pairs}"
             f"?overview=full&geometries=geojson")
 

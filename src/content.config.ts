@@ -20,6 +20,13 @@ const albums = defineCollection({
     }),
 })
 
+const latLon = z
+  .tuple([z.number(), z.number()])
+  .refine(
+    ([lat, lon]) => lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180,
+    { message: 'points must be [lat, lon]' },
+  )
+
 const roadtrips = defineCollection({
   loader: glob({ pattern: '**/[^_]*.yaml', base: './src/content/roadtrips' }),
   schema: ({ image }) =>
@@ -28,23 +35,14 @@ const roadtrips = defineCollection({
       tagline: z.string(),
       intro: z.array(z.string()),
       miles: z.number().optional(),
-      route: z
-        .array(
-          z
-            .tuple([z.number(), z.number()])
-            .refine(
-              ([lat, lon]) =>
-                lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180,
-              { message: 'route points must be [lat, lon]' },
-            ),
-        )
-        .min(2),
+      route: z.array(latLon).min(2),
       stops: z
         .array(
           z.object({
             title: z.string(),
             lat: z.number().min(-90).max(90),
             lon: z.number().min(-180).max(180),
+            via: z.array(latLon).default([]),
             date: z.coerce.date(),
             blurb: z.string(),
             images: z

@@ -36,7 +36,7 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   drawn at build time by `routeToSvgPath`. `/roadtrips/[slug]` is a map-as-page:
   pins open a card anchored to the pin (docked across the bottom below 640px),
   the selected stop is written to the URL hash so a stop can be deep-linked, and
-  the trip intro is the card open by default.
+  the first stop's card, which carries the trip intro, is open by default.
 - **Road trip scripts**: `scripts/prep_roadtrip_photos.mjs <slug>` downscales
   the photos dropped in `src/assets/roadtrips/<slug>/` in place, baking
   orientation into the pixels and keeping EXIF so stop coordinates stay
@@ -107,9 +107,11 @@ colors there, not inline.
 - Adding a road trip: drop the photos in `src/assets/roadtrips/<slug>/` and run
   `node scripts/prep_roadtrip_photos.mjs <slug>`; author
   `src/content/roadtrips/<slug>.yaml` with the stops in driving order, block
-  style, and do not hand-write `route:` or `miles:`; then run
-  `python3 scripts/build_roadtrip_route.py <slug>`, which makes a single OSRM
-  request (the demo server's policy is 1 req/s) and writes both fields back.
+  style (a stop may list `via:` waypoints the route must pass through on the way
+  to it, for the toll road you actually took), and do not hand-write `route:` or
+  `miles:`; then run `python3 scripts/build_roadtrip_route.py <slug>`, which
+  makes a single OSRM request (the demo server's policy is 1 req/s) and writes
+  both fields back.
 - Every tile map must visibly credit OpenStreetMap and CARTO, plus OSRM wherever
   a route line is drawn. Render the tile credit from `handle.attribution()` so
   it swaps to Esri's string when the fallback tiles are active. This is a
