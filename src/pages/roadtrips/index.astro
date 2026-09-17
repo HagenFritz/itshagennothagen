@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content'
+import { routeToSvgPath, type RouteCoord } from 'tile-map/geo'
+import Base from '../../layouts/Base.astro'
+
+const THUMB = 80
+const THUMB_PADDING = 8
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+
+const trips = (await getCollection('roadtrips'))
+  .map((trip) => {
+    const dates = trip.data.stops.map((s) => s.date.valueOf())
+    const latest = Math.max(...dates)
+    const first = fmt(new Date(Math.min(...dates)))
+    const last = fmt(new Date(latest))
+    return {
+      id: trip.id,
+      data: trip.data,
+      latest,
+      dateRange: first === last ? first : `${first} to ${last}`,
+      thumb: routeToSvgPath(
+        trip.data.route as RouteCoord[],
+        THUMB,
+        THUMB,
+        THUMB_PADDING,
+      ),
+    }
+  })
+  .sort((a, b) => b.latest - a.latest)
+---
+
+<Base
+  title="Road trips · Hagen Fritz"
+  description="Drives worth remembering, each one drawn as a map."
+>
+  <h1 class="text-3xl font-semibold tracking-tight">Road trips</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Drives worth remembering. Each trip is a map you can click through, stop by
+    stop, with the photos that came out of it.
+  </p>
+
+  <ul class="mt-8 space-y-4">
+    {
+      trips.map((trip) => (
+        <li>
+          <a
+            href={`/roadtrips/${trip.id}`}
+            class="group flex items-center gap-5 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
+          >
+            <svg
+              viewBox={trip.thumb.viewBox}
+              width={THUMB}
+              height={THUMB}
+              aria-hidden="true"
+              class="size-20 shrink-0 text-primary"
+            >
+              <path
+                d={trip.thumb.d}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <div class="flex flex-col gap-1">
+              <span class="font-medium group-hover:text-primary">
+                {trip.data.title}
+              </span>
+              <span class="text-sm text-muted-foreground">
+                {trip.data.tagline}
+              </span>
+              <span class="text-xs text-muted-foreground">
+                {[
+                  `${trip.data.stops.length} stops`,
+                  trip.dateRange,
+                  trip.data.miles && `${trip.data.miles} mi`,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

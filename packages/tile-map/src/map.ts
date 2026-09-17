@@ -116,7 +116,12 @@ export function createTileMap(
         if (ty < 0 || ty >= span) continue
         const wrapped = ((tx % span) + span) % span
         const img = loader.get(z, wrapped, ty)
-        if (!img.complete || img.hasAttribute('data-failed')) continue
+        if (
+          !img.complete ||
+          img.naturalWidth === 0 ||
+          img.hasAttribute('data-failed')
+        )
+          continue
         tilesCtx.drawImage(
           img,
           (tx * TILE_SIZE - ox) * scale,

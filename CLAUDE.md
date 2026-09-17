@@ -5,7 +5,7 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
 
 ## Stack
 
-- **Astro** (static output) — pages in `src/pages/`, file-based routing. Custom
+- **Astro** (static output): pages in `src/pages/`, file-based routing. Custom
   404 page (`src/pages/404.astro`), RSS feed (`src/pages/rss.xml.ts` →
   `/rss.xml`), security headers in `public/_headers`.
 - **Tailwind v4** via the Vite plugin (`@tailwindcss/vite`). No
@@ -19,6 +19,31 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   `src/pages/play.astro` drives). Packages are excluded from the root `tsconfig`
   and own their own strict tsconfig plus `test`/`typecheck` scripts. Game assets
   and the chop sound live in `public/games/weed-whacker/`.
+- **`packages/tile-map`**: the shared canvas map.
+  `createTileMap(container, options)` owns two DPR-aware canvases, a CARTO dark
+  tile loader (retina `@2x`, retry then Esri fallback, bounded cache), a
+  pan/zoom camera clamped to content bounds with per-side padding, and
+  nearest-point hit testing. The `tile-map/geo` subpath is pure (projection,
+  bounds, fit zoom, haversine, nearest, `routeToSvgPath`) with no DOM
+  references, so it imports safely from Astro frontmatter. Consumers:
+  `/labs/austin-pogo-map` and `/roadtrips/[slug]`. `atxactly.astro` deliberately
+  keeps its own inline map code.
+- **`/roadtrips`**: a `roadtrips` content collection
+  (`src/content/roadtrips/*.yaml`, schema in `src/content.config.ts`) where each
+  trip carries an intro, a road-following `route` polyline, and stops with
+  dates, blurbs, and photos from `src/assets/roadtrips/<slug>/`. The index lists
+  trips newest first with an inline SVG of each route's shape as the thumbnail,
+  drawn at build time by `routeToSvgPath`. `/roadtrips/[slug]` is a map-as-page:
+  pins open a card anchored to the pin (docked across the bottom below 640px),
+  the selected stop is written to the URL hash so a stop can be deep-linked, and
+  the trip intro is the card open by default.
+- **Road trip scripts**: `scripts/prep_roadtrip_photos.mjs <slug>` downscales
+  the photos dropped in `src/assets/roadtrips/<slug>/` in place, baking
+  orientation into the pixels and keeping EXIF so stop coordinates stay
+  re-derivable. `scripts/build_roadtrip_route.py <slug>` sends the trip's stops
+  to the public OSRM API, simplifies the returned geometry, and writes the
+  `route:` block and `miles:` back into the trip YAML. Both are run by hand, not
+  in CI.
 - **Cloudflare Pages Functions**: backend lives in `functions/` at the repo root
   (no adapter; file routing, e.g. `functions/api/scores.ts` → `/api/scores`).
   One shared D1 database (`wrangler.toml` binds a production and a preview
@@ -39,10 +64,10 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
 - **`/labs/austin-pogo-map`**: plots Pokémon GO gyms and breakfast venues from
   `src/data/pogo-gyms.json` and `src/data/pogo-venues.json`, scoring each venue
   by how many gyms fall inside an adjustable interaction radius (80m default).
-  Canvas renderer with a hand-rolled Web Mercator projection over OpenStreetMap
-  raster tiles, no mapping library. Both data files are hand-maintained (gym
-  locations live in Niantic's Wayfarer system, not OSM, so there is nothing to
-  query); adding entries to the JSON is all that is needed to extend the map.
+  Renders through `packages/tile-map` over CARTO dark raster tiles, no mapping
+  library. Both data files are hand-maintained (gym locations live in Niantic's
+  Wayfarer system, not OSM, so there is nothing to query); adding entries to the
+  JSON is all that is needed to extend the map.
 - **`.claude/skills/`**: project-scoped Claude Code skills. `categorize-song`
   matches a liked song against `src/data/playlists.json`, logging misses to
   `docs/music/unsorted-songs.md`. `album-cover` generates a topographic-gradient
@@ -79,7 +104,17 @@ colors there, not inline.
   per-IP bucket. Ops follow-up: add a Cloudflare redirect rule sending
   `*.pages.dev` to `itshagennothagen.dev` (or an Access policy on the pages.dev
   hostnames) so `/api/scores` is only reachable through the proxy.
-- Prettier is configured with `proseWrap: always` — markdown prose is
+- Adding a road trip: drop the photos in `src/assets/roadtrips/<slug>/` and run
+  `node scripts/prep_roadtrip_photos.mjs <slug>`; author
+  `src/content/roadtrips/<slug>.yaml` with the stops in driving order, block
+  style, and do not hand-write `route:` or `miles:`; then run
+  `python3 scripts/build_roadtrip_route.py <slug>`, which makes a single OSRM
+  request (the demo server's policy is 1 req/s) and writes both fields back.
+- Every tile map must visibly credit OpenStreetMap and CARTO, plus OSRM wherever
+  a route line is drawn. Render the tile credit from `handle.attribution()` so
+  it swaps to Esri's string when the fallback tiles are active. This is a
+  license obligation, not a nicety.
+- Prettier is configured with `proseWrap: always`, so markdown prose is
   hard-wrapped at 80 columns. Write to the edge if you want; `npm run format`
   rewraps it. This keeps line-level git diffs clean (a one-word edit touches one
   line, not the whole paragraph). Note: Prettier reflows multi-line paragraphs
@@ -117,14 +152,13 @@ Interactive UI shared across lab pages lives in `global.css` too, driven by
 chips) and `.filter-menu` / `.filter-trigger` / `.filter-popover` /
 `.filter-option` (multi-select dropdowns, used by the pogo map).
 
-## Writing about Hagen — accuracy notes
+## Writing about Hagen (accuracy notes)
 
 - Current role: **Software Engineer II at Rogers-O'Brien**, building internal AI
   tools (the "Compass" platform).
 - He has a **PhD in building science / indoor air quality**, but that is **past
   background, not his current identity**. Do not call him a "building scientist"
-  or over-hype the academic work — mention it as history if relevant, kept
-  light.
+  or over-hype the academic work. Mention it as history if relevant, kept light.
 - Plays **beach volleyball**. Taught a UT class in Fall 2025 (one-off, fun).
 - Keep the site's voice conversational and a little playful; match the existing
   `/about` and homepage tone. Don't inflate credentials.

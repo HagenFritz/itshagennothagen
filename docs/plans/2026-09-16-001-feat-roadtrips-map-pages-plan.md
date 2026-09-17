@@ -1127,7 +1127,7 @@ links, mobile dock compensation, keyboard focus handling, and full attribution.
   (blurbs are indexable without JS) and each card's `id` matches its hash.
 - No console errors on load or during interaction.
 
-- [ ] **Unit 7: `/roadtrips` index, Albums callout, docs**
+- [x] **Unit 7: `/roadtrips` index, Albums callout, docs**
 
 **Goal:** Trips are listable and discoverable, each with a route-shape
 thumbnail; project docs describe the new pieces.

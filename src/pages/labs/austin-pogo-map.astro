@@ -83,16 +83,10 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
       >
     </div>
     <div
-      class="absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground"
+      class="map-credit absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground"
     >
       <span id="attribution"></span>
     </div>
-    <style>
-      #attribution a {
-        text-decoration: underline;
-        text-underline-offset: 2px;
-      }
-    </style>
   </div>
 
   <div
@@ -320,7 +314,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     })
   }
 
-  // Padded so a user zoomed to 18 can still centre on a gym at the edge of the
+  // Padded so a user zoomed to 18 can still center on a gym at the edge of the
   // data rather than having the clamp pull them back off it.
   const raw = boundsOf([...gyms, ...venues])
   const pad = 0.02
