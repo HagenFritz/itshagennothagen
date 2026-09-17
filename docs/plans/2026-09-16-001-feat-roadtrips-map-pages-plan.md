@@ -862,7 +862,7 @@ bar) and gains CARTO dark tiles, retina sharpness, resize handling, a pan clamp,
 
 ### Phase C: road trips
 
-- [ ] **Unit 4: `roadtrips` collection schema and the OSRM route script**
+- [x] **Unit 4: `roadtrips` collection schema and the OSRM route script**
 
 **Goal:** Trip YAML validates against a schema, and a stdlib Python script turns
 a trip's stops into a road-following `route` block in that YAML with the
