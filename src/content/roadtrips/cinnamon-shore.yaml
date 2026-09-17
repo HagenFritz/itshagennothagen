@@ -1,0 +1,302 @@
+title: Austin to Cinnamon Shore
+miles: 242
+tagline: >-
+  An afternoon down the coastal bend to Mustang Island, second year running.
+intro:
+  - >-
+    My wife and I drove from Austin down to Cinnamon Shore on a Tuesday
+    afternoon in early September. We left around 1:30pm and pulled in a little
+    before 7pm. Similar drive to what we did last year, but avoiding San Antonio
+    in favor of some country roads.
+  - >-
+    This is the first road trip on the site: the small towns, the gas station
+    finds, and the bridge over the bay.
+stops:
+  - title: Northwest Austin
+    lat: 30.36435
+    lon: -97.79232
+    date: 2026-09-15
+    blurb: >-
+      Where the drive started, up in the hills off 360.
+  - title: H-E-B on South Congress
+    lat: 30.16883
+    lon: -97.78709
+    date: 2026-09-15
+    blurb: >-
+      First stop: the big HEB at South Congress to load up on goodies. Chips,
+      dips, fruit, and pre-made meals rounded out the majority of the haul.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/heb1.jpg
+        alt: >-
+          H-E-B storefront under a grey sky, red canopy and big red letters over
+          a glass wall, a green SUV parked in front and the Texas Backyard
+          garden center to the side
+      - src: ../../assets/roadtrips/cinnamon-shore/heb2.jpg
+        alt: >-
+          Modern H-E-B with a sweeping orange roofline and a green and yellow
+          geometric entrance under a bright blue sky with puffy clouds
+  - title: Kenedy
+    lat: 28.82615
+    lon: -97.84852
+    via:
+      - [30.04391, -97.69059]
+    date: 2026-09-15
+    blurb: >-
+      The town of Kenedy. It grew up around the San Antonio and Aransas Pass
+      Railway in 1886 on land that Mifflin Kenedy bought, and started life as
+      Kenedy Junction. In the early 1900s, bar patrons on South First Street
+      shot at passing trains often enough that the place picked up the nickname
+      Six Shooter Junction.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6094.jpg
+        alt: >-
+          Wide small town main street with low brick storefronts, ornate street
+          lamps, and a banner reading Kenedy on the corner building
+        caption: The town of Kenedy as viewed through the windshield
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6092.jpg
+        alt: >-
+          Two lane highway seen through a windshield, dry grass and a fence on
+          one side, a lone live oak on the horizon
+        caption: The road into town.
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6095.jpg
+        alt: >-
+          Weathered two story house with a clay tile roof and arched entry, half
+          hidden by trees, beside a traffic signal and an empty street
+        caption: >-
+          A weathered house I liked. Seemed significatn, but I could not find
+          anything about it online.
+  - title: Wind turbine
+    lat: 28.15755
+    lon: -97.76843
+    date: 2026-09-15
+    blurb: >-
+      One turbine right up against the road with a whole field of them running
+      off to the horizon behind and in front.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6096.jpg
+        alt: >-
+          White wind turbine towering over a dark plowed field, with dozens of
+          smaller turbines lined up along the horizon under a clear blue sky
+  - title: Mathis gas station
+    lat: 28.11157
+    lon: -97.81890
+    date: 2026-09-15
+    blurb: >-
+      We stopped for snacks at the Speedy Express #38 gas station in Mathis. I
+      was surprised to see the array of Pokémon card merch - nearly all the
+      latest booster packs and more! They also had some rare, international
+      treats/flavors so we had to stock up. I got some Coriander Doritos which
+      were really good (and a bit spicy) while my wife got Kimbap-flavored Lays.
+      They had other interesting candy and soda flavors including a
+      ketchup-flavored soda.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6097.jpg
+        alt: >-
+          Pegboard wall hung with rows of Pokémon trading card booster packs and
+          blister packs, orange price tags on each hook
+        caption: >-
+          Assorted Pokemon booster packs for $15-ish!
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6098.jpg
+        alt: >-
+          Hand holding a glass bottle of bright red Grandpa Joe's Ketchup Soda
+          over a tile floor
+        caption: Ketchup soda. Crazy flavor. Did not get it, but I should have.
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6099.jpg
+        alt: >-
+          Cooler shelf of glass soda bottles, two red Kool-Aid Soda Tropical
+          Punch bottles in front and orange ones behind
+        caption: Kool-Aid soda. Never seen that before.
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6100.jpg
+        alt: >-
+          Green bag of coriander flavor Doritos held over a car console with a
+          green can and a Snyder's pretzel pieces bag in the cupholder
+        caption: >-
+          Coriander-flavored Doritos, lime Liquid Death, and honey mustard and
+          onion pretzel pieces.
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6101.jpg
+        alt: >-
+          Three story tan hotel with boarded and blanked out windows behind a
+          fence, empty concrete lot in front
+        caption: >-
+          An old, abandoned hotel of some kind right next door. Looked kind of
+          eerie.
+  - title: JFK Causeway
+    lat: 27.64682
+    lon: -97.25156
+    date: 2026-09-15
+    blurb: >-
+      The JFK Memorial Causeway carries Park Road 22 out of Flour Bluff and
+      across the Laguna Madre to North Padre Island.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6102.jpg
+        alt: >-
+          View through a windshield of a divided causeway crossing open water,
+          with the arch of the bridge ahead and a pickup truck in the next lane
+        caption: Bridge view from the car.
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6103.jpg
+        alt: >-
+          Flat hazy water of the Laguna Madre seen over a concrete barrier from
+          the passenger window, low land on the far horizon
+        caption: The Laguna Madre as we drive over.
+  - title: The island road north
+    lat: 27.62845
+    lon: -97.20637
+    date: 2026-09-15
+    blurb: >-
+      Heading up the island toward Cinnamon Shore. This is the scenery I
+      remember most from last year's drive: flat and marshy with not much else.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore/IMG_6104.jpg
+        alt: >-
+          Straight two lane road running to a flat horizon, tall grass and power
+          lines on the left, low dunes on the right
+  - title: Cinnamon Shore
+    lat: 27.77286
+    lon: -97.10572
+    date: 2026-09-15
+    blurb: >-
+      Pulled into Cinnamon Shore North on Mustang Island just before close at
+      7:00 pm.
+route:
+  - [30.36371, -97.79192]
+  - [30.36431, -97.79024]
+  - [30.35806, -97.79191]
+  - [30.32325, -97.81406]
+  - [30.31510, -97.82641]
+  - [30.30595, -97.82528]
+  - [30.29984, -97.82794]
+  - [30.29026, -97.82832]
+  - [30.27499, -97.81803]
+  - [30.26487, -97.81776]
+  - [30.24693, -97.80370]
+  - [30.23462, -97.79721]
+  - [30.22841, -97.78498]
+  - [30.22710, -97.77074]
+  - [30.22234, -97.76444]
+  - [30.20483, -97.77490]
+  - [30.17091, -97.78507]
+  - [30.16925, -97.78674]
+  - [30.16849, -97.78563]
+  - [30.11132, -97.80827]
+  - [30.11058, -97.79602]
+  - [30.09995, -97.77815]
+  - [30.08108, -97.72947]
+  - [30.08197, -97.71113]
+  - [30.08061, -97.69334]
+  - [30.00186, -97.68702]
+  - [29.94106, -97.67209]
+  - [29.92072, -97.67756]
+  - [29.91396, -97.68081]
+  - [29.89882, -97.67769]
+  - [29.89092, -97.67111]
+  - [29.87800, -97.66893]
+  - [29.84857, -97.66810]
+  - [29.81405, -97.67411]
+  - [29.80206, -97.67161]
+  - [29.77351, -97.65731]
+  - [29.74982, -97.65459]
+  - [29.72115, -97.65618]
+  - [29.70713, -97.64974]
+  - [29.69304, -97.64565]
+  - [29.66886, -97.64876]
+  - [29.66109, -97.65545]
+  - [29.64869, -97.66105]
+  - [29.63311, -97.66133]
+  - [29.62004, -97.66594]
+  - [29.60764, -97.66505]
+  - [29.57330, -97.66877]
+  - [29.55756, -97.67205]
+  - [29.52504, -97.68363]
+  - [29.51790, -97.68669]
+  - [29.51056, -97.69765]
+  - [29.48373, -97.71340]
+  - [29.47238, -97.72244]
+  - [29.44142, -97.73771]
+  - [29.38299, -97.74987]
+  - [29.34001, -97.75626]
+  - [29.31650, -97.75642]
+  - [29.28980, -97.76593]
+  - [29.27223, -97.76590]
+  - [29.26644, -97.76435]
+  - [29.21459, -97.74330]
+  - [29.19753, -97.74793]
+  - [29.17058, -97.76407]
+  - [29.13017, -97.78405]
+  - [29.10454, -97.78423]
+  - [29.07836, -97.79019]
+  - [29.05479, -97.79840]
+  - [29.01139, -97.81957]
+  - [28.99258, -97.82381]
+  - [28.95422, -97.82384]
+  - [28.93602, -97.83543]
+  - [28.92629, -97.82993]
+  - [28.90075, -97.82923]
+  - [28.87881, -97.83316]
+  - [28.85601, -97.83893]
+  - [28.84882, -97.84504]
+  - [28.82804, -97.84678]
+  - [28.82232, -97.84478]
+  - [28.81427, -97.85818]
+  - [28.77326, -97.85239]
+  - [28.72010, -97.85041]
+  - [28.70839, -97.84521]
+  - [28.68694, -97.84167]
+  - [28.68400, -97.83944]
+  - [28.67780, -97.82756]
+  - [28.66526, -97.81855]
+  - [28.64667, -97.81831]
+  - [28.63213, -97.80814]
+  - [28.61282, -97.80097]
+  - [28.60512, -97.80205]
+  - [28.59559, -97.80875]
+  - [28.59224, -97.80912]
+  - [28.52915, -97.78209]
+  - [28.48358, -97.77719]
+  - [28.45461, -97.76166]
+  - [28.43405, -97.74329]
+  - [28.40223, -97.72517]
+  - [28.39585, -97.72404]
+  - [28.38272, -97.72606]
+  - [28.36984, -97.73268]
+  - [28.36508, -97.73300]
+  - [28.35689, -97.72562]
+  - [28.32194, -97.70447]
+  - [28.31506, -97.70277]
+  - [28.30539, -97.70339]
+  - [28.28676, -97.69257]
+  - [28.27485, -97.69188]
+  - [28.24663, -97.68299]
+  - [28.11641, -97.80745]
+  - [28.11196, -97.81942]
+  - [28.10504, -97.81277]
+  - [28.09181, -97.81019]
+  - [28.08715, -97.80726]
+  - [28.05484, -97.77188]
+  - [28.04156, -97.75317]
+  - [27.97715, -97.67416]
+  - [27.91758, -97.63721]
+  - [27.88131, -97.62419]
+  - [27.86589, -97.62295]
+  - [27.86323, -97.62143]
+  - [27.84370, -97.56390]
+  - [27.82682, -97.53460]
+  - [27.82089, -97.51899]
+  - [27.81311, -97.50709]
+  - [27.80741, -97.49402]
+  - [27.80347, -97.46912]
+  - [27.80087, -97.46800]
+  - [27.78214, -97.46973]
+  - [27.76540, -97.46864]
+  - [27.74782, -97.45172]
+  - [27.69322, -97.34109]
+  - [27.67686, -97.30601]
+  - [27.67434, -97.29504]
+  - [27.65676, -97.25916]
+  - [27.63748, -97.24517]
+  - [27.62712, -97.22341]
+  - [27.62377, -97.22180]
+  - [27.61789, -97.22188]
+  - [27.61831, -97.21602]
+  - [27.62152, -97.21111]
+  - [27.77475, -97.10798]
+  - [27.77316, -97.10591]

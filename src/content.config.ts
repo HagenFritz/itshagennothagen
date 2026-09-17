@@ -14,9 +14,49 @@ const albums = defineCollection({
           title: z.string(),
           date: z.coerce.date(),
           caption: z.string().optional(),
-          link: z.string().url().optional(),
+          link: z.url().optional(),
         }),
       ),
+    }),
+})
+
+const latLon = z
+  .tuple([z.number(), z.number()])
+  .refine(
+    ([lat, lon]) => lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180,
+    { message: 'points must be [lat, lon]' },
+  )
+
+const roadtrips = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.yaml', base: './src/content/roadtrips' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      tagline: z.string(),
+      intro: z.array(z.string()),
+      miles: z.number().optional(),
+      route: z.array(latLon).min(2),
+      stops: z
+        .array(
+          z.object({
+            title: z.string(),
+            lat: z.number().min(-90).max(90),
+            lon: z.number().min(-180).max(180),
+            via: z.array(latLon).default([]),
+            date: z.coerce.date(),
+            blurb: z.string(),
+            images: z
+              .array(
+                z.object({
+                  src: image(),
+                  alt: z.string(),
+                  caption: z.string().optional(),
+                }),
+              )
+              .default([]),
+          }),
+        )
+        .min(1),
     }),
 })
 
@@ -31,4 +71,4 @@ const posts = defineCollection({
   }),
 })
 
-export const collections = { albums, posts }
+export const collections = { albums, posts, roadtrips }
