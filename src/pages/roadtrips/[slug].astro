@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 import { Image } from 'astro:assets'
 import Base from '../../layouts/Base.astro'
+import { formatDate } from '../../lib/date'
 
 export async function getStaticPaths() {
   const trips = await getCollection('roadtrips')
@@ -18,17 +19,9 @@ interface Props {
 const { trip } = Astro.props
 const { title, tagline, intro, miles, route, stops } = trip.data
 
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  })
-
 const dates = stops.map((s) => s.date.valueOf())
-const first = fmt(new Date(Math.min(...dates)))
-const last = fmt(new Date(Math.max(...dates)))
+const first = formatDate(new Date(Math.min(...dates)))
+const last = formatDate(new Date(Math.max(...dates)))
 const dateRange = first === last ? first : `${first} to ${last}`
 const summary = [`${stops.length} stops`, miles && `${miles} mi`, dateRange]
   .filter(Boolean)
@@ -173,7 +166,7 @@ const mapData = {
                 datetime={stop.date.toISOString().slice(0, 10)}
                 class="mt-0.5 block text-xs italic text-muted-foreground"
               >
-                {fmt(stop.date)}
+                {formatDate(stop.date)}
               </time>
               <p class="mt-2 text-sm text-muted-foreground">{stop.blurb}</p>
             </div>
@@ -204,7 +197,7 @@ const mapData = {
             </span>
             <span class="flex-1 text-sm">{stop.title}</span>
             <span class="shrink-0 text-xs text-muted-foreground">
-              {fmt(stop.date)}
+              {formatDate(stop.date)}
             </span>
           </button>
         </li>
@@ -232,6 +225,7 @@ const mapData = {
     type MapView,
     type RouteCoord,
   } from 'tile-map'
+  import { attachCarousel } from '../../lib/carousel'
 
   type MapData = { route: RouteCoord[]; stops: LatLon[] }
 
@@ -534,33 +528,8 @@ const mapData = {
   for (const carousel of document.querySelectorAll<HTMLElement>(
     '[data-carousel]',
   )) {
-    const track = carousel.querySelector<HTMLElement>('[data-track]')
-    if (!track) continue
-    const slides = [...track.children] as HTMLElement[]
-    if (slides.length < 2) continue
-    const dots = [...carousel.querySelectorAll<HTMLElement>('[data-dot]')]
-
-    let index = 0
-    const observer = new IntersectionObserver(
-      (observed) => {
-        for (const o of observed) {
-          if (!o.isIntersecting) continue
-          index = slides.indexOf(o.target as HTMLElement)
-          dots.forEach((dot, i) =>
-            dot.setAttribute('aria-current', String(i === index)),
-          )
-        }
-      },
-      { root: track, threshold: 0.6 },
-    )
-    for (const slide of slides) observer.observe(slide)
-
-    const step = (delta: number) => {
-      const next = (index + delta + slides.length) % slides.length
-      track.scrollTo({ left: slides[next]!.offsetLeft, behavior: 'smooth' })
-    }
-    carousels.set(carousel, step)
-    track.addEventListener('click', () => step(1))
+    const step = attachCarousel(carousel)
+    if (step) carousels.set(carousel, step)
   }
 
   map.fitBounds()

@@ -2,24 +2,17 @@
 import { getCollection } from 'astro:content'
 import { routeToSvgPath, type RouteCoord } from 'tile-map/geo'
 import Base from '../../layouts/Base.astro'
+import { formatDate } from '../../lib/date'
 
 const THUMB = 80
 const THUMB_PADDING = 8
-
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  })
 
 const trips = (await getCollection('roadtrips'))
   .map((trip) => {
     const dates = trip.data.stops.map((s) => s.date.valueOf())
     const latest = Math.max(...dates)
-    const first = fmt(new Date(Math.min(...dates)))
-    const last = fmt(new Date(latest))
+    const first = formatDate(new Date(Math.min(...dates)))
+    const last = formatDate(new Date(latest))
     return {
       id: trip.id,
       data: trip.data,
