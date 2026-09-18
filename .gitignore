@@ -53,6 +53,7 @@ __pycache__/
 docs/music/liked-songs.json
 docs/music/sort-plan.json
 docs/music/undo-*.json
+docs/music/descriptions-before-*.json
 
 # Local env (CARTO basemap key)
 .env
