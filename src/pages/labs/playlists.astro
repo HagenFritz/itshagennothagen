@@ -116,6 +116,7 @@ const playlists = playlistsData as Playlist[]
     const ids = playlists.map((p) => p.url).join(',')
     const res = await fetch(
       `/api/spotify-playlists?ids=${encodeURIComponent(ids)}`,
+      { signal: AbortSignal.timeout(8000) },
     )
     if (!res.ok) return
     const { playlists: info } = (await res.json()) as {
