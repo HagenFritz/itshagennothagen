@@ -14,9 +14,17 @@ bits.
 - **Weed Whacker** (`/play`): a one-minute tile game. The sim core, renderer,
   input, and audio live in the `packages/weed-whacker` npm workspace; a global
   leaderboard runs on D1.
-- **Lab** (`/lab`): small interactive tools, including a Pokémon stat matcher
-  and a Spotify playlist tracker (`/labs/playlists`) that proxies Spotify's
-  client-credentials API through Pages Functions.
+- **Lab** (`/lab`): small interactive tools, including a Pokémon stat matcher, a
+  Spotify playlist tracker (`/labs/playlists`) that proxies Spotify's
+  client-credentials API through Pages Functions, an Austin Pokémon GO gym map
+  (`/labs/austin-pogo-map`), and ATXactly (`/labs/atxactly`), a guess-the-spot
+  game on a map of Austin.
+- **Albums** (`/albums`): photo collections that mark moments worth keeping, as
+  YAML content collection entries in `src/content/albums/`.
+- **Road trips** (`/roadtrips`): each drive as an interactive map with a
+  road-following route and stop pins that open photo cards. Trips are YAML in
+  `src/content/roadtrips/`; the canvas map lives in the `packages/tile-map`
+  workspace, and `scripts/` holds the photo prep and OSRM route tooling.
 - **API** in `functions/` (Pages Functions file routing, e.g.
   `functions/api/scores.ts` serves `/api/scores`). Schema in
   `functions/schema.sql`.
