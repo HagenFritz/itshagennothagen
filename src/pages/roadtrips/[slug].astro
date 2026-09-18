@@ -141,7 +141,7 @@ const mapData = {
                         alt={img.alt}
                         widths={[320, 640]}
                         sizes="320px"
-                        loading="eager"
+                        loading={i === 0 ? 'eager' : 'lazy'}
                         class="trip-card-photo"
                       />
                       {stop.images.some((other) => other.caption) && (
