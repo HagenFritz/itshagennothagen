@@ -52,8 +52,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     </header>
 
     <div class="mt-stage">
-      <canvas id="mt-tiles"></canvas>
-      <canvas id="mt-over"></canvas>
+      <canvas id="mt-tiles" aria-hidden="true"></canvas>
+      <canvas
+        id="mt-over"
+        role="application"
+        aria-label="Map of Austin. Tap where you think the place is; zoom with the buttons or arrow keys."
+      ></canvas>
+      <div id="mt-credit" class="mt-credit map-credit"></div>
       <div id="mt-toast" class="mt-toast">
         <b id="mt-toast-d"></b>
         <span id="mt-toast-p"></span>
@@ -308,6 +313,17 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   }
   #mt-over.pins {
     cursor: pointer;
+  }
+  .mt-credit {
+    position: absolute;
+    left: 0.375rem;
+    bottom: 0.25rem;
+    z-index: 2;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background: rgb(11 15 26 / 0.75);
+    color: var(--muted-foreground);
+    font-size: 10px;
   }
   .mt-toast {
     position: absolute;
@@ -637,6 +653,8 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 </style>
 
 <script>
+  import { CARTO_ATTRIBUTION, ESRI_ATTRIBUTION } from 'tile-map'
+
   type Loc = {
     id: string
     name: string
@@ -923,6 +941,9 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   }
   const TILE_URL = CARTO_KEY ? CARTO_URL : FALLBACK_URL
   type Layer = keyof typeof FALLBACK_URL
+  document.getElementById('mt-credit')!.innerHTML = CARTO_KEY
+    ? CARTO_ATTRIBUTION
+    : ESRI_ATTRIBUTION
 
   const tiles = new Map<string, HTMLImageElement>()
   // Failure count per tile: two retries against the primary source, then one
