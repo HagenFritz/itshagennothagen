@@ -362,7 +362,7 @@ from the existing code, not from the new module.
 - `npm ci` succeeds with the regenerated lockfile.
 - Prettier is clean on the new files.
 
-- [ ] **Unit 2: Rewire the page onto the package and `tile-map/geo`**
+- [x] **Unit 2: Rewire the page onto the package and `tile-map/geo`**
 
 **Goal:** The page's inline script imports scoring, deck, and projection instead
 of defining them, with no behaviour change.
