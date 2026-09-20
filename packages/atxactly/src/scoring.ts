@@ -88,9 +88,14 @@ export const FLOOR = 100,
 // any boundary scores 52.
 export const INSIDE_EDGE = 75
 
-export function reachOf(loc: ScorableLocation) {
+export type ShapedLocation = ScorableLocation & { shape: number[][][] }
+
+const hasShape = (loc: ScorableLocation): loc is ShapedLocation =>
+  loc.shape !== undefined
+
+export function reachOf(loc: ShapedLocation) {
   let best = 0
-  for (const ring of loc.shape!)
+  for (const ring of loc.shape)
     for (const pt of ring) {
       const d = haversine(loc.lat, loc.lon, pt[1]!, pt[0]!)
       if (d > best) best = d
@@ -98,7 +103,7 @@ export function reachOf(loc: ScorableLocation) {
   return best
 }
 
-export function scoreInside(lat: number, lon: number, loc: ScorableLocation) {
+export function scoreInside(lat: number, lon: number, loc: ShapedLocation) {
   const reach = reachOf(loc)
   if (reach <= 0) return 100
   const frac = Math.min(1, haversine(lat, lon, loc.lat, loc.lon) / reach)
@@ -121,7 +126,7 @@ export function scoreOf(m: number) {
 
 export function scoreLocation(lat: number, lon: number, loc: ScorableLocation) {
   const d = effectiveDistance(lat, lon, loc)
-  if (!loc.shape) return { base: scoreOf(d), dist: d }
+  if (!hasShape(loc)) return { base: scoreOf(d), dist: d }
   if (d === 0) return { base: scoreInside(lat, lon, loc), dist: 0 }
   return { base: scoreOf(d + EDGE_OFFSET), dist: d }
 }

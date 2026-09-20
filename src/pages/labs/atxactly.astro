@@ -1848,8 +1848,21 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   const alreadyPlayed = readStore(PLAYED_KEY) === String(puzzleNo)
   if (alreadyPlayed) showAlreadyPlayed()
 
+  function hasShape(r: unknown): r is Location {
+    const l = r as Partial<Location> | null
+    return (
+      typeof l?.id === 'string' &&
+      typeof l.name === 'string' &&
+      typeof l.lat === 'number' &&
+      typeof l.lon === 'number' &&
+      typeof l.difficulty === 'number' &&
+      typeof l.story === 'string'
+    )
+  }
+
   function usable(rows: unknown): rows is Location[] {
     if (!Array.isArray(rows)) return false
+    if (!rows.every(hasShape)) return false
     const need: Record<number, number> = { 1: 2, 2: 2, 3: 1 }
     for (const band of [1, 2, 3])
       if (rows.filter((r) => r?.difficulty === band).length < need[band]!)

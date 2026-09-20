@@ -22,14 +22,20 @@ type RawLocation = Omit<Location, 'difficulty' | 'story'> & {
 }
 
 const trim = (l: RawLocation): Location => {
+  // Runs at build time, so a hand edit that marks a row eligible before
+  // filling in its fields fails the build instead of shrinking a band.
+  if (typeof l.difficulty !== 'number')
+    throw new Error(`eligible location ${l.id} has no difficulty`)
+  if (typeof l.story !== 'string')
+    throw new Error(`eligible location ${l.id} has no story`)
   const out: Location = {
     id: l.id,
     name: l.name,
     lat: l.lat,
     lon: l.lon,
     category: l.category,
-    difficulty: l.difficulty as number,
-    story: l.story as string,
+    difficulty: l.difficulty,
+    story: l.story,
     extra: l.extra,
     storyUrl: l.storyUrl,
   }
