@@ -1,0 +1,328 @@
+title: Cinnamon Shore to Austin
+miles: 236
+tagline: >-
+  Back home from vacation: down the beach, across on the ferry, and up through
+  Victoria.
+intro:
+  - >-
+    The drive home from Cinnamon Shore on a Saturday. We left around 10:20am and
+    pulled in a little after 4:30pm, opting for the ferry because how often do
+    you get to ride a ferry?
+stops:
+  - title: Cinnamon Shore
+    lat: 27.77286
+    lon: -97.10572
+    date: 2026-09-19
+    blurb: >-
+      Checked out of Cinnamon Shore right at 10am on Saturday. Checked out the
+      boutique and then headed for a drive on the beach.
+  - title: Mustang Island beach
+    lat: 27.70484
+    lon: -97.14941
+    date: 2026-09-19
+    blurb: >-
+      We wanted one last view of the beach. We took the nearby public road to
+      the beach and parked for about five minutes to dip our toes in. Then we
+      drove south along the sand for a few miles (seemed like forever) before
+      cutting back to the highway and heading north to Port Aransas.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/beach_1.jpg
+        alt: >-
+          Wide sandy beach crisscrossed with tire tracks seen through a car
+          window, the Gulf glittering beyond under a sky full of puffy clouds
+        caption: Tire tracks on the beach road.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/beach_2.jpg
+        alt: >-
+          Gulf surf rolling onto a flat sandy beach seen over the hood of a car,
+          with big white clouds stacked up against a blue sky
+        caption: Parked on the sand, facing the Gulf.
+  - title: Port Aransas ferry
+    lat: 27.84410
+    lon: -97.07048
+    date: 2026-09-19
+    blurb: >-
+      We left the island on the ferry instead of the causeway we came in on.
+      Spent some time in the queue to let a giant oil tanker through (so cool).
+      Then a few minutes across the ship channel to Aransas Pass. We were the
+      last car on!
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/ferry_5.jpg
+        alt: >-
+          Ferry staging lanes marked off with orange cones, a produce delivery
+          truck and a pickup ahead, construction cranes and flags on the left
+        caption: Pulling into the ferry lanes.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/ferry_4.jpg
+        alt: >-
+          Stopped in a ferry queue behind a black pickup with a ladder rack,
+          orange barrels and a crane ahead under heavy clouds
+        caption: The wait.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/ferry_3.jpg
+        alt: >-
+          View through a windshield from the deck of a car ferry, two black
+          pickups parked ahead and the white pilothouse rising above them
+        caption: On board.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/ferry_2.jpg
+        alt: >-
+          Ferry pilothouse with purple trim against a deep blue sky, seen over
+          the ladder rack of the pickup parked in front
+      - src: ../../assets/roadtrips/cinnamon-shore-return/ferry_1.jpg
+        alt: >-
+          Wide view from the ferry deck of the pilothouse and twin exhaust
+          stacks, with the red hull of a large ship passing behind the pickups
+        caption: The oil tanker sliding by in the channel.
+  - title: Coasters
+    lat: 27.91110
+    lon: -97.13409
+    date: 2026-09-19
+    blurb: >-
+      We got brunch at Coasters in Aransas Pass. Small restaurant with a great
+      atmosphere right next to a marina. We got to watch a giant forklift raise
+      a boat and store it away like a crate. I got the waffle tacos which were
+      giant and really tasty.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/coasters_1.jpg
+        alt: >-
+          Two waffle tacos on a white plate, one stuffed with fried chicken and
+          candied bacon, the other with eggs, cheese, avocado, and pico, with
+          cups of syrup and salsa between them
+        caption: >-
+          Waffle tacos: fried chicken and candied bacon and chorizo, eggs,
+          cheese, avocado, and pico.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/coasters_2.jpg
+        alt: >-
+          Stack of waffles topped with peppery fried chicken and a pile of
+          candied bacon, with cups of butter and syrup on the side
+        caption: Chicken and waffles with a mountain of candied bacon.
+  - title: Copano Bay Causeway
+    lat: 28.12617
+    lon: -97.01550
+    via:
+      - [28.00349, -97.06727]
+      - [28.03764, -97.04247]
+    date: 2026-09-19
+    blurb: >-
+      North through Rockport and Fulton, then over Copano Bay on Highway 35.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/bridge.jpg
+        alt: >-
+          Green bay water beyond a low concrete bridge railing seen from a
+          moving car, a thin strip of shoreline on the horizon under puffy
+          clouds
+        caption: Copano Bay from the causeway.
+  - title: The Texan
+    lat: 28.85789
+    lon: -97.02752
+    via:
+      - [28.44671, -96.88904]
+    date: 2026-09-19
+    blurb: >-
+      A quick pit stop at The Texan in Victoria for gas and snacks. It was our
+      first time at the Texan which we had seen multiple times on our trek.
+      Seemed like a smaller Buc-ee's, but they had an amazing selection of hot
+      food. Unfortunately didn't get any since I was full from brunch still.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/texan.jpg
+        alt: >-
+          Limestone convenience store with an arched entrance and a sign reading
+          The Texan over a cartoon cowboy on the shape of Texas
+      - src: ../../assets/roadtrips/cinnamon-shore-return/texan_snacks.jpg
+        alt: >-
+          Hand holding an orange can of La Colombe pumpkin spice latte in a car,
+          with a Zebra Cake and a Cosmic Brownie on the seat behind it
+        caption: Pumpkin spice latte, a Zebra Cake, and a Cosmic Brownie.
+  - title: Cuero
+    lat: 29.09200
+    lon: -97.28925
+    date: 2026-09-19
+    blurb: >-
+      A quick loop through downtown Cuero to look at the DeWitt County
+      Courthouse, all red sandstone trim and a clock tower. The town seemed
+      somewhat obsessed with turkeys - there was mention of them everywhere. I
+      did some digging: Farmers used to drive their birds on foot to market
+      every fall, and in 1912 the town made a show of it: the first Turkey Trot
+      sent more than 20,000 turkeys through town. It lives on as Turkeyfest,
+      headlined by a live turkey race called the Great Gobbler Gallop.
+    images:
+      - src: ../../assets/roadtrips/cinnamon-shore-return/cuero_city_hall.jpg
+        alt: >-
+          Three story stone courthouse with red sandstone arches, corner towers,
+          and a tall central clock tower, flags flying out front under a deep
+          blue sky
+        caption: The DeWitt County Courthouse.
+      - src: ../../assets/roadtrips/cinnamon-shore-return/cuero_1.jpg
+        alt: >-
+          Empty small town street lined with low brick storefronts and utility
+          poles under a bright sky full of clouds
+        caption: Downtown Cuero, quiet on a Saturday afternoon.
+  - title: Northwest Austin
+    lat: 30.36435
+    lon: -97.79232
+    via:
+      - [29.50013, -97.45626]
+      - [29.88426, -97.67019]
+      - [30.21081, -97.68318]
+      - [30.21547, -97.73567]
+      - [30.29139, -97.82820]
+    date: 2026-09-19
+    blurb: >-
+      Up 183 through Gonzales, Luling, and Lockhart, and home a little after
+      4:30pm.
+route:
+  - [27.77316, -97.10591]
+  - [27.77475, -97.10798]
+  - [27.77250, -97.10950]
+  - [27.76936, -97.10392]
+  - [27.70361, -97.15024]
+  - [27.70585, -97.15415]
+  - [27.70361, -97.15024]
+  - [27.76936, -97.10392]
+  - [27.77250, -97.10950]
+  - [27.81087, -97.07844]
+  - [27.82820, -97.06703]
+  - [27.83175, -97.07140]
+  - [27.83851, -97.06886]
+  - [27.84403, -97.07043]
+  - [27.85322, -97.07886]
+  - [27.86710, -97.08556]
+  - [27.88968, -97.11122]
+  - [27.89748, -97.13845]
+  - [27.90016, -97.14235]
+  - [27.90140, -97.14138]
+  - [27.90021, -97.13916]
+  - [27.90472, -97.13628]
+  - [27.91395, -97.13338]
+  - [27.91632, -97.13652]
+  - [27.91778, -97.13550]
+  - [27.92225, -97.12961]
+  - [27.95973, -97.10363]
+  - [27.99253, -97.07809]
+  - [28.00173, -97.06813]
+  - [28.02518, -97.05855]
+  - [28.02722, -97.05612]
+  - [28.02775, -97.04832]
+  - [28.03547, -97.04293]
+  - [28.07022, -97.04134]
+  - [28.08942, -97.03729]
+  - [28.10949, -97.02770]
+  - [28.14274, -97.00467]
+  - [28.17335, -96.99624]
+  - [28.23067, -96.98529]
+  - [28.26726, -96.96689]
+  - [28.27561, -96.95656]
+  - [28.28082, -96.95274]
+  - [28.42752, -96.89442]
+  - [28.44741, -96.88880]
+  - [28.45509, -96.88806]
+  - [28.46484, -96.92933]
+  - [28.50483, -97.02146]
+  - [28.51975, -97.04488]
+  - [28.53347, -97.04271]
+  - [28.60038, -97.04338]
+  - [28.66645, -97.04705]
+  - [28.70153, -97.04655]
+  - [28.71976, -97.03857]
+  - [28.73093, -97.04199]
+  - [28.73394, -97.04722]
+  - [28.74502, -97.05907]
+  - [28.74817, -97.07144]
+  - [28.76500, -97.09172]
+  - [28.77381, -97.09769]
+  - [28.78572, -97.09962]
+  - [28.79487, -97.09607]
+  - [28.82280, -97.06614]
+  - [28.83956, -97.05592]
+  - [28.85641, -97.02496]
+  - [28.85695, -97.02748]
+  - [28.85892, -97.02768]
+  - [28.92194, -97.09836]
+  - [28.96347, -97.13746]
+  - [28.98006, -97.15104]
+  - [28.99228, -97.15608]
+  - [29.00904, -97.15932]
+  - [29.01729, -97.16632]
+  - [29.02803, -97.17159]
+  - [29.03616, -97.17799]
+  - [29.04571, -97.19509]
+  - [29.06811, -97.22248]
+  - [29.07711, -97.24243]
+  - [29.08539, -97.25362]
+  - [29.08731, -97.25981]
+  - [29.08806, -97.27476]
+  - [29.09327, -97.28860]
+  - [29.09158, -97.28946]
+  - [29.09213, -97.29084]
+  - [29.10867, -97.28287]
+  - [29.13595, -97.27530]
+  - [29.18646, -97.29243]
+  - [29.21584, -97.29635]
+  - [29.23393, -97.29336]
+  - [29.25402, -97.29250]
+  - [29.27326, -97.29916]
+  - [29.29193, -97.29359]
+  - [29.30068, -97.29264]
+  - [29.30682, -97.29480]
+  - [29.33126, -97.32347]
+  - [29.34676, -97.32778]
+  - [29.35479, -97.33541]
+  - [29.36648, -97.35052]
+  - [29.41215, -97.37623]
+  - [29.42328, -97.39781]
+  - [29.42748, -97.41255]
+  - [29.43025, -97.41566]
+  - [29.46969, -97.44313]
+  - [29.49186, -97.44944]
+  - [29.49882, -97.45573]
+  - [29.53534, -97.47188]
+  - [29.54293, -97.47764]
+  - [29.55666, -97.48348]
+  - [29.56785, -97.50937]
+  - [29.57714, -97.51949]
+  - [29.58208, -97.52891]
+  - [29.59624, -97.54253]
+  - [29.60263, -97.55410]
+  - [29.61694, -97.56985]
+  - [29.62943, -97.57514]
+  - [29.64036, -97.58551]
+  - [29.65241, -97.59233]
+  - [29.66479, -97.61982]
+  - [29.67867, -97.63758]
+  - [29.68051, -97.64756]
+  - [29.69487, -97.64585]
+  - [29.72115, -97.65618]
+  - [29.74982, -97.65459]
+  - [29.77276, -97.65715]
+  - [29.80206, -97.67161]
+  - [29.81457, -97.67417]
+  - [29.84857, -97.66810]
+  - [29.87800, -97.66893]
+  - [29.89092, -97.67111]
+  - [29.89882, -97.67769]
+  - [29.90966, -97.68028]
+  - [29.94109, -97.67157]
+  - [30.00170, -97.68641]
+  - [30.01392, -97.68781]
+  - [30.02267, -97.68702]
+  - [30.09111, -97.69376]
+  - [30.15040, -97.69682]
+  - [30.19147, -97.68509]
+  - [30.20507, -97.68319]
+  - [30.22348, -97.68298]
+  - [30.22344, -97.68137]
+  - [30.21816, -97.69209]
+  - [30.21244, -97.71061]
+  - [30.21647, -97.75088]
+  - [30.22716, -97.77037]
+  - [30.22860, -97.78490]
+  - [30.23559, -97.79748]
+  - [30.24661, -97.80319]
+  - [30.26513, -97.81763]
+  - [30.27491, -97.81773]
+  - [30.28797, -97.82714]
+  - [30.29204, -97.82822]
+  - [30.30024, -97.82760]
+  - [30.30604, -97.82501]
+  - [30.31490, -97.82623]
+  - [30.32300, -97.81394]
+  - [30.35805, -97.79159]
+  - [30.36582, -97.78981]
+  - [30.36371, -97.79192]
