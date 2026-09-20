@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro'
 import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '../lib/date'
 
 interface Props {
   post: CollectionEntry<'posts'>
@@ -11,12 +12,7 @@ const { title, date, tags } = post.data
 
 // Frontmatter dates parse as UTC midnight; format in UTC so the shown day
 // never shifts with the build machine's timezone.
-const fmt = date.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  timeZone: 'UTC',
-})
+const fmt = formatDate(date, 'long')
 ---
 
 <Base

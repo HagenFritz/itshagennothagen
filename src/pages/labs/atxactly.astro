@@ -1,24 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
-import locationData from '../../data/atxactly-locations.json'
-
-type Loc = {
-  id: string
-  name: string
-  lat: number
-  lon: number
-  category: string
-  tier: string
-  difficulty: number | null
-  story: string | null
-  extra: string | null
-  storyUrl: string | null
-  status: string
-  shape?: number[][][]
-  photo?: { url: string; attribution: string } | null
-}
-
-const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
+import { locationsUrl } from '../../lib/atxactly-locations'
 
 // CARTO serves label-free tiles, which is what keeps the map unreadable during
 // play. Keyless requests are watermarked, so the key is required for a clean
@@ -28,11 +10,8 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 ---
 
 <Base title="ATXactly · Hagen Fritz">
-  <div
-    id="mt"
-    data-locations={JSON.stringify(eligible)}
-    data-carto-key={cartoKey}
-  >
+  <link slot="head" rel="preload" as="fetch" crossorigin href={locationsUrl} />
+  <div id="mt" data-locations-url={locationsUrl} data-carto-key={cartoKey}>
     <header class="mt-head">
       <div class="mt-score"><span>SCORE</span><b id="mt-total">0</b></div>
       <div class="mt-mid">
@@ -44,7 +23,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
           <span id="mt-cat" class="mt-cat"></span>
           <span id="mt-name" class="mt-name">Loading…</span>
         </div>
-        <div id="mt-sub" class="mt-sub">Tap as close as you can</div>
+        <div id="mt-sub" class="mt-sub">Getting today's puzzle</div>
       </div>
       <button id="mt-help" class="mt-help" aria-label="How to play">?</button>
       <button id="mt-again" class="mt-btn" hidden>Play again</button>
@@ -654,23 +633,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 
 <script>
   import { CARTO_ATTRIBUTION, ESRI_ATTRIBUTION } from 'tile-map'
-
-  type Loc = {
-    id: string
-    name: string
-    lat: number
-    lon: number
-    category: string
-    difficulty: number
-    story: string
-    extra: string | null
-    storyUrl: string | null
-    shape?: number[][][]
-    photo?: { url: string; attribution: string } | null
-  }
+  import { lonToX, latToY, xToLon, yToLat, TILE_SIZE } from 'tile-map/geo'
+  import { MULTIPLIERS, scoreLocation, buildRound } from 'atxactly'
+  import type { Location } from '../../lib/atxactly-locations'
 
   const root = document.getElementById('mt') as HTMLElement
-  const ALL: Loc[] = JSON.parse(root.dataset.locations!)
+  let ALL: Location[] = []
+  let phase: 'booting' | 'ready' | 'failed' = 'booting'
 
   // One round per UTC day, remembered on the device. This is an honour lock,
   // not a security boundary: clearing site data or a private window resets it.
@@ -696,198 +665,23 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   const overC = document.getElementById('mt-over') as HTMLCanvasElement
   const tctx = tilesC.getContext('2d')!
   const octx = overC.getContext('2d')!
-  const TILE = 256
-  const MULTIPLIERS = [1, 1, 2, 2, 3]
   const MAX_TOTAL = 100 * MULTIPLIERS.reduce((a, b) => a + b, 0)
   // Wide enough to contain every eligible polygon, not just the centres.
   // Kyle, Bastrop and Dripping Springs extend past the original box, which
   // made them unwinnable: the camera clamped before the player could reach them.
   const BOX = { s: 29.93, w: -98.15, n: 30.77, e: -97.29 }
 
-  const lonToX = (lon: number, z: number) => ((lon + 180) / 360) * TILE * 2 ** z
-  const latToY = (lat: number, z: number) => {
-    const s = Math.sin((lat * Math.PI) / 180)
-    return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * TILE * 2 ** z
-  }
-  const xToLon = (x: number, z: number) => (x / (TILE * 2 ** z)) * 360 - 180
-  const yToLat = (y: number, z: number) => {
-    const n = Math.PI - 2 * Math.PI * (y / (TILE * 2 ** z))
-    return (180 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
-  }
-
-  function haversine(aLat: number, aLon: number, bLat: number, bLon: number) {
-    const R = 6371008.8
-    const rad = Math.PI / 180
-    const dLat = (bLat - aLat) * rad
-    const dLon = (bLon - aLon) * rad
-    const h =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLon / 2) ** 2
-    return 2 * R * Math.asin(Math.sqrt(h))
-  }
-  function pointInRing(lon: number, lat: number, ring: number[][]) {
-    let inside = false
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [x1, y1] = ring[i]
-      const [x2, y2] = ring[j]
-      if (y1 > lat !== y2 > lat) {
-        const xint = ((x2 - x1) * (lat - y1)) / (y2 - y1) + x1
-        if (lon < xint) inside = !inside
-      }
-    }
-    return inside
-  }
-  function distToSegment(lat: number, lon: number, a: number[], b: number[]) {
-    const kx = 111320 * Math.cos((lat * Math.PI) / 180)
-    const ky = 110574
-    const px = lon * kx,
-      py = lat * ky
-    const ax = a[0] * kx,
-      ay = a[1] * ky
-    const bx = b[0] * kx,
-      by = b[1] * ky
-    const dx = bx - ax,
-      dy = by - ay
-    if (dx === 0 && dy === 0) return Math.hypot(px - ax, py - ay)
-    let t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)
-    t = Math.max(0, Math.min(1, t))
-    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
-  }
-  // Areas score flat 100 anywhere inside; outside measures to the edge.
-  function effectiveDistance(lat: number, lon: number, loc: Loc) {
-    if (!loc.shape) return haversine(lat, lon, loc.lat, loc.lon)
-    for (const ring of loc.shape) if (pointInRing(lon, lat, ring)) return 0
-    let best = Infinity
-    for (const ring of loc.shape)
-      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++)
-        best = Math.min(best, distToSegment(lat, lon, ring[i], ring[j]))
-    return best
-  }
-  // FLOOR: a guess this close counts as exact. The board opens at zoom 11
-  // where one pixel is 66 m, so anything tighter rewards zooming rather than
-  // knowing. MAXD: about the diameter of Austin proper, so being in the city
-  // still scores and the wrong end of the metro does not.
-  const FLOOR = 100,
-    MAXD = 25000
-  // Inside an area the score eases from 100 at the centre to INSIDE_EDGE at
-  // the boundary, scaled to that polygon's own radius. Flat-100 made a tap on
-  // the far edge of Georgetown (176 km²) worth as much as one on the
-  // courthouse; a fixed metre falloff punished small parks for being small.
-  // Anywhere inside still beats outside: worst interior is 75, and 1 km beyond
-  // any boundary scores 52.
-  const INSIDE_EDGE = 75
-  function reachOf(loc: Loc) {
-    let best = 0
-    for (const ring of loc.shape!)
-      for (const [lon, lat] of ring) {
-        const d = haversine(loc.lat, loc.lon, lat, lon)
-        if (d > best) best = d
-      }
-    return best
-  }
-  function scoreInside(lat: number, lon: number, loc: Loc) {
-    const reach = reachOf(loc)
-    if (reach <= 0) return 100
-    const frac = Math.min(1, haversine(lat, lon, loc.lat, loc.lon) / reach)
-    return Math.round((100 - (100 - INSIDE_EDGE) * frac) * 10) / 10
-  }
-  // Distance on the point curve that already scores exactly INSIDE_EDGE.
-  // Adding it to an outside-a-polygon distance keeps the curve continuous
-  // across the boundary: without it, stepping 1 m outside a shape jumped the
-  // score from 75 back to 100, rewarding a deliberate miss.
-  const EDGE_OFFSET =
-    FLOOR * (10 ** ((1 - INSIDE_EDGE / 100) * Math.log10(1 + MAXD / FLOOR)) - 1)
-
-  function scoreLocation(lat: number, lon: number, loc: Loc) {
-    const d = effectiveDistance(lat, lon, loc)
-    if (!loc.shape) return { base: scoreOf(d), dist: d }
-    if (d === 0) return { base: scoreInside(lat, lon, loc), dist: 0 }
-    return { base: scoreOf(d + EDGE_OFFSET), dist: d }
-  }
-
-  function scoreOf(m: number) {
-    if (m <= FLOOR) return 100
-    if (m >= MAXD) return 0
-    const v =
-      100 * (1 - Math.log10(1 + m / FLOOR) / Math.log10(1 + MAXD / FLOOR))
-    return Math.round(v * 10) / 10
-  }
-
-  function mulberry(seed: number) {
-    return () => {
-      seed |= 0
-      seed = (seed + 0x6d2b79f5) | 0
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-    }
-  }
   const today = new Date()
   const puzzleNo = Math.floor(
     Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()) /
       86400000,
   )
 
-  function shuffled(pool: Loc[], seed: number) {
-    const rnd = mulberry(seed)
-    const deck = [...pool]
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1))
-      const t = deck[i]
-      deck[i] = deck[j]
-      deck[j] = t
-    }
-    return deck
-  }
-
-  // Each band is a deck dealt front to back, `count` locations a day, so a
-  // location cannot come back until the whole band has played through: 42
-  // days for easy, 59 medium, 134 hard at the current pool.
-  //
-  // The deck is reshuffled every cycle, but a location stays in the half it
-  // was already in and is only shuffled within that half. That is what keeps
-  // the cycle boundary honest: a location dealt late in one cycle stays late
-  // in the next, so it cannot land right after itself across the seam. A
-  // plain reshuffle put repeats one day apart, and reshuffling once and never
-  // again fixed the order forever.
-  function deckFor(pool: Loc[], cycle: number, band: number) {
-    let deck = shuffled(pool, band)
-    for (let c = 1; c <= cycle; c++) {
-      const h = Math.ceil(deck.length / 2)
-      const s = (Math.imul(c, 0x9e3779b9) + band) | 0
-      deck = [
-        ...shuffled(deck.slice(0, h), s),
-        ...shuffled(deck.slice(h), s ^ 0x5bf03635),
-      ]
-    }
-    return deck
-  }
-
-  function drawFrom(pool: Loc[], day: number, count: number, band: number) {
-    if (pool.length <= count) return pool.slice(0, count)
-    const days = Math.floor(pool.length / count)
-    const deck = deckFor(pool, Math.floor(day / days), band)
-    const slot = (day % days) * count
-    const out: Loc[] = []
-    for (let i = 0; i < count; i++) out.push(deck[(slot + i) % deck.length])
-    return out
-  }
-
-  // Rounds 1-2 easy, 3-4 medium, 5 hard.
-  function buildRound(day: number): Loc[] {
-    const band = (d: number) => ALL.filter((l) => l.difficulty === d)
-    return [
-      ...drawFrom(band(1), day, 2, 1),
-      ...drawFrom(band(2), day, 2, 2),
-      ...drawFrom(band(3), day, 1, 3),
-    ]
-  }
-
-  let ROUND = buildRound(puzzleNo)
+  let ROUND: Location[] = []
   let idx = 0
   let total = 0
   let results: {
-    loc: Loc
+    loc: Location
     guess: { lat: number; lon: number }
     dist: number
     base: number
@@ -898,17 +692,19 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   let pending: { lat: number; lon: number } | null = null
   let reveal: {
     guess: { lat: number; lon: number }
-    loc: Loc
+    loc: Location
     t0: number
   } | null = null
   let revealRaf = 0
   // The initial ROUND is built straight from puzzleNo; reset() re-derives
   // this for practice rounds so they never touch the daily lock.
   let isDaily = true
-  let locked = false
+  // Both start true so that nothing can score and the help overlay samples a
+  // placeholder header while the dataset is still in flight.
+  let locked = true
   let finished = false
-  // header is showing no live round (already played, or the run is over)
-  let idle = false
+  // header is showing no live round (booting, already played, or run is over)
+  let idle = true
   let pinHover = -1
 
   let center = { lat: 30.2672, lon: -97.7431 }
@@ -921,7 +717,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   // (which prints park and street names from about z15) and results to OSM
   // (a bright basemap under a dark UI); keyed sessions also fall back at
   // runtime when CARTO itself errors, so an outage degrades instead of
-  // blanking the map. The key parameter is ?key=, not ?api_key= — the wrong
+  // blanking the map. The key parameter is ?key=, not ?api_key=: the wrong
   // name returns HTTP 200 with a watermarked tile, which nothing can detect.
   const CARTO_KEY = root.dataset.cartoKey || ''
   // On a retina display a 256 px tile is upscaled 2x before anything else
@@ -1048,13 +844,13 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     const oy = latToY(center.lat, z) - h / (2 * scale)
     const span = 2 ** z
     for (
-      let tx = Math.floor(ox / TILE);
-      tx <= Math.floor((ox + w / scale) / TILE);
+      let tx = Math.floor(ox / TILE_SIZE);
+      tx <= Math.floor((ox + w / scale) / TILE_SIZE);
       tx++
     ) {
       for (
-        let ty = Math.floor(oy / TILE);
-        ty <= Math.floor((oy + h / scale) / TILE);
+        let ty = Math.floor(oy / TILE_SIZE);
+        ty <= Math.floor((oy + h / scale) / TILE_SIZE);
         ty++
       ) {
         if (ty < 0 || ty >= span) continue
@@ -1067,10 +863,10 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
           if (img.complete && !img.hasAttribute('data-failed')) {
             tctx.drawImage(
               img,
-              (tx * TILE - ox) * scale,
-              (ty * TILE - oy) * scale,
-              TILE * scale,
-              TILE * scale,
+              (tx * TILE_SIZE - ox) * scale,
+              (ty * TILE_SIZE - oy) * scale,
+              TILE_SIZE * scale,
+              TILE_SIZE * scale,
             )
           }
         }
@@ -1105,7 +901,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     octx.restore()
   }
 
-  function shapePath(loc: Loc) {
+  function shapePath(loc: Location) {
     octx.beginPath()
     for (const ring of loc.shape!) {
       ring.forEach(([lon, lat], i) => {
@@ -1480,7 +1276,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 
   function reset(seed: number) {
     isDaily = seed === puzzleNo
-    ROUND = buildRound(seed)
+    ROUND = buildRound(ALL, seed)
     idx = 0
     total = 0
     shown = 0
@@ -1558,9 +1354,10 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     setTimeout(() => elToast.classList.remove('show'), 1600)
   })
 
-  elAgain.addEventListener('click', () =>
-    reset(Math.floor(Math.random() * 1e9)),
-  )
+  elAgain.addEventListener('click', () => {
+    if (phase === 'failed') location.reload()
+    else if (phase === 'ready') reset(Math.floor(Math.random() * 1e9))
+  })
 
   // ---- interaction ----
   let dragging = false,
@@ -1693,8 +1490,22 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     elMult.hidden = true
     elName.textContent = 'Already played today'
     elSub.textContent = 'A new puzzle unlocks at midnight UTC'
-    elAgain.hidden = false
     elAgain.textContent = 'Practice round'
+    // A practice round needs the dataset, so the button waits for the fetch.
+    elAgain.hidden = phase !== 'ready'
+  }
+
+  function showLoadFailed() {
+    phase = 'failed'
+    locked = true
+    idle = true
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elCat.hidden = true
+    elName.textContent = 'Could not load today’s puzzle'
+    elSub.textContent = 'Reload to try again'
+    elAgain.textContent = 'Reload'
+    elAgain.hidden = false
   }
 
   document.getElementById('mt-confirm-yes')!.addEventListener('click', () => {
@@ -2031,6 +1842,57 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   })
   fit()
   syncZoomButtons()
-  if (readStore(PLAYED_KEY) === String(puzzleNo)) showAlreadyPlayed()
-  else renderPrompt()
+
+  // The lock depends only on the UTC date, so it resolves before the dataset
+  // does and its header is never overwritten by a prompt.
+  const alreadyPlayed = readStore(PLAYED_KEY) === String(puzzleNo)
+  if (alreadyPlayed) showAlreadyPlayed()
+
+  function hasShape(r: unknown): r is Location {
+    const l = r as Partial<Location> | null
+    return (
+      typeof l?.id === 'string' &&
+      typeof l.name === 'string' &&
+      typeof l.lat === 'number' &&
+      typeof l.lon === 'number' &&
+      typeof l.difficulty === 'number' &&
+      typeof l.story === 'string'
+    )
+  }
+
+  function usable(rows: unknown): rows is Location[] {
+    if (!Array.isArray(rows)) return false
+    if (!rows.every(hasShape)) return false
+    const need: Record<number, number> = { 1: 2, 2: 2, 3: 1 }
+    for (const band of [1, 2, 3])
+      if (rows.filter((r) => r?.difficulty === band).length < need[band]!)
+        return false
+    return true
+  }
+
+  async function boot() {
+    try {
+      // `crossorigin` on the preload link makes it an anonymous CORS request,
+      // which the fetch only matches at credentials 'same-origin'. A mismatch
+      // downloads the file twice.
+      const res = await fetch(root.dataset.locationsUrl!, {
+        credentials: 'same-origin',
+        signal: AbortSignal.timeout(10000),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const rows: unknown = await res.json()
+      if (!usable(rows)) throw new Error('unexpected payload')
+      ALL = rows
+      ROUND = buildRound(ALL, puzzleNo)
+      phase = 'ready'
+      if (alreadyPlayed) elAgain.hidden = false
+      else {
+        locked = false
+        renderPrompt()
+      }
+    } catch {
+      showLoadFailed()
+    }
+  }
+  boot()
 </script>

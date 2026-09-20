@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reference implementation of ATXactly guess scoring.
 
-Mirrors the TypeScript in src/pages/labs/atxactly.astro so the rules can be
+Mirrors the TypeScript in packages/atxactly/src/scoring.ts so the rules can be
 exercised and tested without a browser; change both together. See
 docs/brainstorms/2026-08-11-001-atxactly-requirements.md.
 """
