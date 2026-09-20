@@ -26,8 +26,34 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   nearest-point hit testing. The `tile-map/geo` subpath is pure (projection,
   bounds, fit zoom, haversine, nearest, `routeToSvgPath`) with no DOM
   references, so it imports safely from Astro frontmatter. Consumers:
-  `/labs/austin-pogo-map` and `/roadtrips/[slug]`. `atxactly.astro` deliberately
-  keeps its own inline map code.
+  `/labs/austin-pogo-map` and `/roadtrips/[slug]`. `atxactly.astro` takes only
+  the projection helpers from `tile-map/geo` (game logic comes from
+  `packages/atxactly`) and owns its tiles and camera, because it swaps between
+  two basemap layers (no labels during play, labels at reveal), needs a fallback
+  provider per layer, and brightens tiles with a CSS filter, none of which
+  `createTileMap` offers. So `tile-map` is the source of truth for tiles only
+  where a page needs one layer with one fallback.
+- **`packages/atxactly`**: the pure game logic behind `/labs/atxactly`.
+  `src/scoring.ts` holds the score curve, `haversine`, polygon distance, and
+  `MULTIPLIERS`; `src/deck.ts` holds the seeded PRNG and `buildRound(pool, day)`
+  for the daily 1-1-2-2-3 draw. Both are typed structurally, so the package
+  never imports the site's `Location` type and has no DOM or Node dependencies.
+  Same shape as the other packages (strict tsconfig, colocated Vitest specs,
+  root `file:` dependency). `scripts/atxactly_scoring.py` mirrors
+  `src/scoring.ts` in Python; change both together.
+- **ATXactly dataset delivery**: `src/lib/atxactly-locations.ts` trims
+  `src/data/atxactly-locations.json` to eligible rows and client fields at build
+  time, serialises it once, and hashes the body.
+  `src/pages/data/atxactly/[hash].json.ts` emits that body at
+  `/data/atxactly/<hash>.json` (about 280 KB), which `public/_headers` caches
+  immutably under `/data/*`. The page fetches it at boot, keeping taps locked
+  until the payload validates and showing a Reload button on failure, which is
+  what keeps the HTML shell at 5.4 KB instead of the 415 KB it was when the rows
+  were inlined. The preload link and the fetch must agree on credentials mode:
+  `crossorigin` on the link pairs with `credentials: 'same-origin'` on the
+  fetch, and any other pairing downloads the file twice. The link needs the
+  named `head` slot in `src/layouts/Base.astro` and must be an immediate child
+  of `<Base>`, since Astro does not hoist `<link>` tags out of a wrapper.
 - **`/roadtrips`**: a `roadtrips` content collection
   (`src/content/roadtrips/*.yaml`, schema in `src/content.config.ts`) where each
   trip carries an intro, a road-following `route` polyline, and stops with

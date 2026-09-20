@@ -73,6 +73,9 @@ export function fitCenter(
   }
 }
 
+// atxactly/scoring has the same formula at R = 6371008.8, which its scores are
+// pinned to. Keep these radii separate: changing this one is safe, changing
+// that one moves every score.
 export function haversineMeters(a: LatLon, b: LatLon): number {
   const R = 6371000
   const rad = Math.PI / 180

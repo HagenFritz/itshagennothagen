@@ -18,7 +18,8 @@ bits.
   Spotify playlist tracker (`/labs/playlists`) that proxies Spotify's
   client-credentials API through Pages Functions, an Austin Pokémon GO gym map
   (`/labs/austin-pogo-map`), and ATXactly (`/labs/atxactly`), a guess-the-spot
-  game on a map of Austin.
+  game on a map of Austin whose scoring and daily deck live in the
+  `packages/atxactly` workspace.
 - **Albums** (`/albums`): photo collections that mark moments worth keeping, as
   YAML content collection entries in `src/content/albums/`.
 - **Road trips** (`/roadtrips`): each drive as an interactive map with a
