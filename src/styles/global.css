@@ -480,6 +480,16 @@ body {
   padding-left: 1rem;
   color: var(--muted-foreground);
 }
+.prose blockquote > * + * {
+  margin-top: 0.75rem;
+}
+.prose blockquote cite {
+  font-size: 0.9375rem;
+  font-style: normal;
+}
+.prose blockquote cite::before {
+  content: '\00b7\00a0';
+}
 
 /* Callouts (remark-github-blockquote-alert) */
 .prose .markdown-alert {
