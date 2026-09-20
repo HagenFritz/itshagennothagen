@@ -21,30 +21,31 @@
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p functions",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:prose": "node_modules/@vvago/vale/bin/vale src/content"
+    "lint:prose": "vale src/content"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "^7.2.0",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.3",
-    "@fontsource-variable/inter": "^5.2.8",
-    "@tailwindcss/vite": "^4.3.1",
-    "astro": "^6.4.8",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.2",
     "atxactly": "file:packages/atxactly",
     "remark-github-blockquote-alert": "^2.1.0",
-    "tailwindcss": "^4.3.1",
+    "tailwindcss": "^4.3.3",
     "tile-map": "file:packages/tile-map",
     "weed-whacker": "file:packages/weed-whacker"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@types/node": "^24.12.3",
-    "@vvago/vale": "^3.15.1",
-    "prettier": "^3.8.4",
-    "prettier-plugin-astro": "^0.14.1",
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.5.1",
+    "@vvago/vale": "^3.21.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^1.0.0",
     "typescript": "^6.0.3",
-    "wrangler": "^4.107.0"
+    "wrangler": "^4.131.2"
   },
   "overrides": {
-    "vite": "^7.3.2"
+    "vite": "^8.0.13"
   }
 }

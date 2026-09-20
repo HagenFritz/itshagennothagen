@@ -21,9 +21,7 @@ import Base from '../layouts/Base.astro'
   </div>
 
   <div id="game-wrap" class="mt-8">
-    <div
-      class="relative mx-auto aspect-square w-full max-w-[672px] overflow-hidden rounded-lg border border-border bg-black"
-    >
+    <div class="relative mx-auto aspect-square w-full max-w-[672px] overflow-hidden rounded-lg border border-border bg-black">
       <canvas
         id="game"
         class="block h-full w-full rounded-lg [image-rendering:pixelated]"
@@ -38,8 +36,9 @@ import Base from '../layouts/Base.astro'
           id="start-btn"
           disabled
           class="rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-          >Loading...</button
         >
+          Loading...
+        </button>
       </div>
 
       <div
@@ -67,8 +66,9 @@ import Base from '../layouts/Base.astro'
               id="submit-btn"
               type="submit"
               class="rounded-md bg-primary px-3 py-1.5 font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-              >Submit</button
             >
+              Submit
+            </button>
           </div>
           <p id="submit-msg" class="min-h-5 text-sm text-muted-foreground"></p>
         </form>
@@ -79,8 +79,9 @@ import Base from '../layouts/Base.astro'
         <button
           id="again-btn"
           class="mt-2 rounded-md bg-primary px-4 py-2 font-medium text-white transition-opacity hover:opacity-90"
-          >Play again</button
         >
+          Play again
+        </button>
       </div>
     </div>
 
@@ -96,8 +97,9 @@ import Base from '../layouts/Base.astro'
         <span
           id="hud-score"
           class="inline-block min-w-[2ch] text-right font-semibold tabular-nums text-foreground"
-          >0</span
         >
+          0
+        </span>
       </span>
 
       <span class="flex items-center gap-2 text-muted-foreground">
@@ -111,8 +113,9 @@ import Base from '../layouts/Base.astro'
         <span
           id="hud-money"
           class="inline-block min-w-[3ch] text-right font-semibold tabular-nums text-foreground"
-          >0</span
         >
+          0
+        </span>
       </span>
 
       <span
@@ -126,32 +129,36 @@ import Base from '../layouts/Base.astro'
           height="28"
           class="h-7 w-7 [image-rendering:pixelated]"
         />
-        <span
-          class="relative block h-3 w-24 overflow-hidden rounded-full bg-muted"
-        >
+        <span class="relative block h-3 w-24 overflow-hidden rounded-full bg-muted">
           <span
             id="hud-cooldown"
             class="absolute inset-y-0 left-0 rounded-full bg-primary"
-            style="width: 100%"></span>
+            style="width: 100%"
+          ></span>
         </span>
       </span>
 
       <span
         id="hud-time"
-        class="ml-auto font-semibold tabular-nums text-foreground">1:00</span
+        class="ml-auto font-semibold tabular-nums text-foreground"
       >
+        1:00
+      </span>
       <button
         id="mute-btn"
         class="rounded-md border border-border px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >Sound: on</button
       >
+        Sound: on
+      </button>
     </div>
   </div>
 
   <div class="mx-auto mt-12 max-w-[672px]">
     <h2 class="text-xl font-semibold tracking-tight">Top 10</h2>
     <ol id="lb-list" class="mt-4 hidden space-y-1"></ol>
-    <p id="lb-status" class="mt-4 text-muted-foreground">Loading scores...</p>
+    <p id="lb-status" class="mt-4 text-muted-foreground">
+      Loading scores...
+    </p>
   </div>
 </Base>
 

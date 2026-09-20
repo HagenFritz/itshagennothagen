@@ -48,9 +48,7 @@ const mapData = {
   <h1 class="mt-4 text-3xl font-semibold tracking-tight">{title}</h1>
   <p class="mt-1 text-muted-foreground">{tagline}</p>
 
-  <div
-    class="relative mt-5 h-[calc(100dvh-20rem)] min-h-[420px] overflow-hidden rounded-lg border border-border bg-card"
-  >
+  <div class="relative mt-5 h-[calc(100dvh-20rem)] min-h-[420px] overflow-hidden rounded-lg border border-border bg-card">
     <div
       id="map"
       tabindex="-1"
@@ -58,122 +56,118 @@ const mapData = {
       aria-label={`Map of the ${title} route. Use the stop list below the map to open a stop.`}
       data-carto-key={cartoKey}
       class="absolute inset-0"
-    >
-    </div>
+    ></div>
 
     <div class="absolute right-2 top-2 flex flex-col gap-1">
       <button
         id="zoom-in"
         aria-label="Zoom in"
         class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
-        >+</button
       >
+        +
+      </button>
       <button
         id="zoom-out"
         aria-label="Zoom out"
         class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
-        >&minus;</button
       >
+        &minus;
+      </button>
     </div>
 
-    <div
-      class="map-credit absolute bottom-1 right-1.5 z-[2] rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground max-sm:bottom-auto max-sm:left-1.5 max-sm:right-auto max-sm:top-1"
-    >
-      <span id="attribution"></span> · Routing by <a
-        href="https://project-osrm.org/">OSRM</a
-      >
+    <div class="map-credit absolute bottom-1 right-1.5 z-[2] rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground max-sm:bottom-auto max-sm:left-1.5 max-sm:right-auto max-sm:top-1">
+      <span id="attribution"></span> · Routing by{' '}
+      <a href="https://project-osrm.org/">OSRM</a>
     </div>
 
-    {
-      stops.map((stop, i) => (
-        <article
-          id={`stop-${i + 1}`}
-          class:list={['trip-card', i === 0 && 'is-collapsed']}
-          data-stop={i + 1}
-          tabindex="-1"
-          hidden
+    {stops.map((stop, i) => (
+      <article
+        id={`stop-${i + 1}`}
+        class:list={['trip-card', i === 0 && 'is-collapsed']}
+        data-stop={i + 1}
+        tabindex="-1"
+        hidden
+      >
+        <button
+          type="button"
+          class="trip-card-close"
+          aria-label="Close"
+          data-close
         >
-          <button
-            type="button"
-            class="trip-card-close"
-            aria-label="Close"
-            data-close
-          >
-            &times;
-          </button>
+          &times;
+        </button>
+        {i === 0 && (
+          <div class="p-4 pr-10">
+            <h2 class="font-medium">{title}</h2>
+            <p class="mt-0.5 text-sm text-muted-foreground">{tagline}</p>
+            <p class="trip-card-summary mt-2 text-xs text-muted-foreground">
+              {summary}
+            </p>
+          </div>
+        )}
+        <div class="trip-card-body">
           {i === 0 && (
-            <div class="p-4 pr-10">
-              <h2 class="font-medium">{title}</h2>
-              <p class="mt-0.5 text-sm text-muted-foreground">{tagline}</p>
-              <p class="trip-card-summary mt-2 text-xs text-muted-foreground">
-                {summary}
-              </p>
+            <div class="space-y-3 px-4 pb-4 text-sm text-foreground">
+              {intro.map((paragraph) => (
+                <p set:html={paragraph} />
+              ))}
             </div>
           )}
-          <div class="trip-card-body">
-            {i === 0 && (
-              <div class="space-y-3 px-4 pb-4 text-sm text-foreground">
-                {intro.map((paragraph) => (
-                  <p set:html={paragraph} />
+          {stop.images.length > 0 && (
+            <div class="relative" data-carousel>
+              <div
+                class:list={[
+                  'flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+                  stop.images.length > 1 && 'cursor-pointer',
+                ]}
+                data-track
+              >
+                {stop.images.map((img) => (
+                  <figure class="trip-card-slide">
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      widths={[320, 640]}
+                      sizes="320px"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      class="trip-card-photo"
+                    />
+                    {stop.images.some((other) => other.caption) && (
+                      <figcaption class="trip-card-caption">
+                        {img.caption}
+                      </figcaption>
+                    )}
+                  </figure>
                 ))}
               </div>
-            )}
-            {stop.images.length > 0 && (
-              <div class="relative" data-carousel>
-                <div
-                  class:list={[
-                    'flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-                    stop.images.length > 1 && 'cursor-pointer',
-                  ]}
-                  data-track
-                >
-                  {stop.images.map((img) => (
-                    <figure class="trip-card-slide">
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        widths={[320, 640]}
-                        sizes="320px"
-                        loading={i === 0 ? 'eager' : 'lazy'}
-                        class="trip-card-photo"
-                      />
-                      {stop.images.some((other) => other.caption) && (
-                        <figcaption class="trip-card-caption">
-                          {img.caption}
-                        </figcaption>
-                      )}
-                    </figure>
+              {stop.images.length > 1 && (
+                <div class="pointer-events-none absolute inset-x-0 top-[10.5rem] flex justify-center gap-1.5">
+                  {stop.images.map((_, d) => (
+                    <span
+                      class="size-1.5 rounded-full bg-white/40 transition-colors aria-[current=true]:bg-white"
+                      aria-current={d === 0 ? 'true' : 'false'}
+                      data-dot
+                    />
                   ))}
                 </div>
-                {stop.images.length > 1 && (
-                  <div class="pointer-events-none absolute inset-x-0 top-[10.5rem] flex justify-center gap-1.5">
-                    {stop.images.map((_, d) => (
-                      <span
-                        class="size-1.5 rounded-full bg-white/40 transition-colors aria-[current=true]:bg-white"
-                        aria-current={d === 0 ? 'true' : 'false'}
-                        data-dot
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            <div class="p-4 pr-10">
-              <h2 class="font-medium">
-                {i + 1}. {stop.title}
-              </h2>
-              <time
-                datetime={stop.date.toISOString().slice(0, 10)}
-                class="mt-0.5 block text-xs italic text-muted-foreground"
-              >
-                {formatDate(stop.date)}
-              </time>
-              <p class="mt-2 text-sm text-muted-foreground">{stop.blurb}</p>
+              )}
             </div>
+          )}
+          <div class="p-4 pr-10">
+            <h2 class="font-medium">
+              {i + 1}. {stop.title}
+            </h2>
+            <time
+              datetime={stop.date.toISOString().slice(0, 10)}
+              class="mt-0.5 block text-xs italic text-muted-foreground"
+            >
+              {formatDate(stop.date)}
+            </time>
+            <p class="mt-2 text-sm text-muted-foreground">{stop.blurb}</p>
           </div>
-        </article>
-      ))
-    }
+        </div>
+      </article>
+    ))}
   </div>
 
   <p class="mt-3 text-sm text-muted-foreground">
@@ -182,27 +176,25 @@ const mapData = {
   </p>
 
   <ol id="stop-list" class="mt-6 space-y-1.5">
-    {
-      stops.map((stop, i) => (
-        <li>
-          <button
-            type="button"
-            class="flex w-full items-baseline gap-3 rounded border border-border bg-card px-3 py-2 text-left transition-colors hover:border-primary"
-            data-stop={i + 1}
-            aria-expanded="false"
-            aria-controls={`stop-${i + 1}`}
-          >
-            <span class="w-5 shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
-              {i + 1}
-            </span>
-            <span class="flex-1 text-sm">{stop.title}</span>
-            <span class="shrink-0 text-xs text-muted-foreground">
-              {formatDate(stop.date)}
-            </span>
-          </button>
-        </li>
-      ))
-    }
+    {stops.map((stop, i) => (
+      <li>
+        <button
+          type="button"
+          class="flex w-full items-baseline gap-3 rounded border border-border bg-card px-3 py-2 text-left transition-colors hover:border-primary"
+          data-stop={i + 1}
+          aria-expanded="false"
+          aria-controls={`stop-${i + 1}`}
+        >
+          <span class="w-5 shrink-0 font-mono text-xs text-muted-foreground tabular-nums">
+            {i + 1}
+          </span>
+          <span class="flex-1 text-sm">{stop.title}</span>
+          <span class="shrink-0 text-xs text-muted-foreground">
+            {formatDate(stop.date)}
+          </span>
+        </button>
+      </li>
+    ))}
   </ol>
 
   <script
@@ -210,7 +202,7 @@ const mapData = {
     type="application/json"
     id="map-data"
     set:html={JSON.stringify(mapData)}
-  />
+  ></script>
 </Base>
 
 <script>

@@ -31,8 +31,11 @@ const STATS = [
     blurb and stats. The story behind it is in
     <a
       href="/blog/pokemon-matcher"
-      class="text-primary underline underline-offset-2">this post</a
-    >.
+      class="text-primary underline underline-offset-2"
+    >
+      this post
+    </a>
+    .
   </p>
 
   <div class="mt-8 grid gap-8 sm:grid-cols-[3fr_2fr]">
@@ -41,44 +44,44 @@ const STATS = [
         <h2 class="text-sm font-semibold tracking-wide text-muted-foreground">
           YOUR STATS
         </h2>
-        <span class="text-sm text-muted-foreground"
-          >Total: <span id="total" class="font-semibold text-foreground"
-            >420</span
-          ></span
-        >
+        <span class="text-sm text-muted-foreground">
+          Total:{' '}
+          <span id="total" class="font-semibold text-foreground">
+            420
+          </span>
+        </span>
       </div>
 
       <div class="mt-4 space-y-3">
-        {
-          STATS.map((s, i) => (
-            <label class="block">
-              <div class="flex justify-between text-sm">
-                <span class="text-foreground">{s.label}</span>
-                <span
-                  class="stat-val tabular-nums text-muted-foreground"
-                  data-i={i}
-                />
-              </div>
-              <p class="text-xs text-muted-foreground">{s.sub}</p>
-              <input
-                type="range"
-                class="stat-slider mt-1 w-full accent-primary"
-                min="50"
-                max="100"
-                step="5"
-                value="70"
+        {STATS.map((s, i) => (
+          <label class="block">
+            <div class="flex justify-between text-sm">
+              <span class="text-foreground">{s.label}</span>
+              <span
+                class="stat-val tabular-nums text-muted-foreground"
                 data-i={i}
               />
-            </label>
-          ))
-        }
+            </div>
+            <p class="text-xs text-muted-foreground">{s.sub}</p>
+            <input
+              type="range"
+              class="stat-slider mt-1 w-full accent-primary"
+              min="50"
+              max="100"
+              step="5"
+              value="70"
+              data-i={i}
+            />
+          </label>
+        ))}
       </div>
 
       <button
         id="reset"
         class="mt-5 rounded-md border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >Reset</button
       >
+        Reset
+      </button>
     </div>
 
     <div class="flex flex-col">
@@ -99,12 +102,13 @@ const STATS = [
         aria-label="Close"
         class="absolute right-3 top-3 rounded-md p-1 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
       >
-        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-          ><path
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
             fill-rule="evenodd"
             d="M4.3 4.3a1 1 0 0 1 1.4 0L10 8.6l4.3-4.3a1 1 0 1 1 1.4 1.4L11.4 10l4.3 4.3a1 1 0 0 1-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 0 1-1.4-1.4L8.6 10 4.3 5.7a1 1 0 0 1 0-1.4z"
-            clip-rule="evenodd"></path></svg
-        >
+            clip-rule="evenodd"
+          ></path>
+        </svg>
       </button>
       <div class="flex items-center gap-4">
         <img
@@ -121,8 +125,7 @@ const STATS = [
       <p
         id="d-blurb"
         class="mt-4 text-sm leading-relaxed text-muted-foreground"
-      >
-      </p>
+      ></p>
       <div id="d-stats" class="mt-4 grid grid-cols-3 gap-2 text-sm"></div>
     </div>
   </dialog>
