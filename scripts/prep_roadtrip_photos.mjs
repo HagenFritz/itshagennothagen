@@ -64,8 +64,10 @@ for (const name of names) {
     .withMetadata()
     .toFile(temp)
 
-  await rename(temp, target)
+  // Source goes first: on a case-insensitive volume IMG.JPG and IMG.jpg are
+  // one file, so removing it after the rename deletes the output.
   if (source !== target) await rm(source)
+  await rename(temp, target)
 
   const after = await stat(target)
   const out = await sharp(target).metadata()
