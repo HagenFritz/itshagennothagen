@@ -26,8 +26,8 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   nearest-point hit testing. The `tile-map/geo` subpath is pure (projection,
   bounds, fit zoom, haversine, nearest, `routeToSvgPath`) with no DOM
   references, so it imports safely from Astro frontmatter. Consumers:
-  `/labs/austin-pogo-map` and `/roadtrips/[slug]`. `atxactly.astro` takes only
-  the projection helpers from `tile-map/geo` (game logic comes from
+  `/labs/austin-pogo-map` and `/albums/roadtrips/[slug]`. `atxactly.astro` takes
+  only the projection helpers from `tile-map/geo` (game logic comes from
   `packages/atxactly`) and owns its tiles and camera, because it swaps between
   two basemap layers (no labels during play, labels at reveal), needs a fallback
   provider per layer, and brightens tiles with a CSS filter, none of which
@@ -54,15 +54,16 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   fetch, and any other pairing downloads the file twice. The link needs the
   named `head` slot in `src/layouts/Base.astro` and must be an immediate child
   of `<Base>`, since Astro does not hoist `<link>` tags out of a wrapper.
-- **`/roadtrips`**: a `roadtrips` content collection
+- **`/albums/roadtrips`**: a `roadtrips` content collection
   (`src/content/roadtrips/*.yaml`, schema in `src/content.config.ts`) where each
   trip carries an intro, a road-following `route` polyline, and stops with
   dates, blurbs, and photos from `src/assets/roadtrips/<slug>/`. The index lists
   trips newest first with an inline SVG of each route's shape as the thumbnail,
-  drawn at build time by `routeToSvgPath`. `/roadtrips/[slug]` is a map-as-page:
-  pins open a card anchored to the pin (docked across the bottom below 640px),
-  the selected stop is written to the URL hash so a stop can be deep-linked, and
-  the first stop's card, which carries the trip intro, is open by default.
+  drawn at build time by `routeToSvgPath`. `/albums/roadtrips/[slug]` is a
+  map-as-page: pins open a card anchored to the pin (docked across the bottom
+  below 640px), the selected stop is written to the URL hash so a stop can be
+  deep-linked, and the first stop's card, which carries the trip intro, is open
+  by default.
 - **Road trip scripts**: `scripts/prep_roadtrip_photos.mjs <slug>` downscales
   the photos dropped in `src/assets/roadtrips/<slug>/` in place, baking
   orientation into the pixels and keeping EXIF so stop coordinates stay

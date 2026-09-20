@@ -22,7 +22,7 @@ bits.
   `packages/atxactly` workspace.
 - **Albums** (`/albums`): photo collections that mark moments worth keeping, as
   YAML content collection entries in `src/content/albums/`.
-- **Road trips** (`/roadtrips`): each drive as an interactive map with a
+- **Road trips** (`/albums/roadtrips`): each drive as an interactive map with a
   road-following route and stop pins that open photo cards. Trips are YAML in
   `src/content/roadtrips/`; the canvas map lives in the `packages/tile-map`
   workspace, and `scripts/` holds the photo prep and OSRM route tooling.
