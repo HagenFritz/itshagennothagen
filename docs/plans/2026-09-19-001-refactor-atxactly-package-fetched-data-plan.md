@@ -493,12 +493,13 @@ recoverable failure state.
 - Add a `<link rel="preload" as="fetch" crossorigin>` for the data URL so the
   fetch starts alongside the script download. Preload matching keys on
   credentials mode even for same-origin requests (MDN, `rel=preload`), so the
-  link and the fetch must be a matched pair: `crossorigin` on the link means the
-  fetch passes `credentials: 'omit'`. A bare `fetch(url)` defaults to
-  `same-origin` and would download the file twice. This needs a named head slot
-  in `Base.astro`, and Astro does not hoist `<link>` tags, so the page's link
-  must be an immediate child of the layout component carrying the slot name, not
-  nested in a wrapper.
+  link and the fetch must be a matched pair: a bare `crossorigin` on the link is
+  `anonymous`, whose credentials mode is `same-origin`, so the fetch passes
+  `credentials: 'same-origin'` explicitly. Verified in Chrome against the built
+  output: `omit` on either side, or no `crossorigin`, downloads the file twice
+  with a console warning. This needs a named head slot in `Base.astro`, and
+  Astro does not hoist `<link>` tags, so the page's link must be an immediate
+  child of the layout component carrying the slot name, not nested in a wrapper.
 
 **Patterns to follow:**
 
@@ -526,7 +527,7 @@ recoverable failure state.
 - Cold load makes exactly one request for the data URL (the preload is consumed
   by the fetch).
 
-- [ ] **Unit 5: Update docs and the Python mirror's pointer**
+- [x] **Unit 5: Update docs and the Python mirror's pointer**
 
 **Goal:** Repo documentation reflects the new package and data path.
 
