@@ -72,6 +72,8 @@ const isActive = (href: string) =>
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+
+    <slot name="head" />
   </head>
   <body class="min-h-dvh bg-background text-foreground antialiased">
     <div class="bg-layer bg-grid" aria-hidden="true"></div>

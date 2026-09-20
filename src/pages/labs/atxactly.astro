@@ -1,24 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
-import locationData from '../../data/atxactly-locations.json'
-
-type Loc = {
-  id: string
-  name: string
-  lat: number
-  lon: number
-  category: string
-  tier: string
-  difficulty: number | null
-  story: string | null
-  extra: string | null
-  storyUrl: string | null
-  status: string
-  shape?: number[][][]
-  photo?: { url: string; attribution: string } | null
-}
-
-const eligible = (locationData as Loc[]).filter((l) => l.status === 'eligible')
+import { locationsUrl } from '../../lib/atxactly-locations'
 
 // CARTO serves label-free tiles, which is what keeps the map unreadable during
 // play. Keyless requests are watermarked, so the key is required for a clean
@@ -28,11 +10,8 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
 ---
 
 <Base title="ATXactly · Hagen Fritz">
-  <div
-    id="mt"
-    data-locations={JSON.stringify(eligible)}
-    data-carto-key={cartoKey}
-  >
+  <link slot="head" rel="preload" as="fetch" crossorigin href={locationsUrl} />
+  <div id="mt" data-locations-url={locationsUrl} data-carto-key={cartoKey}>
     <header class="mt-head">
       <div class="mt-score"><span>SCORE</span><b id="mt-total">0</b></div>
       <div class="mt-mid">
@@ -44,7 +23,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
           <span id="mt-cat" class="mt-cat"></span>
           <span id="mt-name" class="mt-name">Loading…</span>
         </div>
-        <div id="mt-sub" class="mt-sub">Tap as close as you can</div>
+        <div id="mt-sub" class="mt-sub">Getting today's puzzle</div>
       </div>
       <button id="mt-help" class="mt-help" aria-label="How to play">?</button>
       <button id="mt-again" class="mt-btn" hidden>Play again</button>
@@ -656,23 +635,11 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   import { CARTO_ATTRIBUTION, ESRI_ATTRIBUTION } from 'tile-map'
   import { lonToX, latToY, xToLon, yToLat, TILE_SIZE } from 'tile-map/geo'
   import { MULTIPLIERS, scoreLocation, buildRound } from 'atxactly'
-
-  type Loc = {
-    id: string
-    name: string
-    lat: number
-    lon: number
-    category: string
-    difficulty: number
-    story: string
-    extra: string | null
-    storyUrl: string | null
-    shape?: number[][][]
-    photo?: { url: string; attribution: string } | null
-  }
+  import type { Location } from '../../lib/atxactly-locations'
 
   const root = document.getElementById('mt') as HTMLElement
-  const ALL: Loc[] = JSON.parse(root.dataset.locations!)
+  let ALL: Location[] = []
+  let phase: 'booting' | 'ready' | 'failed' = 'booting'
 
   // One round per UTC day, remembered on the device. This is an honour lock,
   // not a security boundary: clearing site data or a private window resets it.
@@ -710,11 +677,11 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
       86400000,
   )
 
-  let ROUND = buildRound(ALL, puzzleNo)
+  let ROUND: Location[] = []
   let idx = 0
   let total = 0
   let results: {
-    loc: Loc
+    loc: Location
     guess: { lat: number; lon: number }
     dist: number
     base: number
@@ -725,17 +692,19 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   let pending: { lat: number; lon: number } | null = null
   let reveal: {
     guess: { lat: number; lon: number }
-    loc: Loc
+    loc: Location
     t0: number
   } | null = null
   let revealRaf = 0
   // The initial ROUND is built straight from puzzleNo; reset() re-derives
   // this for practice rounds so they never touch the daily lock.
   let isDaily = true
-  let locked = false
+  // Both start true so that nothing can score and the help overlay samples a
+  // placeholder header while the dataset is still in flight.
+  let locked = true
   let finished = false
-  // header is showing no live round (already played, or the run is over)
-  let idle = false
+  // header is showing no live round (booting, already played, or run is over)
+  let idle = true
   let pinHover = -1
 
   let center = { lat: 30.2672, lon: -97.7431 }
@@ -748,7 +717,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   // (which prints park and street names from about z15) and results to OSM
   // (a bright basemap under a dark UI); keyed sessions also fall back at
   // runtime when CARTO itself errors, so an outage degrades instead of
-  // blanking the map. The key parameter is ?key=, not ?api_key= — the wrong
+  // blanking the map. The key parameter is ?key=, not ?api_key=: the wrong
   // name returns HTTP 200 with a watermarked tile, which nothing can detect.
   const CARTO_KEY = root.dataset.cartoKey || ''
   // On a retina display a 256 px tile is upscaled 2x before anything else
@@ -932,7 +901,7 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     octx.restore()
   }
 
-  function shapePath(loc: Loc) {
+  function shapePath(loc: Location) {
     octx.beginPath()
     for (const ring of loc.shape!) {
       ring.forEach(([lon, lat], i) => {
@@ -1385,9 +1354,10 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     setTimeout(() => elToast.classList.remove('show'), 1600)
   })
 
-  elAgain.addEventListener('click', () =>
-    reset(Math.floor(Math.random() * 1e9)),
-  )
+  elAgain.addEventListener('click', () => {
+    if (phase === 'failed') location.reload()
+    else if (phase === 'ready') reset(Math.floor(Math.random() * 1e9))
+  })
 
   // ---- interaction ----
   let dragging = false,
@@ -1520,8 +1490,22 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
     elMult.hidden = true
     elName.textContent = 'Already played today'
     elSub.textContent = 'A new puzzle unlocks at midnight UTC'
-    elAgain.hidden = false
     elAgain.textContent = 'Practice round'
+    // A practice round needs the dataset, so the button waits for the fetch.
+    elAgain.hidden = phase !== 'ready'
+  }
+
+  function showLoadFailed() {
+    phase = 'failed'
+    locked = true
+    idle = true
+    elBandTxt.textContent = `Puzzle #${puzzleNo}`
+    elMult.hidden = true
+    elCat.hidden = true
+    elName.textContent = 'Could not load today’s puzzle'
+    elSub.textContent = 'Reload to try again'
+    elAgain.textContent = 'Reload'
+    elAgain.hidden = false
   }
 
   document.getElementById('mt-confirm-yes')!.addEventListener('click', () => {
@@ -1858,6 +1842,44 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   })
   fit()
   syncZoomButtons()
-  if (readStore(PLAYED_KEY) === String(puzzleNo)) showAlreadyPlayed()
-  else renderPrompt()
+
+  // The lock depends only on the UTC date, so it resolves before the dataset
+  // does and its header is never overwritten by a prompt.
+  const alreadyPlayed = readStore(PLAYED_KEY) === String(puzzleNo)
+  if (alreadyPlayed) showAlreadyPlayed()
+
+  function usable(rows: unknown): rows is Location[] {
+    if (!Array.isArray(rows)) return false
+    const need: Record<number, number> = { 1: 2, 2: 2, 3: 1 }
+    for (const band of [1, 2, 3])
+      if (rows.filter((r) => r?.difficulty === band).length < need[band]!)
+        return false
+    return true
+  }
+
+  async function boot() {
+    try {
+      // `crossorigin` on the preload link makes it an anonymous CORS request,
+      // which the fetch only matches at credentials 'same-origin'. A mismatch
+      // downloads the file twice.
+      const res = await fetch(root.dataset.locationsUrl!, {
+        credentials: 'same-origin',
+        signal: AbortSignal.timeout(10000),
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const rows: unknown = await res.json()
+      if (!usable(rows)) throw new Error('unexpected payload')
+      ALL = rows
+      ROUND = buildRound(ALL, puzzleNo)
+      phase = 'ready'
+      if (alreadyPlayed) elAgain.hidden = false
+      else {
+        locked = false
+        renderPrompt()
+      }
+    } catch {
+      showLoadFailed()
+    }
+  }
+  boot()
 </script>

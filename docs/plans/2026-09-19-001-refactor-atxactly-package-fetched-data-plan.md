@@ -455,7 +455,7 @@ output.
 - `dist/_headers` carries the new stanza.
 - Editing one location and rebuilding changes the hash.
 
-- [ ] **Unit 4: Fetch the dataset at runtime with an explicit boot phase**
+- [x] **Unit 4: Fetch the dataset at runtime with an explicit boot phase**
 
 **Goal:** The page stops inlining data, loads it asynchronously without any
 window where a tap can score or a wrong round can render, and shows a
