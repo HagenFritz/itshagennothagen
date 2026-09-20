@@ -30,10 +30,14 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   <h1 class="text-3xl font-semibold tracking-tight">Austin Pokémon GO Map</h1>
 
   <p class="mt-4 max-w-[70ch] text-muted-foreground">
-    Breakfast spots scored by how many gyms sit inside the 80m raid radius. <a
+    Breakfast spots scored by how many gyms sit inside the 80m raid radius.{' '}
+    <a
       href="/blog/austin-pogo-map"
-      class="text-primary underline underline-offset-2">Why I built it</a
-    >.
+      class="text-primary underline underline-offset-2"
+    >
+      Why I built it
+    </a>
+    .
   </p>
 
   <div class="mt-6 flex flex-wrap items-center gap-3">
@@ -48,50 +52,46 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
         value="80"
         class="accent-primary"
       />
-      <span id="radius-val" class="font-mono tabular-nums text-foreground"
-        >80 m</span
-      >
+      <span id="radius-val" class="font-mono tabular-nums text-foreground">
+        80 m
+      </span>
     </label>
     <button
       id="reset-view"
       class="rounded border border-border px-2.5 py-1 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
-      >Reset view</button
     >
+      Reset view
+    </button>
   </div>
 
-  <div
-    class="relative mt-4 overflow-hidden rounded-lg border border-border bg-card"
-  >
+  <div class="relative mt-4 overflow-hidden rounded-lg border border-border bg-card">
     <div
       id="map"
       data-carto-key={cartoKey}
       class="relative aspect-[1000/660] w-full"
-    >
-    </div>
+    ></div>
     <div class="absolute right-2 top-2 flex flex-col gap-1">
       <button
         id="zoom-in"
         aria-label="Zoom in"
         class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
-        >+</button
       >
+        +
+      </button>
       <button
         id="zoom-out"
         aria-label="Zoom out"
         class="flex h-8 w-8 items-center justify-center rounded border border-border bg-background/85 text-lg leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
-        >&minus;</button
       >
+        &minus;
+      </button>
     </div>
-    <div
-      class="map-credit absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground"
-    >
+    <div class="map-credit absolute bottom-1 right-1.5 rounded bg-background/75 px-1.5 py-0.5 text-[10px] text-muted-foreground">
       <span id="attribution"></span>
     </div>
   </div>
 
-  <div
-    class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
-  >
+  <div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
     <span class="flex items-center gap-1.5">
       <span class="inline-block h-2.5 w-2.5 rounded-[2px] bg-forest"></span>
       Venue, 2+ gyms
@@ -108,163 +108,152 @@ const cartoKey = import.meta.env.PUBLIC_CARTO_API_KEY ?? ''
   </div>
 
   <div class="mt-6 flex flex-wrap items-start gap-2">
-    {
-      [
-        {
-          group: 'coverage',
-          label: 'Gyms in range',
-          opts: [
-            ['1', '1+ in range'],
-            ['2', '2+ in range'],
-            ['3', '3+ in range'],
-          ],
-        },
-        { group: 'kind', label: 'Type', opts: kinds.map((k) => [k, k]) },
-        {
-          group: 'area',
-          label: 'Area',
-          opts: venueAreas.map((a) => [a, a]),
-        },
-      ].map(({ group, label, opts }) => (
-        <details class="filter-menu" data-group={group}>
-          <summary class="filter-trigger">
-            <span class="filter-label">{label}</span>
-            <span class="filter-count" hidden />
-            <svg
-              class="filter-caret"
-              viewBox="0 0 12 12"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <path d="M3 4.5 6 7.5 9 4.5" stroke-linecap="round" />
-            </svg>
-          </summary>
-          <div class="filter-popover">
-            {opts.map(([val, text]) => (
-              <label class="filter-option">
-                <input type="checkbox" value={val} />
-                <span class="filter-check" aria-hidden="true">
-                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor">
-                    <path
-                      d="M2.5 6.2 4.8 8.5 9.5 3.8"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-                {text}
-              </label>
-            ))}
-            <button type="button" class="filter-clear">
-              Clear
-            </button>
-          </div>
-        </details>
-      ))
-    }
-    <button type="button" id="clear-all" class="filter-trigger" hidden
-      >Clear all</button
-    >
+    {[
+      {
+        group: 'coverage',
+        label: 'Gyms in range',
+        opts: [
+          ['1', '1+ in range'],
+          ['2', '2+ in range'],
+          ['3', '3+ in range'],
+        ],
+      },
+      { group: 'kind', label: 'Type', opts: kinds.map((k) => [k, k]) },
+      {
+        group: 'area',
+        label: 'Area',
+        opts: venueAreas.map((a) => [a, a]),
+      },
+    ].map(({ group, label, opts }) => (
+      <details class="filter-menu" data-group={group}>
+        <summary class="filter-trigger">
+          <span class="filter-label">{label}</span>
+          <span class="filter-count" hidden />
+          <svg
+            class="filter-caret"
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path d="M3 4.5 6 7.5 9 4.5" stroke-linecap="round" />
+          </svg>
+        </summary>
+        <div class="filter-popover">
+          {opts.map(([val, text]) => (
+            <label class="filter-option">
+              <input type="checkbox" value={val} />
+              <span class="filter-check" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor">
+                  <path
+                    d="M2.5 6.2 4.8 8.5 9.5 3.8"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              {text}
+            </label>
+          ))}
+          <button type="button" class="filter-clear">
+            Clear
+          </button>
+        </div>
+      </details>
+    ))}
+    <button type="button" id="clear-all" class="filter-trigger" hidden>
+      Clear all
+    </button>
   </div>
 
   <details class="group mt-10" open>
-    <summary
-      class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight"
-    >
-      <span
-        class="text-muted-foreground transition-transform group-open:rotate-90"
-        >&rsaquo;</span
-      >
+    <summary class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight">
+      <span class="text-muted-foreground transition-transform group-open:rotate-90">
+        &rsaquo;
+      </span>
       Places
       <span
         id="places-count"
         class="text-base font-normal text-muted-foreground"
-        >({venues.length})</span
       >
+        ({venues.length})
+      </span>
     </summary>
     <ul id="venue-list" class="mt-4 space-y-3">
-      {
-        venues.map((v) => (
-          <li
-            class="venue-card rounded-lg border border-border bg-card p-4"
-            data-lat={v.lat}
-            data-lon={v.lon}
-            data-name={v.name}
-            data-kind={v.kind}
-            data-area={v.area}
-          >
-            <div class="flex items-baseline justify-between gap-3">
-              <span class="flex flex-wrap items-baseline gap-x-2">
-                <span class="font-medium">{v.name}</span>
-                <span class="text-xs text-muted-foreground">
-                  {v.kind} · {v.area}
-                </span>
+      {venues.map((v) => (
+        <li
+          class="venue-card rounded-lg border border-border bg-card p-4"
+          data-lat={v.lat}
+          data-lon={v.lon}
+          data-name={v.name}
+          data-kind={v.kind}
+          data-area={v.area}
+        >
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="flex flex-wrap items-baseline gap-x-2">
+              <span class="font-medium">{v.name}</span>
+              <span class="text-xs text-muted-foreground">
+                {v.kind} · {v.area}
               </span>
-              <div class="flex shrink-0 items-center gap-2">
-                <span class="score-slot rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground" />
-                <button
-                  type="button"
-                  class="locate-btn rounded border border-border p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                  aria-label={`Show ${v.name} on the map`}
-                  title="Show on map"
+            </span>
+            <div class="flex shrink-0 items-center gap-2">
+              <span class="score-slot rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground" />
+              <button
+                type="button"
+                class="locate-btn rounded border border-border p-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                aria-label={`Show ${v.name} on the map`}
+                title="Show on map"
+              >
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
                 >
-                  <svg
-                    class="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.6"
-                  >
-                    <circle cx="10" cy="10" r="3.2" />
-                    <path d="M10 1.6v2.6M10 15.8v2.6M1.6 10h2.6M15.8 10h2.6" />
-                  </svg>
-                </button>
-              </div>
+                  <circle cx="10" cy="10" r="3.2" />
+                  <path d="M10 1.6v2.6M10 15.8v2.6M1.6 10h2.6M15.8 10h2.6" />
+                </svg>
+              </button>
             </div>
-            {v.notes && (
-              <p class="mt-2 text-sm text-muted-foreground">{v.notes}</p>
-            )}
-            <ul class="nearby-slot mt-2 space-y-0.5 text-sm text-muted-foreground" />
-          </li>
-        ))
-      }
+          </div>
+          {v.notes && (
+            <p class="mt-2 text-sm text-muted-foreground">{v.notes}</p>
+          )}
+          <ul class="nearby-slot mt-2 space-y-0.5 text-sm text-muted-foreground" />
+        </li>
+      ))}
     </ul>
   </details>
 
   <details class="group mt-8">
-    <summary
-      class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight"
-    >
-      <span
-        class="text-muted-foreground transition-transform group-open:rotate-90"
-        >&rsaquo;</span
-      >
+    <summary class="flex cursor-pointer list-none items-center gap-2 text-xl font-semibold tracking-tight">
+      <span class="text-muted-foreground transition-transform group-open:rotate-90">
+        &rsaquo;
+      </span>
       Gyms
-      <span class="text-base font-normal text-muted-foreground"
-        >({gyms.length})</span
-      >
+      <span class="text-base font-normal text-muted-foreground">
+        ({gyms.length})
+      </span>
     </summary>
-    {
-      areas.map((area) => (
-        <div class="mt-4">
-          <h3 class="text-sm font-medium text-muted-foreground">{area}</h3>
-          <ul class="mt-1.5 space-y-1 text-sm">
-            {gyms
-              .filter((g) => g.area === area)
-              .map((g) => (
-                <li class="flex flex-wrap items-baseline gap-x-2">
-                  <span>{g.name}</span>
-                  <span class="font-mono text-xs text-muted-foreground tabular-nums">
-                    {g.lat.toFixed(5)}, {g.lon.toFixed(5)}
-                  </span>
-                </li>
-              ))}
-          </ul>
-        </div>
-      ))
-    }
+    {areas.map((area) => (
+      <div class="mt-4">
+        <h3 class="text-sm font-medium text-muted-foreground">{area}</h3>
+        <ul class="mt-1.5 space-y-1 text-sm">
+          {gyms
+            .filter((g) => g.area === area)
+            .map((g) => (
+              <li class="flex flex-wrap items-baseline gap-x-2">
+                <span>{g.name}</span>
+                <span class="font-mono text-xs text-muted-foreground tabular-nums">
+                  {g.lat.toFixed(5)}, {g.lon.toFixed(5)}
+                </span>
+              </li>
+            ))}
+        </ul>
+      </div>
+    ))}
   </details>
 </Base>
 

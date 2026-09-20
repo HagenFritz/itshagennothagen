@@ -54,14 +54,12 @@ const isActive = (href: string) =>
     <meta name="description" content={description} />
 
     <meta property="og:type" content={ogType} />
-    {
-      ogType === 'article' && publishedDate && (
-        <meta
-          property="article:published_time"
-          content={publishedDate.toISOString()}
-        />
-      )
-    }
+    {ogType === 'article' && publishedDate && (
+      <meta
+        property="article:published_time"
+        content={publishedDate.toISOString()}
+      />
+    )}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -78,28 +76,24 @@ const isActive = (href: string) =>
   <body class="min-h-dvh bg-background text-foreground antialiased">
     <div class="bg-layer bg-grid" aria-hidden="true"></div>
     <div class="mx-auto flex min-h-dvh max-w-4xl flex-col px-6">
-      <header
-        class="flex items-center justify-between border-b border-border py-5"
-      >
+      <header class="flex items-center justify-between border-b border-border py-5">
         <a href="/" class="font-semibold tracking-tight hover:text-primary">
           Hagen Fritz
         </a>
         <nav class="flex gap-5 text-sm">
-          {
-            nav.map((item) => (
-              <a
-                href={item.href}
-                class:list={[
-                  'transition-colors hover:text-foreground',
-                  isActive(item.href)
-                    ? 'text-foreground'
-                    : 'text-muted-foreground',
-                ]}
-              >
-                {item.label}
-              </a>
-            ))
-          }
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class:list={[
+                'transition-colors hover:text-foreground',
+                isActive(item.href)
+                  ? 'text-foreground'
+                  : 'text-muted-foreground',
+              ]}
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
       </header>
 

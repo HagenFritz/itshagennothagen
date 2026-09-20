@@ -20,46 +20,44 @@ const taglines = [
 <Base title="Hagen Fritz · Software Engineer in Construction Tech">
   <section class="space-y-5">
     <h1 class="text-5xl font-bold tracking-tight sm:text-7xl">Hagen Fritz</h1>
-    <p
-      class="tagline-line flex items-start text-xl text-muted-foreground sm:text-2xl"
-    >
-      <span id="tagline" class="tagline-text">{taglines[0]}</span>
+    <p class="tagline-line flex items-start text-xl text-muted-foreground sm:text-2xl">
+      <span id="tagline" class="tagline-text">
+        {taglines[0]}
+      </span>
       <span class="tagline-caret" aria-hidden="true"></span>
     </p>
   </section>
 
-  {
-    recent.length > 0 && (
-      <section class="mt-16 space-y-4">
-        <div class="flex items-baseline justify-between">
-          <h2 class="text-lg font-semibold">Recent writing</h2>
-          <a
-            href="/blog"
-            class="text-sm text-muted-foreground hover:text-primary"
-          >
-            All posts →
-          </a>
-        </div>
-        <ul class="space-y-3">
-          {recent.map((post) => (
-            <li>
-              <a
-                href={`/blog/${post.id}`}
-                class="group flex flex-col gap-1 rounded-md border border-border bg-card p-4 transition-colors hover:border-navy-bright"
-              >
-                <span class="font-medium group-hover:text-primary">
-                  {post.data.title}
-                </span>
-                <span class="text-sm text-muted-foreground">
-                  {post.data.summary}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    )
-  }
+  {recent.length > 0 && (
+    <section class="mt-16 space-y-4">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-lg font-semibold">Recent writing</h2>
+        <a
+          href="/blog"
+          class="text-sm text-muted-foreground hover:text-primary"
+        >
+          All posts →
+        </a>
+      </div>
+      <ul class="space-y-3">
+        {recent.map((post) => (
+          <li>
+            <a
+              href={`/blog/${post.id}`}
+              class="group flex flex-col gap-1 rounded-md border border-border bg-card p-4 transition-colors hover:border-navy-bright"
+            >
+              <span class="font-medium group-hover:text-primary">
+                {post.data.title}
+              </span>
+              <span class="text-sm text-muted-foreground">
+                {post.data.summary}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </Base>
 
 <script is:inline define:vars={{ taglines }}>

@@ -27,15 +27,11 @@ const fmt = formatDate(date, 'long')
         ← Blog
       </a>
       <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
-      <div
-        class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
-      >
+      <div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
         <time datetime={date.toISOString().slice(0, 10)}>{fmt}</time>
-        {
-          tags.map((t) => (
-            <span class="rounded bg-muted px-1.5 py-0.5 text-[11px]">{t}</span>
-          ))
-        }
+        {tags.map((t) => (
+          <span class="rounded bg-muted px-1.5 py-0.5 text-[11px]">{t}</span>
+        ))}
       </div>
     </header>
 

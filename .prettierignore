@@ -4,3 +4,11 @@ node_modules
 package-lock.json
 src/content/posts
 functions/types.d.ts
+
+# Prettier 3.9 will not break a line before a "$1"-style token, so it rewraps
+# these paragraphs into ragged two-word lines. Hand-wrapped instead.
+docs/brainstorms/2026-07-03-001-weed-whacker-web-v1-requirements.md
+
+# Prettier collapses this discriminated union onto one line. One member per
+# line is the point.
+packages/weed-whacker/src/core/state.ts
