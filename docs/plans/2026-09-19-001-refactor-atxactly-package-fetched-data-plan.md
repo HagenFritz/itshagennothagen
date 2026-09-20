@@ -1,7 +1,7 @@
 ---
 title: 'refactor: Extract ATXactly game logic to a package and fetch its data'
 type: refactor
-status: active
+status: completed
 date: 2026-09-19
 deepened: 2026-09-19
 ---
