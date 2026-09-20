@@ -44,7 +44,7 @@ const trim = (l: RawLocation): Location => {
   return out
 }
 
-export const locations: Location[] = (raw as RawLocation[])
+const locations: Location[] = (raw as RawLocation[])
   .filter((l) => l.status === 'eligible')
   .map(trim)
 

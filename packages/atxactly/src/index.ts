@@ -1,2 +1,2 @@
-export * from './scoring'
-export * from './deck'
+export { MULTIPLIERS, scoreLocation } from './scoring'
+export { buildRound } from './deck'

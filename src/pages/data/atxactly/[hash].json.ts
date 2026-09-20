@@ -1,11 +1,11 @@
 import { locationsBody, locationsHash } from '../../../lib/atxactly-locations'
+import type { APIRoute, GetStaticPaths } from 'astro'
 
-export function getStaticPaths() {
-  return [{ params: { hash: locationsHash } }]
-}
+export const getStaticPaths: GetStaticPaths = () => [
+  { params: { hash: locationsHash } },
+]
 
-export function GET() {
-  return new Response(locationsBody, {
+export const GET: APIRoute = () =>
+  new Response(locationsBody, {
     headers: { 'Content-Type': 'application/json' },
   })
-}
