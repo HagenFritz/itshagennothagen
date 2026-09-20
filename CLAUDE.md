@@ -118,6 +118,10 @@ colors there, not inline.
 - Cloudflare auto-deploys `main` on merge and builds per-PR previews.
 - Commands: `npm run dev` (port 4321), `npm run build`, `npm run check`,
   `npm run format`, `npm run lint:prose`.
+- Vale is not an npm dependency. `lint:prose` calls the `vale` binary on your
+  PATH (`brew install vale`), and CI installs a pinned release in the workflow.
+  The npm wrapper fetched the binary from api.github.com in a postinstall, which
+  got rate limited on Cloudflare's shared build IPs and failed deploys.
 - Pages Functions (`functions/`, leaderboard API) do not run under `astro dev`,
   so the leaderboard shows "unavailable" on port 4321. Use `npm run dev` for
   everything except the leaderboard; use `npm run dev:api` (builds, applies the

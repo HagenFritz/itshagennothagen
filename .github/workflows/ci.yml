@@ -34,6 +34,16 @@ jobs:
       - name: Tests
         run: npm test
 
+      # Vale is installed here, not through npm: the npm wrapper downloads the
+      # binary from api.github.com in a postinstall, which gets rate limited on
+      # Cloudflare's shared build IPs and fails the deploy.
+      - name: Install Vale
+        env:
+          VALE_VERSION: 3.22.0
+        run: |
+          curl -sSfL "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin vale
+
       - name: Prose lint
         run: npm run lint:prose
 
@@ -49,3 +59,4 @@ jobs:
         with:
           path: src/content
           skip: ./node_modules,./dist,./package-lock.json
+          ignore_words_list: brunch
