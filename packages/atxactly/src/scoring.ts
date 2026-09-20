@@ -6,6 +6,10 @@ export type ScorableLocation = {
 
 export const MULTIPLIERS = [1, 1, 2, 2, 3]
 
+// tile-map/geo has the same formula in haversineMeters, at R = 6371000.
+// The radii differ on purpose and must not be unified: this one is pinned by
+// the score specs and by scripts/atxactly_scoring.py, while tile-map's only
+// feeds pin hit-testing, where the difference is invisible.
 export function haversine(
   aLat: number,
   aLon: number,
