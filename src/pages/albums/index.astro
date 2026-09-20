@@ -1,12 +1,31 @@
 ---
 import { getCollection } from 'astro:content'
 import { Image } from 'astro:assets'
+import { routeToSvgPath, type RouteCoord } from 'tile-map/geo'
 import Base from '../../layouts/Base.astro'
+
+const THUMB = 80
+const THUMB_PADDING = 8
 
 const albums = await getCollection('albums')
 
 const latestEntry = (album: (typeof albums)[number]) =>
   [...album.data.entries].sort((a, b) => b.date.valueOf() - a.date.valueOf())[0]
+
+const latestTrip = (await getCollection('roadtrips')).sort(
+  (a, b) =>
+    Math.max(...b.data.stops.map((s) => s.date.valueOf())) -
+    Math.max(...a.data.stops.map((s) => s.date.valueOf())),
+)[0]
+
+const tripThumb = latestTrip
+  ? routeToSvgPath(
+      latestTrip.data.route as RouteCoord[],
+      THUMB,
+      THUMB,
+      THUMB_PADDING,
+    )
+  : null
 ---
 
 <Base
@@ -53,13 +72,33 @@ const latestEntry = (album: (typeof albums)[number]) =>
     })}
     <li>
       <a
-        href="/roadtrips"
-        class="group flex flex-col gap-1 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
+        href="/albums/roadtrips"
+        class="group flex items-center gap-5 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
       >
-        <span class="font-medium group-hover:text-primary">Road Trips</span>
-        <span class="text-sm text-muted-foreground">
-          Experiences I meet along my way from Point A to B.
-        </span>
+        {tripThumb && (
+          <svg
+            viewBox={tripThumb.viewBox}
+            width={THUMB}
+            height={THUMB}
+            aria-hidden="true"
+            class="size-20 shrink-0 rounded-md border border-white/20 p-1 text-primary"
+          >
+            <path
+              d={tripThumb.d}
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        )}
+        <div class="flex flex-col gap-1">
+          <span class="font-medium group-hover:text-primary">Road Trips</span>
+          <span class="text-sm text-muted-foreground">
+            Experiences I meet along my way from Point A to B.
+          </span>
+        </div>
       </a>
     </li>
   </ul>

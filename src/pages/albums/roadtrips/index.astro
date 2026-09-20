@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content'
 import { routeToSvgPath, type RouteCoord } from 'tile-map/geo'
-import Base from '../../layouts/Base.astro'
-import { formatDate } from '../../lib/date'
+import Base from '../../../layouts/Base.astro'
+import { formatDate } from '../../../lib/date'
 
 const THUMB = 80
 const THUMB_PADDING = 8
@@ -44,7 +44,7 @@ const trips = (await getCollection('roadtrips'))
     {trips.map((trip) => (
       <li>
         <a
-          href={`/roadtrips/${trip.id}`}
+          href={`/albums/roadtrips/${trip.id}`}
           class="group flex items-center gap-5 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
         >
           <svg
@@ -52,7 +52,7 @@ const trips = (await getCollection('roadtrips'))
             width={THUMB}
             height={THUMB}
             aria-hidden="true"
-            class="size-20 shrink-0 text-primary"
+            class="size-20 shrink-0 rounded-md border border-white/20 p-1 text-primary"
           >
             <path
               d={trip.thumb.d}

@@ -1,8 +1,8 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content'
 import { Image } from 'astro:assets'
-import Base from '../../layouts/Base.astro'
-import { formatDate } from '../../lib/date'
+import Base from '../../../layouts/Base.astro'
+import { formatDate } from '../../../lib/date'
 
 export async function getStaticPaths() {
   const trips = await getCollection('roadtrips')
@@ -39,7 +39,7 @@ const mapData = {
 
 <Base title={`${title} · Hagen Fritz`} description={tagline}>
   <a
-    href="/roadtrips"
+    href="/albums/roadtrips"
     class="text-sm text-muted-foreground transition-colors hover:text-foreground"
   >
     ← Road trips
@@ -217,7 +217,7 @@ const mapData = {
     type MapView,
     type RouteCoord,
   } from 'tile-map'
-  import { attachCarousel } from '../../lib/carousel'
+  import { attachCarousel } from '../../../lib/carousel'
 
   type MapData = { route: RouteCoord[]; stops: LatLon[] }
 
