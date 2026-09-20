@@ -403,7 +403,7 @@ of defining them, with no behaviour change.
 - The built page's script chunk shrinks by roughly the size of the removed
   functions.
 
-- [ ] **Unit 3: Emit the location dataset as a hashed JSON endpoint**
+- [x] **Unit 3: Emit the location dataset as a hashed JSON endpoint**
 
 **Goal:** The trimmed dataset is a separate, immutable, content-addressed build
 output.
