@@ -49,3 +49,4 @@ jobs:
         with:
           path: src/content
           skip: ./node_modules,./dist,./package-lock.json
+          ignore_words_list: brunch
