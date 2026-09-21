@@ -15,6 +15,18 @@ intro:
     "Celebrate the little wins".
 entries:
   - images:
+      - src: ../../assets/albums/career/waterloo_tropical_fruit.jpg
+        alt: >-
+          Waterloo Tropical Fruit sparkling water can held over a desk with
+          handwritten notes in the background
+    title: Compass Turns One
+    date: 2026-09-01
+    caption: >-
+      Compass hit its first birthday. A schedule narrative that used to take a
+      Friday afternoon now takes 15 minutes, and RO marked the milestone on
+      their feed.
+    link: https://www.instagram.com/p/DcynlaHm7Xt/
+  - images:
       - src: ../../assets/albums/career/qdol_lychee.jpg
         alt: Orange QDOL Charmander sparkling water can, lychee flavor
     title: RO Compass V2
