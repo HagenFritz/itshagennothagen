@@ -1,7 +1,10 @@
 import { hmacHex } from 'weed-whacker/leaderboard'
 
 const WINDOW_MS = 60_000
-const MAX_REQUESTS_PER_WINDOW = 20
+// One page load fires a batch call plus one call per playlist opened, so a
+// normal browsing session burns through a low ceiling fast. The page treats
+// any non-OK response as a permanent failure.
+export const MAX_REQUESTS_PER_WINDOW = 60
 
 // Sliding-window limiter shared by the Spotify proxy endpoints. Insert this
 // request's row and prune anything outside the window in one batch, then
