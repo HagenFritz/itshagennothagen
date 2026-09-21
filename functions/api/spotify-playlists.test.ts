@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fakeRateLimitDb, stubCaches } from './_test-helpers'
 import { onRequestGet } from './spotify-playlists'
+import { MAX_REQUESTS_PER_WINDOW } from './_rate-limit'
 
 function makeEnv(): Env {
   return {
@@ -258,7 +259,7 @@ describe('GET /api/spotify-playlists', () => {
       }) as unknown as Parameters<typeof onRequestGet>[0]
 
     let lastRes
-    for (let i = 0; i < 21; i++) {
+    for (let i = 0; i <= MAX_REQUESTS_PER_WINDOW; i++) {
       lastRes = await onRequestGet(request())
     }
 
