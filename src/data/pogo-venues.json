@@ -102,5 +102,13 @@
     "lon": -97.8398043,
     "notes": "Breakfast-focused. Sits inside the Arbor Trails gym cluster.",
     "area": "Arbor Trails"
+  },
+  {
+    "name": "Tumble 22 - Texas Chicken Joint",
+    "kind": "chicken",
+    "lat": 30.2780879,
+    "lon": -97.7716591,
+    "notes": "The unicorn: two gyms from one table. Its own sign is a gym at 2m, and the Lake Austin Animal Hospital Dog sits 71m south. Sit toward the south side; ten meters the wrong way puts the second one out of range.",
+    "area": "Tarrytown"
   }
 ]

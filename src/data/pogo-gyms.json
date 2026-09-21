@@ -202,5 +202,17 @@
     "lat": 30.250765,
     "lon": -97.75433,
     "area": "Bouldin Creek"
+  },
+  {
+    "name": "Tumble 22 Lake Austin Blvd",
+    "lat": 30.278069,
+    "lon": -97.771645,
+    "area": "Tarrytown"
+  },
+  {
+    "name": "Lake Austin Animal Hospital Dog",
+    "lat": 30.277466,
+    "lon": -97.77182,
+    "area": "Tarrytown"
   }
 ]
