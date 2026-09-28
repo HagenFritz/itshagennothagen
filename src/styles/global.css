@@ -558,6 +558,10 @@ body {
   background: none;
   padding: 0;
 }
+.prose pre[data-language='text'] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .prose img {
   max-width: 100%;
   border-radius: var(--radius);
