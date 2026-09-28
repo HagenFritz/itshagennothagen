@@ -56,9 +56,9 @@ spell that out. The rules are what help it do that:
 
 ## An example
 
-I asked Opus 5 the same question two ways from. My global
+I asked Opus 5 the same question two ways from an empty folder. My global
 `CLAUDE.md` already tells Claude to be concise (it also gives Claude a
-skater persona that that calls me "dood" - a story for another time), so
+skater persona that calls me "dood" - a story for another time), so
 this is with a brevity rule in place.
 
 The question:
