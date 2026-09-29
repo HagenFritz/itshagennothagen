@@ -5,6 +5,7 @@ summary:
   Niantic is rerunning a GO Fest raid day this Sunday. I went looking for an
   Austin breakfast spot with two gyms in range of the table.
 tags: [pokemon, lab]
+draft: true
 ---
 
 Niantic is
