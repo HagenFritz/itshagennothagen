@@ -3,6 +3,7 @@ title: 'Fredericksburg Trip'
 date: 2026-06-25
 summary: 'A long weekend itinerary for Fredericksburg, TX: wine tasting and World Cup watching'
 tags: [travel]
+draft: true
 ---
 
 My friend and I have been more conscious about taking trips for each other's birthdays each year. For his birthday this year (early June), we decided to travel west to Fredericksburg for a more low-key weekend. His only request: that we watch World Cup games in a cool environment and really lean into the rowdy 'football' fan persona.
