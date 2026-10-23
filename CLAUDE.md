@@ -174,6 +174,13 @@ style attributes:
   label-description rows (see pokemon-matcher.md).
 - `stat-bars` > `row` > `label` + `bar` > `fill` (inline `width: N%`) + `val`
   (add `max` to bold the top stat): horizontal bar chart.
+- `stop-map` > `<script type="application/json">` holding
+  `{ route: [[lat, lon], ...], stops: [{ title, address, perk, lat, lon, photos?: [{ src, alt }] }] }`:
+  a `tile-map` route map with numbered pins, a card per stop (photos shown
+  whole, in a carousel when there are several), and a stop list.
+  `src/layouts/Post.astro` lazy-loads `src/lib/stop-map.ts` only on posts that
+  contain one. Build the route with OSRM (see `build_roadtrip_route.py`) and
+  paste it in; the map credits OSM, CARTO, and OSRM itself.
 
 When a second post needs a pattern that exists inline somewhere, extract it here
 first. Good future candidates: pull quote, side-by-side image pair, big-number
