@@ -46,5 +46,8 @@ const fmt = formatDate(date, 'long')
       t.parentNode!.insertBefore(w, t)
       w.appendChild(t)
     })
+    if (document.querySelector('.stop-map')) {
+      import('../lib/stop-map').then((m) => m.mountStopMaps())
+    }
   </script>
 </Base>
