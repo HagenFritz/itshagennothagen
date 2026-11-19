@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../../layouts/Base.astro'
+import RecipeThumb from '../../../components/RecipeThumb.astro'
+import { formatDate } from '../../../lib/date'
+
+const recipes = (await getCollection('recipes')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+)
+---
+
+<Base
+  title="Recipes · Hagen Fritz"
+  description="Dishes I have made and would make again."
+>
+  <a
+    href="/albums"
+    class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+  >
+    ← Albums
+  </a>
+
+  <h1 class="mt-4 text-3xl font-semibold tracking-tight">Recipes</h1>
+
+  <p class="mt-4 max-w-[70ch] text-muted-foreground">
+    Dishes I have made and would make again, written down so I can.
+  </p>
+
+  <ul class="mt-8 space-y-4">
+    {recipes.map((recipe) => (
+      <li>
+        <a
+          href={`/albums/recipes/${recipe.id}`}
+          class="group flex items-center gap-5 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary"
+        >
+          <RecipeThumb image={recipe.data.image} />
+          <div class="flex flex-col gap-1">
+            <span class="font-medium group-hover:text-primary">
+              {recipe.data.title}
+            </span>
+            <span class="text-sm text-muted-foreground">
+              {recipe.data.tagline}
+            </span>
+            <span class="text-xs text-muted-foreground">
+              {`Serves ${recipe.data.serves} · ${formatDate(recipe.data.date)}`}
+            </span>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>
