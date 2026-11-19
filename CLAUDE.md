@@ -64,6 +64,15 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   below 640px), the selected stop is written to the URL hash so a stop can be
   deep-linked, and the first stop's card, which carries the trip intro, is open
   by default.
+- **`/albums/recipes`**: a `recipes` content collection
+  (`src/content/recipes/*.yaml`, schema in `src/content.config.ts`) where each
+  dish carries serves, source, an optional photo from
+  `src/assets/recipes/<slug>/`, and named sections (sub-recipes such as a
+  dressing) each with its own ingredients and steps. An ingredient is a plain
+  string or `{ item, note }`, where the note renders as a small line under it
+  (use it to record a change from the source amount). Write the method in your
+  own words rather than copying a cookbook's text. `RecipeThumb.astro` shows the
+  photo, or a bowl icon when there is none.
 - **Road trip scripts**: `scripts/prep_roadtrip_photos.mjs <slug>` downscales
   the photos dropped in `src/assets/roadtrips/<slug>/` in place, baking
   orientation into the pixels and keeping EXIF so stop coordinates stay
