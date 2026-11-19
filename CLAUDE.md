@@ -97,9 +97,10 @@ Personal/professional website for Hagen Fritz, hosted on Cloudflare Pages at
   JSON is all that is needed to extend the map.
 - **`.claude/skills/`**: project-scoped Claude Code skills. `categorize-song`
   matches a liked song against `src/data/playlists.json`, logging misses to
-  `docs/music/unsorted-songs.md`. `album-cover` generates a topographic-gradient
-  cover image + SAT-word title for a playlist (builds on the global
-  `generate-image` skill in `~/.claude/skills/`).
+  `docs/brainstorms/2026-11-12-001-playlist-classification-requirements.md`.
+  `album-cover` generates a topographic-gradient cover image + SAT-word title
+  for a playlist (builds on the global `generate-image` skill in
+  `~/.claude/skills/`).
 
 ## Theme
 
