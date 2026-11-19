@@ -60,6 +60,37 @@ const roadtrips = defineCollection({
     }),
 })
 
+const recipes = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.yaml', base: './src/content/recipes' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      tagline: z.string(),
+      date: z.coerce.date(),
+      source: z.string(),
+      serves: z.number().int().positive(),
+      intro: z.array(z.string()).default([]),
+      image: z.object({ src: image(), alt: z.string() }).optional(),
+      sections: z
+        .array(
+          z.object({
+            name: z.string(),
+            note: z.string().optional(),
+            ingredients: z
+              .array(
+                z.union([
+                  z.string().transform((item) => ({ item, note: undefined })),
+                  z.object({ item: z.string(), note: z.string().optional() }),
+                ]),
+              )
+              .min(1),
+            steps: z.array(z.string()).min(1),
+          }),
+        )
+        .min(1),
+    }),
+})
+
 const posts = defineCollection({
   loader: glob({ pattern: '**/[^_]*.md', base: './src/content/posts' }),
   schema: z.object({
@@ -71,4 +102,4 @@ const posts = defineCollection({
   }),
 })
 
-export const collections = { albums, posts, roadtrips }
+export const collections = { albums, posts, recipes, roadtrips }
